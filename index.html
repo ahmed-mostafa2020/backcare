@@ -356,14 +356,14 @@ const EX={
   safe:'إذا امتد الألم إلى الساق أو زاد أثناء المشي، أبطئ وقلّل المدة.',
   det:'ابدأ بإيقاع هادئ لدقيقة، ثم امشِ بسرعتك المريحة. انظر للأمام، واترك ذراعيك تتأرجحان طبيعيًا، وتنفّس بانتظام. حذاء مريح وأرض مستوية أفضل. يمكنك تقسيم المدة على فترتين إن احتجت.'},
  brace:{name:'شدّ عضلات البطن',en:'Abdominal Bracing',kind:'reps',anim:'hold',prop:'mat',core:true,
-  A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{},
+  A:P(HOOK,{elN:[100,140],haN:[122,145]}),B:{neck:[80,150],elN:[101,144],haN:[123,150],knN:[176,118],knF:[172,120]},
   short:'على ظهرك والركبتان مثنيتان: شدّ عضلات البطن بلطف كأنك تستعد لنكزة خفيفة، واستمر في التنفس.',
   ben:['يفعّل العضلات العميقة الداعمة للظهر','أساس آمن لكل التمارين التالية','يحسّن التحكم في الجذع أثناء الحركة'],
   mis:['حبس النفس','شفط البطن للداخل بقوة أو شدّ زائد','تقويس الظهر أو رفع الحوض'],
   safe:'الشدّ خفيف (حوالي 30% من أقصى قوتك) ولا يجب أن يسبب ألمًا.',
   det:'ضع أطراف أصابعك على جانبي البطن فوق عظمة الحوض الأمامية مباشرة. شدّ عضلات البطن حتى تشعر بها تتصلّب تحت أصابعك دون أن يتحرك ظهرك أو حوضك. اثبت مع تنفّس طبيعي ثم ارتخِ تمامًا.'},
  tilt:{name:'إمالة الحوض',en:'Pelvic Tilt',kind:'reps',anim:'tempo',tempo:4,prop:'mat',core:true,
-  A:HOOK,B:{hip:[140,152],knN:[178,117],knF:[174,119]},
+  A:HOOK,B:{hip:[141,147],knN:[183,113],knF:[179,115]},
   short:'على ظهرك والركبتان مثنيتان: أمِل الحوض بلطف ليقترب أسفل ظهرك من الأرض، ثم عد للوضع المريح.',
   ben:['يحرّك أسفل الظهر حركة صغيرة ولطيفة','يخفف التيبّس','يحسّن إحساسك بوضع الحوض'],
   mis:['الحركة السريعة أو المندفعة','رفع الحوض عن الأرض','الدفع بالقدمين بدل عضلات البطن'],
@@ -401,7 +401,7 @@ const EX={
   det:'الكوع تحت الكتف مباشرة، والركبتان مثنيتان خلفك. شدّ البطن ثم ارفع الحوض حتى يصبح الجسم خطًا مستقيمًا. يمكنك البدء بثوانٍ أقل والزيادة تدريجيًا.'},
  hipflexor:{name:'إطالة الفخذ الأمامي',en:'Hip Flexor Stretch',kind:'stretch',anim:'stretch',prop:'mat',
   A:{head:[140,34],neck:[138,52],hip:[134,108],knN:[178,110],anN:[182,162],toN:[198,166],knF:[112,160],anF:[74,162],toF:[64,158],elN:[158,82],haN:[174,104],elF:[152,84],haF:[170,106],f:[1,0]},
-  B:{head:[149,36],neck:[146,54],hip:[146,110],knN:[184,110],elN:[166,84],haN:[180,106],elF:[160,86],haF:[176,108]},
+  B:{head:[153,37],neck:[151,55],hip:[152,113],knN:[188,112],elN:[166,84],haN:[180,106],elF:[160,86],haF:[176,108]},
   short:'على ركبة واحدة والقدم الأخرى للأمام: شدّ البطن والأرداف وادفع الحوض للأمام قليلًا حتى تشعر بشدّ لطيف أمام الفخذ.',
   ben:['يخفف شدّ عضلات الورك التي تسحب أسفل الظهر','مفيد جدًا لمن يجلس ساعات طويلة'],
   mis:['تقويس أسفل الظهر للأمام','الاندفاع بعيدًا للأمام','الإطالة حتى الألم'],
@@ -416,7 +416,7 @@ const EX={
   safe:'إذا ظهر تنميل أو ألم ممتد في الساق، أنزل الساق فورًا وقلّل المدى؛ قد يكون تهيّجًا للعصب.',
   det:'الساق الأخرى مثنية والقدم على الأرض لحماية الظهر. يمكنك استخدام منشفة حول القدم. لا تحاول فرد الركبة بالكامل إن لم يكن مريحًا.'},
  breath:{name:'التنفّس المريح',en:'Relaxed Breathing',kind:'timed',anim:'breath',prop:'mat',core:true,
-  A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{},
+  A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{neck:[80,147],elN:[100,133],haN:[122,138]},
   short:'استلقِ بارتخاء ويدك على بطنك: شهيق هادئ من الأنف يرفع البطن، ثم زفير أطول وأبطأ.',
   ben:['يرخي العضلات المتوترة','يقلل الإحساس بالألم والتوتر','يساعد على نوم أفضل'],
   mis:['رفع الكتفين مع الشهيق','التنفّس السريع'],
@@ -462,10 +462,10 @@ class Figure{
       nThigh:L(C.skin,15),nShorts:L(C.shorts,16.5),nShin:L(C.skin,11.5),nFoot:L(C.shoe,9.5),
       neck:L(C.skin,9.5),hair:mk('circle',{r:12.6,fill:C.hair},g),face:mk('circle',{r:11.3,fill:C.skin},g),
       beard:mk('path',{stroke:C.hair,'stroke-width':4.2,opacity:.9},g),eye:mk('circle',{r:1.5,fill:C.hair},g),
-      core:d.core?mk('circle',{fill:'#F2B84B',opacity:.3},g):null,
+      core:d.core?mk('circle',{fill:'#F2B84B',opacity:.3},g):null,ring:d.core?mk('circle',{fill:'none',stroke:'#E39B2D','stroke-width':2.5,opacity:0},g):null,
       nUpper:L(C.skin,10),nSleeve:L(C.shirt,12.5),nFore:L(C.skin,9)
     };
-    if(d.core){g.insertBefore(this.e.core,this.e.nThigh)}
+    if(d.core){g.insertBefore(this.e.core,this.e.nThigh);g.insertBefore(this.e.ring,this.e.nThigh)}
     if(d.prop==='water'){
       mk('path',{d:'M0 106 Q25 98 50 106 T100 106 T150 106 T200 106 T250 106 T300 106 V200 H0Z',fill:'#5FB3C9',opacity:.42},svg);
       mk('path',{d:'M0 112 Q25 104 50 112 T100 112 T150 112 T200 112 T250 112 T300 112',stroke:'#fff',fill:'none','stroke-width':2.5,opacity:.7},svg);
@@ -494,7 +494,7 @@ class Figure{
     const p1=[fc[0]+d1[0]*r,fc[1]+d1[1]*r],p2=[fc[0]+d2[0]*r,fc[1]+d2[1]*r];
     const sweep=(d1[0]*d2[1]-d1[1]*d2[0])>0?1:0;
     E.beard.setAttribute('d',`M${p1[0].toFixed(1)} ${p1[1].toFixed(1)} A${r} ${r} 0 0 ${sweep} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`);
-    if(E.core){const cc=lerp(p.neck,p.hip,.66);Ci(E.core,cc);E.core.setAttribute('r',(8+9*e).toFixed(1));E.core.setAttribute('opacity',(.18+.4*e).toFixed(2))}
+    if(E.core){const cc=lerp(p.neck,p.hip,.66);Ci(E.core,cc);E.core.setAttribute('r',(7+13*e).toFixed(1));E.core.setAttribute('opacity',(.12+.5*e).toFixed(2));Ci(E.ring,cc);E.ring.setAttribute('r',(14+16*e).toFixed(1));E.ring.setAttribute('opacity',(e*(1-e)*2.4).toFixed(2))}
     const xs=['hip','knN','anN','toN','knF','anF','toF','head','haN'].map(k=>p[k][0]);const mn=Math.min(...xs),mx=Math.max(...xs);
     this.shadow.setAttribute('cx',((mn+mx)/2).toFixed(1));this.shadow.setAttribute('rx',((mx-mn)/2+14).toFixed(1));
     if(side!==this.side){this.side=side;this.g.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'');
@@ -716,7 +716,8 @@ function wkUpdate(force){
   if(!W||!$('#wkring'))return;
   const st=W.steps[W.si];const it=W.items[W.idx];const ex=EX[it.id];
   if(!st)return;
-  W.fig.draw(stepT(st,W.el,ex.anim),st.side);
+  const demo=!W.run||st.k==='ready'||(st.k==='rest'&&st.d>=5);
+  W.fig.draw(demo?demoT(ex.anim,performance.now()/1000):stepT(st,W.el,ex.anim),st.side);
   const left=Math.max(0,st.d-W.el);
   const sec=Math.ceil(left);
   const r=$('#wkring');
