@@ -287,6 +287,8 @@ textarea{min-height:80px;resize:vertical}
 .phwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .phwrap .pb{opacity:0}
 [data-theme=dark] .phwrap img{filter:brightness(.9) saturate(.95)}
+.cheer{position:absolute;left:50%;top:42%;z-index:5;transform:translate(-50%,-50%);background:linear-gradient(135deg,#FFB547,#FF6B6B);color:#fff;font-weight:700;font-size:30px;padding:12px 26px;border-radius:24px;box-shadow:0 12px 30px rgba(255,107,107,.45);white-space:nowrap;pointer-events:none;animation:cheer 1.9s cubic-bezier(.2,.9,.3,1.3) forwards;text-shadow:0 2px 4px rgba(0,0,0,.18)}
+@keyframes cheer{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-8deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.12) rotate(3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(-2deg)}80%{opacity:1;transform:translate(-50%,-60%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -318,7 +320,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
 
 /* ================== state ================== */
 const KEY='backcare.v1';
-function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto'},days:{},pain:{},flares:{}}}
+function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto',cheer:true},days:{},pain:{},flares:{}}}
 let S=defaults();
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S={...defaults(),...o,settings:{...defaults().settings,...(o.settings||{})}}}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('تعذّر الحفظ على هذا الجهاز')}syncSWConfig()}
@@ -384,7 +386,7 @@ function targetLabel(it){
   s+=side; if(it.sets>1)s=`${it.sets} مجموعات · `+s; return s;
 }
 function buildSteps(it){
-  const ex=EX[it.id];const st=[{k:'ready',d:5,l:'استعد',side:it.perSide?'R':null}];
+  const ex=EX[it.id];const st=[{k:'ready',d:5,l:'يلا بينا 🚀',side:it.perSide?'R':null}];
   if(ex.kind==='timed'){st.push({k:'timed',d:(it.id==='breath'?2:it.min)*60,l:it.id==='breath'?'تنفّس ببطء':'امشِ بخطوات مريحة'});return st}
   const sides=it.perSide?['R','L']:[null];
   if(ex.kind==='stretch'){sides.forEach((s,i)=>{if(i)st.push({k:'rest',d:6,l:'بدّل الجهة',side:s});st.push({k:'stretch',d:it.hold,l:'اثبت مع تنفّس هادئ',side:s})});return st}
@@ -415,7 +417,7 @@ const SYM_RED=['ضعف في الساق أو القدم','تنميل في منط�
 const HOOK={head:[62,146],neck:[80,152],hip:[140,156],knN:[176,120],anN:[202,160],toN:[218,163],knF:[172,122],anF:[198,160],toF:[214,163],elN:[106,162],haN:[130,163],elF:[104,160],haF:[128,161],f:[0,-1]};
 const P=(base,over)=>({...base,...over});
 const EX={
- walk:{name:'المشي',en:'Walking',kind:'timed',anim:'walk',prop:'ground',
+ walk:{img:'walk',name:'المشي',en:'Walking',kind:'timed',anim:'walk',prop:'ground',
   A:{head:[152,28],neck:[150,46],hip:[148,100],knN:[160,134],anN:[168,168],toN:[181,170],knF:[138,135],anF:[126,165],toF:[138,170],elN:[138,74],haN:[133,98],elF:[161,74],haF:[171,95],f:[1,0]},
   B:{knN:[138,135],anN:[126,165],toN:[138,170],knF:[160,134],anF:[168,168],toF:[181,170],elN:[161,74],haN:[171,95],elF:[138,74],haF:[133,98]},
   short:'امشِ بخطوات مريحة على أرض مستوية، مع استقامة الظهر وارتخاء الكتفين.',
@@ -423,21 +425,21 @@ const EX={
   mis:['خطوات طويلة جدًا أو سرعة تزيد الألم','الانحناء للأمام والنظر للأرض','حمل أشياء ثقيلة أثناء المشي'],
   safe:'إذا امتد الألم إلى الساق أو زاد أثناء المشي، أبطئ وقلّل المدة.',
   det:'ابدأ بإيقاع هادئ لدقيقة، ثم امشِ بسرعتك المريحة. انظر للأمام، واترك ذراعيك تتأرجحان طبيعيًا، وتنفّس بانتظام. حذاء مريح وأرض مستوية أفضل. يمكنك تقسيم المدة على فترتين إن احتجت.'},
- brace:{name:'شدّ عضلات البطن',en:'Abdominal Bracing',kind:'reps',anim:'hold',prop:'mat',core:true,
+ brace:{img:'brace',name:'شدّ عضلات البطن',en:'Abdominal Bracing',kind:'reps',anim:'hold',prop:'mat',core:true,
   A:P(HOOK,{elN:[100,140],haN:[122,145]}),B:{neck:[80,150],elN:[101,144],haN:[123,150],knN:[176,118],knF:[172,120]},
   short:'على ظهرك والركبتان مثنيتان: شدّ عضلات البطن بلطف كأنك تستعد لنكزة خفيفة، واستمر في التنفس.',
   ben:['يفعّل العضلات العميقة الداعمة للظهر','أساس آمن لكل التمارين التالية','يحسّن التحكم في الجذع أثناء الحركة'],
   mis:['حبس النفس','شفط البطن للداخل بقوة أو شدّ زائد','تقويس الظهر أو رفع الحوض'],
   safe:'الشدّ خفيف (حوالي 30% من أقصى قوتك) ولا يجب أن يسبب ألمًا.',
   det:'ضع أطراف أصابعك على جانبي البطن فوق عظمة الحوض الأمامية مباشرة. شدّ عضلات البطن حتى تشعر بها تتصلّب تحت أصابعك دون أن يتحرك ظهرك أو حوضك. اثبت مع تنفّس طبيعي ثم ارتخِ تمامًا.'},
- tilt:{name:'إمالة الحوض',en:'Pelvic Tilt',kind:'reps',anim:'tempo',tempo:4,prop:'mat',core:true,
+ tilt:{img:'tilt',name:'إمالة الحوض',en:'Pelvic Tilt',kind:'reps',anim:'tempo',tempo:4,prop:'mat',core:true,
   A:HOOK,B:{hip:[141,147],knN:[183,113],knF:[179,115]},
   short:'على ظهرك والركبتان مثنيتان: أمِل الحوض بلطف ليقترب أسفل ظهرك من الأرض، ثم عد للوضع المريح.',
   ben:['يحرّك أسفل الظهر حركة صغيرة ولطيفة','يخفف التيبّس','يحسّن إحساسك بوضع الحوض'],
   mis:['الحركة السريعة أو المندفعة','رفع الحوض عن الأرض','الدفع بالقدمين بدل عضلات البطن'],
   safe:'حركة صغيرة وفي المدى المريح فقط. توقف إذا زاد الألم أو امتد للساق.',
   det:'خذ نفسًا، ومع الزفير شدّ البطن بلطف وأمِل الحوض كأنك تقرّب عظمة العانة نحو السرة، فيقترب أسفل الظهر من الأرض. اثبت لحظة ثم عد ببطء. الحركة من الحوض وليست من الأرجل.'},
- heel:{name:'انزلاق الكعب',en:'Heel Slides',kind:'reps',anim:'tempo',tempo:5,prop:'mat',
+ heel:{img:'heel',name:'انزلاق الكعب',en:'Heel Slides',kind:'reps',anim:'tempo',tempo:5,prop:'mat',
   A:HOOK,B:{knN:[178,150],anN:[216,158],toN:[228,150]},
   short:'على ظهرك: شدّ البطن بلطف وازلق كعبًا واحدًا على الأرض حتى تفرد الساق، ثم أرجعه ببطء.',
   ben:['يدرّب ثبات الجذع أثناء حركة الساق','حركة آمنة ولطيفة لمفصل الورك'],
@@ -459,7 +461,7 @@ const EX={
   mis:['الارتفاع الزائد وتقويس الظهر','الدفع من الرقبة والكتفين','انهيار الركبتين للداخل'],
   safe:'ارتفع للمدى المريح فقط. إذا شعرت بالجهد في الظهر بدل الأرداف، قلّل الارتفاع.',
   det:'القدمان على عرض الوركين وقريبتان من الأرداف. ابدأ بشدّ البطن، ثم اعصر الأرداف وارفع الحوض. انزل فقرةً فقرة ببطء.'},
- sideplank:{name:'البلانك الجانبي المعدّل',en:'Modified Side Plank',kind:'reps',anim:'hold',prop:'mat',from:2,
+ sideplank:{img:'sideplank',name:'البلانك الجانبي المعدّل',en:'Modified Side Plank',kind:'reps',anim:'hold',prop:'mat',from:2,
   A:{head:[70,106],neck:[86,120],hip:[150,155],sh:[92,124],elN:[94,160],haN:[122,162],elF:[114,114],haF:[142,138],knN:[196,159],anN:[170,150],toN:[160,144],knF:[192,155],anF:[166,145],toF:[156,139],f:[.6,-.8]},
   B:{hip:[150,134],elF:[116,106],haF:[144,126]},
   short:'على جانبك مستندًا على الساعد والركبتان مثنيتان: ارفع الحوض حتى يستقيم الجسم من الرأس للركبتين، واثبت.',
@@ -467,7 +469,7 @@ const EX={
   mis:['هبوط الحوض أثناء الثبات','الكوع بعيد عن مستوى الكتف','حبس النفس'],
   safe:'يبدأ من الأسبوع الثاني فقط إذا كان مريحًا. توقف فورًا إذا زاد ألم الظهر أو الساق.',
   det:'الكوع تحت الكتف مباشرة، والركبتان مثنيتان خلفك. شدّ البطن ثم ارفع الحوض حتى يصبح الجسم خطًا مستقيمًا. يمكنك البدء بثوانٍ أقل والزيادة تدريجيًا.'},
- hipflexor:{name:'إطالة الفخذ الأمامي',en:'Hip Flexor Stretch',kind:'stretch',anim:'stretch',prop:'mat',
+ hipflexor:{img:'hipflexor',name:'إطالة الفخذ الأمامي',en:'Hip Flexor Stretch',kind:'stretch',anim:'stretch',prop:'mat',
   A:{head:[140,34],neck:[138,52],hip:[134,108],knN:[178,110],anN:[182,162],toN:[198,166],knF:[112,160],anF:[74,162],toF:[64,158],elN:[158,82],haN:[174,104],elF:[152,84],haF:[170,106],f:[1,0]},
   B:{head:[153,37],neck:[151,55],hip:[152,113],knN:[188,112],elN:[166,84],haN:[180,106],elF:[160,86],haF:[176,108]},
   short:'على ركبة واحدة والقدم الأخرى للأمام: شدّ البطن والأرداف وادفع الحوض للأمام قليلًا حتى تشعر بشدّ لطيف أمام الفخذ.',
@@ -475,7 +477,7 @@ const EX={
   mis:['تقويس أسفل الظهر للأمام','الاندفاع بعيدًا للأمام','الإطالة حتى الألم'],
   safe:'شدّ لطيف فقط وبلا ألم. ضع وسادة تحت الركبة.',
   det:'الجذع مستقيم والبطن مشدود بلطف. اعصر أرداف الساق الخلفية، فتشعر بالشدّ أمام الورك. اثبت مع تنفّس هادئ، ثم بدّل.'},
- hamstring:{name:'إطالة الفخذ الخلفي',en:'Hamstring Stretch',kind:'stretch',anim:'stretch',prop:'mat',
+ hamstring:{img:'hamstring',name:'إطالة الفخذ الخلفي',en:'Hamstring Stretch',kind:'stretch',anim:'stretch',prop:'mat',
   A:P(HOOK,{knN:[168,118],anN:[190,86],toN:[200,79],elN:[112,130],haN:[150,128],elF:[110,134],haF:[148,132]}),
   B:{knN:[162,112],anN:[172,70],toN:[183,64],haN:[146,124],haF:[144,128]},
   short:'على ظهرك: ارفع ساقًا وامسك خلف الفخذ، ثم افرد الركبة تدريجيًا حتى تشعر بشدّ لطيف.',
@@ -483,14 +485,14 @@ const EX={
   mis:['شدّ الساق بقوة أو بحركات ارتدادية','رفع الرأس أو الحوض عن الأرض','الإطالة حتى الألم'],
   safe:'إذا ظهر تنميل أو ألم ممتد في الساق، أنزل الساق فورًا وقلّل المدى؛ قد يكون تهيّجًا للعصب.',
   det:'الساق الأخرى مثنية والقدم على الأرض لحماية الظهر. يمكنك استخدام منشفة حول القدم. لا تحاول فرد الركبة بالكامل إن لم يكن مريحًا.'},
- breath:{name:'التنفّس المريح',en:'Relaxed Breathing',kind:'timed',anim:'breath',prop:'mat',core:true,
+ breath:{img:'breath',name:'التنفّس المريح',en:'Relaxed Breathing',kind:'timed',anim:'breath',prop:'mat',core:true,
   A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{neck:[80,147],elN:[100,133],haN:[122,138]},
   short:'استلقِ بارتخاء ويدك على بطنك: شهيق هادئ من الأنف يرفع البطن، ثم زفير أطول وأبطأ.',
   ben:['يرخي العضلات المتوترة','يقلل الإحساس بالألم والتوتر','يساعد على نوم أفضل'],
   mis:['رفع الكتفين مع الشهيق','التنفّس السريع'],
   safe:'إذا شعرت بدوخة، عد إلى تنفّسك الطبيعي.',
   det:'اتبع الإيقاع على الشاشة: شهيق 4 ثوانٍ، زفير 6 ثوانٍ. اترك الكتفين والفك مرتخيين.'},
- catcamel:{name:'القطة والجمل',en:'Cat-Camel',kind:'reps',anim:'tempo',tempo:6,prop:'mat',from:1,
+ catcamel:{img:'catcamel',name:'القطة والجمل',en:'Cat-Camel',kind:'reps',anim:'tempo',tempo:6,prop:'mat',from:1,
   A:{head:[204,116],neck:[190,107],mid:[155,93],hip:[120,108],elN:[194,132],haN:[196,160],elF:[188,132],haF:[190,160],knN:[118,158],anN:[80,161],toN:[70,158],knF:[122,158],anF:[84,161],toF:[74,158],f:[1,.6]},
   B:{head:[210,88],neck:[192,100],mid:[155,108],hip:[120,102],elN:[195,128],elF:[189,128]},
   short:'على اليدين والركبتين: قوّس ظهرك لأعلى بهدوء، ثم اخفضه قليلًا لأسفل، في مدى صغير ومريح.',
@@ -506,7 +508,7 @@ const EX={
   mis:['رفع الجسم كله كتمرين البطن العادي','ثني الرقبة وشدّ الذقن للصدر','تسطيح الظهر على اليدين'],
   safe:'الرفع بسيط جدًا (بضعة سنتيمترات). إذا شعرت بألم في الظهر أو الرقبة، قلّل الارتفاع.',
   det:'اليدان تحت انحناءة أسفل الظهر للحفاظ على وضعه الطبيعي. الرأس والرقبة والصدر قطعة واحدة. بدّل الساق الممدودة في منتصف التكرارات.'},
- clamshell:{name:'تمرين الصدفة',en:'Clamshell',kind:'reps',anim:'hold',prop:'mat',from:3,
+ clamshell:{img:'clamshell',name:'تمرين الصدفة',en:'Clamshell',kind:'reps',anim:'hold',prop:'mat',from:3,
   A:{head:[62,138],neck:[80,145],hip:[140,150],knN:[184,146],anN:[168,163],toN:[158,165],knF:[184,152],anF:[168,166],toF:[158,167],elN:[112,148],haN:[132,152],elF:[64,162],haF:[52,146],f:[.4,-1]},
   B:{knN:[168,102],anN:[166,158]},
   short:'على جانبك والركبتان مثنيتان والقدمان متلاصقتان: افتح الركبة العلوية ببطء دون أن يتحرك الحوض، ثم أغلقها.',
@@ -514,7 +516,7 @@ const EX={
   mis:['دوران الحوض للخلف مع فتح الركبة','فصل القدمين','الحركة السريعة'],
   safe:'ابدأ بدون شريط. أضف شريطًا خفيفًا من الأسبوع 5 فقط إذا كان مريحًا.',
   det:'ضع يدك العلوية على الحوض لتتأكد أنه ثابت. افتح الركبة للمدى الذي يبقى فيه الحوض ثابتًا فقط.'},
- slbridge:{name:'جسر بساق واحدة',en:'Single-Leg Bridge',kind:'reps',anim:'hold',prop:'mat',from:5,
+ slbridge:{img:'slbridge',name:'جسر بساق واحدة',en:'Single-Leg Bridge',kind:'reps',anim:'hold',prop:'mat',from:5,
   A:P(HOOK,{knN:[178,126],anN:[218,128],toN:[226,118]}),
   B:{hip:[140,126],neck:[82,151],knF:[174,112],knN:[184,116],anN:[226,104],toN:[232,93]},
   short:'مثل جسر الأرداف، لكن مع فرد ساق واحدة: ارفع الحوض وحافظ عليه مستويًا.',
@@ -538,7 +540,7 @@ const EX={
   mis:['تقويس الظهر أثناء الرجوع','الرجوع لمدى أكبر من المريح'],
   safe:'تمرين اختياري. الظهر يبقى مستقيمًا، والحركة من الورك فقط.',
   det:'القدم الممدودة على الأرض. ارجع حتى تشعر بشدّ لطيف في الفخذ الداخلي، ثم تقدّم.'},
- splitsquat:{name:'القرفصاء المنقسمة',en:'Split Squat',kind:'reps',anim:'tempo',tempo:5,prop:'ground',from:7,
+ splitsquat:{img:'splitsquat',name:'القرفصاء المنقسمة',en:'Split Squat',kind:'reps',anim:'tempo',tempo:5,prop:'ground',from:7,
   A:{head:[150,28],neck:[148,46],hip:[146,100],knN:[172,134],anN:[176,168],toN:[190,170],knF:[124,134],anF:[106,160],toF:[118,170],elN:[162,74],haN:[150,98],elF:[158,74],haF:[146,98],f:[1,0]},
   B:{head:[150,52],neck:[148,70],hip:[146,124],knN:[180,128],anN:[178,168],knF:[124,160],anF:[100,160],toF:[112,170],elN:[162,98],haN:[150,122],elF:[158,98],haF:[146,122]},
   short:'قف بخطوة واسعة، قدم أمام والأخرى خلف: انزل عموديًا ببطء مع جذع مستقيم، ثم اصعد.',
@@ -546,7 +548,7 @@ const EX={
   mis:['ميل الجذع للأمام','دخول الركبة الأمامية للداخل','النزول لمدى يسبب ألمًا'],
   safe:'انزل لمدى صغير في البداية، واستند على حائط أو كرسي إن احتجت.',
   det:'الوزن على القدم الأمامية، والركبة فوق منتصف القدم. البطن مشدود بلطف.'},
- stepup:{name:'تمرين الصعود',en:'Step Up',kind:'reps',anim:'tempo',tempo:5,prop:'step',from:7,
+ stepup:{img:'stepup',name:'تمرين الصعود',en:'Step Up',kind:'reps',anim:'tempo',tempo:5,prop:'step',from:7,
   A:{head:[136,30],neck:[134,48],hip:[132,102],knN:[164,120],anN:[168,148],toN:[182,150],knF:[130,136],anF:[128,168],toF:[142,170],elN:[124,76],haN:[120,100],elF:[144,76],haF:[150,98],f:[1,0]},
   B:{head:[164,20],neck:[162,38],hip:[160,92],knN:[168,122],anN:[168,148],knF:[156,124],anF:[150,142],toF:[162,145],elN:[154,66],haN:[150,90],elF:[172,66],haF:[178,88]},
   short:'ضع قدمًا على درجة ثابتة منخفضة، ادفع بالكعب واصعد بجذع مستقيم، ثم انزل ببطء.',
@@ -614,7 +616,7 @@ class Figure{
     this.draw(0,null);FIGS.add(this);
   }
   draw(t,side){
-    if(this.isImg){const e=t<0?0:t>1?1:t;this.pb.style.opacity=e.toFixed(3);if(side!==this.side){this.side=side;this.wrap.style.transform=side==='L'?'scaleX(-1)':''}return}
+    if(this.isImg){const x=t<0?0:t>1?1:t,e=x<.3?0:x>.7?1:(x-.3)/.4*((x-.3)/.4)*(3-2*(x-.3)/.4);this.pb.style.opacity=e.toFixed(3);if(side!==this.side){this.side=side;this.wrap.style.transform=side==='L'?'scaleX(-1)':''}return}
     const d=this.def,A=d.A,B=d.B||{};const p={};
     const e=t<0?0:t>1?1:t;
     for(const k in A){p[k]=B[k]&&k!=='f'?lerp(A[k],B[k],e):A[k]}
@@ -704,7 +706,7 @@ function todayTasks(){const d=dayRec();const t=[{k:'morning',done:d.morning.fin}
 function todayPct(){return dayPct(today())}
 function todayPctOld(){const d=dayRec();let tot=required('morning').length+required('evening').length,dn=required('morning').filter(i=>d.morning.done.includes(i.id)).length+required('evening').filter(i=>d.evening.done.includes(i.id)).length;if(isSwimDay()){tot+=4;if(d.swim&&d.swim.done)dn+=4}return tot?dn/tot:0}
 function nextSwim(){for(let i=0;i<8;i++){const d=addDays(new Date(),i);if(isSwimDay(d))return{d,i}}return null}
-function greeting(){const h=new Date().getHours();return h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}
+function greeting(){const h=new Date().getHours();return h<12?'صباح الفل ☀️':h<18?'نهارك فل 🌿':'مساء الفل 🌙'}
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
 const toMin=hm=>{const[h,m]=hm.split(':').map(Number);return h*60+m};
 
@@ -735,7 +737,7 @@ function viewHome(){
       ${first?`<p class="tip">هنمشي معاك تمرين تمرين، بالرسمة والتايمر والصوت.</p>`:''}
     </div>`;
   }else{
-    main=`<div class="card next" style="text-align:center"><div style="font-size:40px">🎉</div><h2>خلّصت تمارين النهارده</h2><p class="muted small" style="margin-top:4px">أحسنت! الراحة جزء من التعافي.</p></div>`;
+    main=`<div class="card next" style="text-align:center"><div style="font-size:40px">🎉</div><h2>عاش! خلّصت تمارين النهارده</h2><p class="muted small" style="margin-top:4px">ريّح بقى، الراحة جزء من التعافي.</p></div>`;
   }
   const other=nk==='morning'?'evening':'morning';
   const oRec=d[other],om=other==='morning';
@@ -809,7 +811,7 @@ function startWorkout(kind){
 function saveResume(quiet){if(!W||!W.steps.length)return;const it=W.items[W.idx];S.resume={d:today(),kind:W.kind,id:it.id,si:W.si,el:Math.floor(W.el)};if(quiet){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}else save()}
 function resumeNote(kind){const R=S.resume;if(!R||R.d!==today()||R.kind!==kind||dayRec()[kind].done.includes(R.id)||!EX[R.id])return '';const it=routine(kind).find(i=>i.id===R.id);if(!it)return '';const st=buildSteps(it)[R.si]||{};const bits=[EX[R.id].name];if(st.rep)bits.push(`تكرار ${st.rep} من ${it.reps}`);if(st.side)bits.push(st.side==='R'?'الجهة اليمنى':'الجهة اليسرى');return `<div class="resume">${ic('play','icon" style="width:16px;height:16px')}<span>هتكمّل من: <b>${bits.join(' · ')}</b></span></div>`}
 function wkLoad(){
-  const it=W.items[W.idx],ex=EX[it.id];W.steps=buildSteps(it);W.si=0;W.el=0;W.lastSec=-1;
+  const it=W.items[W.idx],ex=EX[it.id];W.steps=buildSteps(it);W.si=0;W.el=0;W.lastSec=-1;W.cheered=false;
   const o=$('#wk');
   o.innerHTML=`<div class="wk">
    <div class="wk-top"><button class="icon-btn" data-act="wk-close" aria-label="إغلاق">${ic('x')}</button><div class="wk-prog"><b style="width:${(W.idx/W.items.length)*100}%"></b></div><b class="small">${W.idx+1} / ${W.items.length}</b></div>
@@ -880,6 +882,7 @@ function wkTick(ts){
     if(left!==W.lastSec){W.lastSec=left;if(left<=3&&left>0&&(st.k==='ready'||st.k==='hold'||st.k==='stretch'||(st.k==='rest'&&st.d>=5)))beep(660,.08,.15)}
     if(W.el>=st.d){wkNextStep()}
     if(!W._sv||ts-W._sv>4000){W._sv=ts;saveResume(true)}
+    if(!W.cheered&&W.steps.length>1){const tot=W.steps.reduce((a,x)=>a+x.d,0)-W.steps[0].d,dn=W.steps.slice(1,W.si).reduce((a,x)=>a+x.d,0)+(W.si>0?W.el:0);if(tot>12&&dn/tot>=.5){W.cheered=true;cheer(CHEER_MID)}}
   }
   wkUpdate(false);
 }
@@ -890,19 +893,20 @@ function wkNextStep(){
   if(st.k==='hold'||st.k==='stretch'||st.k==='timed'){beep(880,.14,.2);buzz(60)}
   else if(st.k==='rest'){beep(520,.12,.16)}
   else if(st.k==='tempo'){beep(740,.06,.12)}
+  {const it=W.items[W.idx];const last=W.steps.filter(x=>x.k==='hold'||x.k==='tempo').pop();if(st===last&&it.reps>2)setTimeout(()=>cheer(['آخر واحدة يا بطل! 🔥','آخر عدّة، شدّ حيلك 💪','دي الأخيرة، يلا! 🏁']),250)}
 }
 function markDone(id){const r=dayRec()[W.kind];if(!r.done.includes(id))r.done.push(id);r.fin=required(W.kind).every(i=>r.done.includes(i.id));save()}
 function wkComplete(){
   const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);if(W.idx<W.items.length-1)celebrate(false);
   if(W.idx>=W.items.length-1){wkFinish();return}
-  W.idx++;const keep=W.run;wkLoad();W.run=keep;saveResume();toast('أحسنت 👏 الجاي: '+EX[W.items[W.idx].id].name);
+  W.idx++;const keep=W.run;wkLoad();W.run=keep;saveResume();cheer(CHEER_DONE);toast('الجاي: '+EX[W.items[W.idx].id].name);
 }
 function wkFinish(){
   W.run=false;releaseWake();
   const r=dayRec()[W.kind];const n=routineDoneCount(W.kind);
   if(r.fin){S.resume=null;save();setTimeout(()=>{if(!checkDayComplete())celebrate(true)},300)}else saveResume();
   $('#wk').innerHTML=`<div class="wk"><div class="done-hero"><div class="big">${ic('check','icon" style="width:52px;height:52px;color:#fff',3)}</div>
-   <h1>${r.fin?'أحسنت، الروتين اكتمل!':'تم حفظ ما أنجزته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${W.kind==='morning'?'روتين الصباح':'روتين المساء'}</p></div>
+   <h1>${r.fin?'عاااااش يا بطل! 🏆':'تم حفظ اللي عملته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${W.kind==='morning'?'روتين الصباح':'روتين المساء'}</p></div>
    <div class="card" style="margin-top:18px"><h3>كيف الألم الآن؟</h3><div class="row between" style="margin-top:8px"><span class="muted small">حرّك المؤشر</span><b id="fpv" class="pain-num" style="font-size:34px">${(S.pain[today()]||{}).level??2}</b></div>
    <input type="range" min="0" max="10" step="1" value="${(S.pain[today()]||{}).level??2}" id="fpr" aria-label="مستوى الألم"><div class="scale"><span>0</span><span>5</span><span>10</span></div>
    <button class="btn navy block" style="margin-top:14px" data-act="wk-savepain">حفظ وإغلاق</button></div>
@@ -917,6 +921,9 @@ let AC=null;
 function unlockAudio(){if(!S.settings.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}}
 function beep(f,d=.1,v=.15){if(!S.settings.sound||!AC)return;try{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d+.15);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d+.2)}catch(e){}}
 function chime(){beep(660,.12,.14);setTimeout(()=>beep(880,.12,.14),130);setTimeout(()=>beep(1175,.2,.12),260)}
+const CHEER_MID=['عاااااش! 🔥','جامد يا وحش 💪','كمّل يا بطل','إيه الحلاوة دي 😍','أسطورة!','ده إنت معلّم','شدّ حيلك، فاضل شوية','أيوه كده! 👌','وحش الكون 🦁','تمام التمام 👍'];
+const CHEER_DONE=['عاااااش! 🎉','الله ينوّر 👏','برافو عليك يا كبير','كده الشغل ولا بلاش 💪','أداء عالمي 🌍','يا سلام عليك! ✨'];
+function cheer(list){if(!S.settings.cheer)return;const host=$('.wk-fig');if(!host)return;const old=host.querySelector('.cheer');if(old)old.remove();const d=document.createElement('div');d.className='cheer';d.textContent=list[Math.floor(Math.random()*list.length)];host.appendChild(d);beep(988,.08,.12);setTimeout(()=>beep(1319,.12,.12),90);buzz(40);setTimeout(()=>d.remove(),2000)}
 function buzz(p){if(S.settings.vibrate&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
 async function requestWake(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
 function releaseWake(){try{wakeLock&&wakeLock.release()}catch(e){}wakeLock=null}
@@ -1055,7 +1062,7 @@ function celebrate(big){
     x.globalAlpha=1;for(let i=P.length-1;i>=0;i--)if(P[i].life<=0)P.splice(i,1);
     if(now<end||P.length)requestAnimationFrame(f);else c.remove()})(performance.now());
 }
-function checkDayComplete(){const k=today(),r=dayRec(k);if(dayPct(k)>=1&&!r.cel){r.cel=true;save();setTimeout(()=>{celebrate(true);toast('يوم كامل 100% ❤️ أحسنت!')},400);return true}return false}
+function checkDayComplete(){const k=today(),r=dayRec(k);if(dayPct(k)>=1&&!r.cel){r.cel=true;save();setTimeout(()=>{celebrate(true);toast('يوم كامل 100% ❤️ عاش يا وحش!')},400);return true}return false}
 function painChart(){
   const pts=[];for(let i=27;i>=0;i--){const k=keyOf(addDays(new Date(),-i));if(S.pain[k])pts.push({i:27-i,v:S.pain[k].level})}
   if(pts.length<2)return `<div class="muted small" style="text-align:center;padding:24px 0">سجّل ألمك يوميًا لتظهر هنا المتابعة.</div>`;
@@ -1098,6 +1105,7 @@ function viewSettings(){
   <div class="card" style="padding:4px 18px">
    <div class="set-row"><label>${ic('vol','icon" style="width:18px;height:18px;vertical-align:-3px')} الأصوات</label><label class="switch"><input type="checkbox" data-toggle="sound" ${s.sound?'checked':''}><span></span></label></div>
    <div class="set-row"><label>الاهتزاز</label><label class="switch"><input type="checkbox" data-toggle="vibrate" ${s.vibrate?'checked':''}><span></span></label></div>
+   <div class="set-row"><div><label>تشجيع شعبي</label><div class="muted small">«عاااااش!» و«جامد يا وحش» أثناء التمرين</div></div><label class="switch"><input type="checkbox" data-toggle="cheer" ${s.cheer?'checked':''}><span></span></label></div>
   </div>
   <div class="sec-title"><h2>بياناتك</h2></div>
   <div class="card">
@@ -1220,7 +1228,7 @@ document.addEventListener('click',e=>{
     case 'sheet-close':closeSheet();break;
     case 'modal-close':closeModal();break;
     case 'redflags':showRedFlags(false);break;
-    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();if(!checkDayComplete()){celebrate(false);toast('رائع! تم تسجيل السباحة 🏊')}}save();render();break}
+    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();if(!checkDayComplete()){celebrate(false);toast('سمكة يا معلّم! 🐟 السباحة اتسجّلت')}}save();render();break}
     case 'pain-save':savePain();break;
     case 'install':doInstall();break;
     case 'ics':download('backcare-reminders.ics',icsFile(),'text/calendar');toast('افتح الملف لإضافته لتقويم جوجل');break;
