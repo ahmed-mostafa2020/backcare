@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#13213C">
+<meta name="description" content="BackCare – رحلة تعافي ظهرك: برنامج منزلي متدرّج 8 أسابيع">
+<title>BackCare – رحلة تعافي ظهرك</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#13213C;--navy2:#1E3157;--navy3:#2B4170;
+  --sage:#8FAE8B;--sage-d:#6E8F6A;--sage-l:#E5EDE2;--sage-xl:#F1F5EF;
+  --teal:#2A8C82;--teal-d:#1F6E66;--teal-l:#DCEFEC;
+  --bg:#F4F2ED;--card:#FFFFFF;--ink:#16223A;--muted:#6A7488;--line:#E6E2DA;
+  --amber:#D99A3B;--amber-l:#FBF0DC;--red:#B8402F;--red-l:#FBE6E2;
+  --r:22px;--shadow:0 1px 2px rgba(19,33,60,.05),0 8px 24px rgba(19,33,60,.06);
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.55}
+body{overscroll-behavior-y:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding:calc(var(--safe-t) + 14px) 16px calc(var(--safe-b) + 100px)}
+h1,h2,h3{margin:0;font-weight:700;line-height:1.3}
+h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.stack>*+*{margin-top:14px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:26px 4px 10px}
+.sec-title h2{font-size:18px}
+.link{color:var(--teal);font-weight:600;font-size:14.5px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;font-size:13px;font-weight:600;background:var(--sage-l);color:var(--sage-d)}
+.pill.teal{background:var(--teal-l);color:var(--teal-d)}
+.pill.amber{background:var(--amber-l);color:#9A6415}
+.pill.navy{background:rgba(255,255,255,.14);color:#fff}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 22px;border-radius:18px;font-weight:700;font-size:17px;transition:transform .12s,opacity .12s;user-select:none}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--teal);color:#fff;box-shadow:0 6px 18px rgba(42,140,130,.3)}
+.btn.navy{background:var(--navy);color:#fff}
+.btn.ghost{background:var(--sage-xl);color:var(--ink);border:1px solid var(--line)}
+.btn.light{background:#fff;color:var(--navy)}
+.btn.danger{background:var(--red-l);color:var(--red)}
+.btn.block{width:100%}
+.btn.sm{min-height:44px;font-size:15px;border-radius:14px;padding:0 16px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.icon{width:22px;height:22px;flex:none}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:40px;height:40px;border-radius:13px;background:var(--navy);display:grid;place-items:center}
+.date{font-size:13.5px;color:var(--muted)}
+
+/* hero */
+.hero{background:radial-gradient(120% 140% at 100% 0%,#2C4A7A 0%,var(--navy2) 38%,var(--navy) 100%);color:#fff;border-radius:28px;padding:20px;position:relative;overflow:hidden;box-shadow:0 14px 34px rgba(19,33,60,.28)}
+.hero:after{content:"";position:absolute;inset:auto -60px -80px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(143,174,139,.35),transparent 65%)}
+.hero .ring-wrap{position:relative;width:104px;height:104px;flex:none}
+.hero .ring-wrap .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-weight:700;font-size:24px;line-height:1.1}
+.hero .ring-wrap .val small{display:block;font-size:11px;font-weight:500;opacity:.75}
+.weeks{display:flex;gap:5px;margin-top:16px;position:relative;z-index:1}
+.weeks i{flex:1;height:7px;border-radius:9px;background:rgba(255,255,255,.16)}
+.weeks i.on{background:var(--sage)}
+.weeks i.cur{background:#fff}
+
+/* routine cards */
+.routine{display:flex;gap:14px;align-items:center}
+.routine .ico{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;flex:none}
+.routine .ico.sun{background:var(--amber-l)}
+.routine .ico.moon{background:#E4E8F3}
+.routine .meta{flex:1;min-width:0}
+.check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none}
+.check.on{background:var(--teal);border-color:var(--teal)}
+.mini-bar{height:6px;border-radius:9px;background:var(--sage-xl);overflow:hidden;margin-top:8px}
+.mini-bar b{display:block;height:100%;background:var(--teal);border-radius:9px;transition:width .4s}
+
+/* exercise list */
+.ex-list{display:flex;flex-direction:column;gap:2px}
+.ex-item{display:flex;align-items:center;gap:12px;padding:10px 4px;border-radius:14px;width:100%;text-align:right}
+.ex-item:active{background:var(--sage-xl)}
+.ex-thumb{width:64px;height:46px;border-radius:12px;background:var(--sage-xl);flex:none;overflow:hidden}
+.ex-item .t{flex:1;min-width:0}
+.ex-item .t b{display:block;font-size:15.5px;font-weight:600}
+.ex-item .t span{font-size:13px;color:var(--muted)}
+
+/* banners */
+.banner{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;font-size:14.5px}
+.banner.amber{background:var(--amber-l);color:#7A4E10}
+.banner.red{background:var(--red-l);color:#7E2A1E}
+.banner.teal{background:var(--teal-l);color:#14524C}
+.banner b{display:block;margin-bottom:2px}
+
+/* tabs */
+#tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:6px 6px calc(var(--safe-b) + 6px);display:flex;justify-content:center}
+#tabs .in{display:flex;width:100%;max-width:520px}
+#tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;font-size:11.5px;font-weight:600;color:var(--muted);border-radius:14px}
+#tabs button.on{color:var(--navy)}
+#tabs button.on .icon{color:var(--teal)}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto}
+.sheet-bg{position:fixed;inset:0;z-index:60;background:rgba(19,33,60,.42);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:var(--bg);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;border-radius:28px 28px 0 0;padding:10px 18px calc(var(--safe-b) + 22px);animation:up .28s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:42px;height:5px;border-radius:9px;background:#D3CEC4;margin:2px auto 12px}
+.modal-bg{position:fixed;inset:0;z-index:80;background:rgba(19,33,60,.5);display:flex;align-items:center;justify-content:center;padding:22px;animation:fade .2s}
+.modal{background:#fff;border-radius:26px;padding:22px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+#toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 96px);transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:14px;font-size:14.5px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* figure */
+.fig{position:relative;direction:ltr}
+.fig svg{display:block;width:100%;height:100%}
+.fig-card{background:linear-gradient(160deg,var(--sage-xl),#fff 70%);border-radius:24px;overflow:hidden;aspect-ratio:3/2;border:1px solid var(--line)}
+
+/* detail */
+.lst{margin:6px 0 0;padding:0 18px 0 0}
+.lst li{margin:4px 0}
+.box{border-radius:18px;padding:14px 16px}
+.box.green{background:var(--sage-xl)}
+.box.amber{background:var(--amber-l)}
+.box.red{background:var(--red-l)}
+.box h3{font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+details summary{list-style:none;cursor:pointer;font-weight:700;color:var(--teal);padding:6px 0}
+details summary::-webkit-details-marker{display:none}
+
+/* workout */
+.wk{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:calc(var(--safe-t) + 10px) 16px calc(var(--safe-b) + 16px)}
+.wk-top{display:flex;align-items:center;gap:12px}
+.wk-top .x{width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow)}
+.wk-prog{flex:1;height:8px;border-radius:9px;background:#E3DFD6;overflow:hidden}
+.wk-prog b{display:block;height:100%;background:var(--teal);transition:width .3s}
+.wk-fig{margin-top:14px;position:relative}
+.wk-fig .side{position:absolute;top:12px;right:12px;z-index:2}
+.wk-fig .phase{position:absolute;top:12px;left:12px;z-index:2}
+.wk-name{margin-top:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.wk-name h1{font-size:23px}
+.wk-short{margin-top:6px;color:#3D4760;font-size:15px}
+.timer{display:flex;align-items:center;gap:16px;margin-top:14px;background:#fff;border-radius:24px;padding:14px 16px;box-shadow:var(--shadow)}
+.timer .ring{position:relative;width:96px;height:96px;flex:none}
+.timer .ring .num{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+.timer .lbl{font-size:19px;font-weight:700}
+.timer .sub{font-size:14px;color:var(--muted);margin-top:2px}
+.ctrls{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:10px;margin-top:auto;padding-top:14px}
+.ctrls .btn{min-height:64px;flex-direction:column;gap:2px;font-size:13.5px}
+.ctrls .btn.primary{font-size:17px}
+.ctrls2{display:flex;gap:10px;margin-top:10px}
+.ctrls2 .btn{flex:1}
+
+/* pain */
+.pain-num{font-size:64px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:14px;border-radius:99px;background:linear-gradient(90deg,#6FAE8F,#E8C25A 50%,#D0573F);outline:none;margin:18px 0 6px;direction:ltr}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:38px;height:38px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:0 3px 10px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#fff;border:3px solid var(--navy)}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);direction:ltr}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 14px;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-size:14px;font-weight:500}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip.flag{border-color:#E7B6AC}
+.chip.flag.on{background:var(--red);border-color:var(--red)}
+textarea,input[type=text],input[type=date],input[type=time],select{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-size:16px;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--teal)}
+textarea{min-height:80px;resize:vertical}
+.hist{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:8px}
+.hist .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.hist .b i{display:block;width:100%;max-width:28px;border-radius:9px 9px 5px 5px;min-height:4px}
+.hist .b span{font-size:11px;color:var(--muted)}
+
+/* progress */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#fff;border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.stat .v{font-size:30px;font-weight:700;line-height:1.1;margin-top:6px}
+.stat .k{font-size:13px;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal .d{padding:10px 0 8px;border-radius:16px;background:var(--sage-xl)}
+.cal .d.today{background:var(--navy);color:#fff}
+.cal .d .n{font-size:11.5px;opacity:.75}
+.cal .d .dt{font-weight:700;font-size:16px}
+.dots{display:flex;justify-content:center;gap:3px;margin-top:6px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#D6D1C6}
+.dots i.m{background:var(--amber)}
+.dots i.e{background:var(--navy3)}
+.dots i.s{background:var(--teal)}
+.cal .d.today .dots i:not(.m):not(.e):not(.s){background:rgba(255,255,255,.3)}
+.legend{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.phases{display:flex;flex-direction:column;gap:10px}
+.ph{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--sage-xl)}
+.ph .no{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:700;background:#fff;flex:none;font-size:14px}
+.ph.on{background:var(--navy);color:#fff}
+.ph.on .no{background:var(--teal);color:#fff}
+.ph.done .no{background:var(--sage);color:#fff}
+
+/* settings */
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:0}
+.set-row label{font-weight:600}
+.set-row input[type=time],.set-row input[type=date],.set-row select{width:auto;min-width:130px;padding:9px 12px}
+.switch{position:relative;width:54px;height:32px;flex:none}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch span{position:absolute;inset:0;border-radius:99px;background:#D6D1C6;transition:.2s}
+.switch span:after{content:"";position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.switch input:checked+span{background:var(--teal)}
+.switch input:checked+span:after{right:25px}
+.daychips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.daychips .chip{padding:8px 11px;font-size:13.5px}
+
+.done-hero{text-align:center;padding:30px 10px 10px}
+.done-hero .big{width:96px;height:96px;border-radius:32px;background:var(--teal);display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 12px 30px rgba(42,140,130,.35)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><main id="view"></main></div>
+<nav id="tabs"><div class="in"></div></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ================== helpers ================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const today=()=>keyOf(new Date());
+const daysBetween=(a,b)=>Math.round((parseKey(b)-parseKey(a))/864e5);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const DAY=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAYS=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+const WEEK_ORDER=[6,0,1,2,3,4,5];
+const LOC='ar-EG-u-nu-latn';
+const fmtDate=(d,o)=>d.toLocaleDateString(LOC,o);
+function fmt12(hm){const[h,m]=hm.split(':').map(Number);const ap=h<12?'ص':'م';const hh=((h+11)%12)+1;return `${hh}:${pad(m)} ${ap}`}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)}
+
+/* ================== state ================== */
+const KEY='backcare.v1';
+function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false},days:{},pain:{},flares:{}}}
+let S=defaults();
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S={...defaults(),...o,settings:{...defaults().settings,...(o.settings||{})}}}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('تعذّر الحفظ على هذا الجهاز')}syncSWConfig()}
+function dayRec(k=today()){if(!S.days[k])S.days[k]={morning:{done:[],fin:false},evening:{done:[],fin:false},swim:null};return S.days[k]}
+if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{})}
+
+/* ================== program ================== */
+const PHASES=[
+ {n:1,w:'1–2',t:'الحركة اللطيفة والثبات',d:'تحريك هادئ للظهر وتفعيل العضلات العميقة.'},
+ {n:2,w:'3–4',t:'التدرّج والثبات',d:'زيادة بسيطة في التكرارات ومدة الثبات.'},
+ {n:3,w:'5–6',t:'القوة والتحمّل',d:'مجموعات أكثر لتقوية الجذع والأرداف.'},
+ {n:4,w:'7–8',t:'التدرّج الوظيفي',d:'تمارين قريبة من حركتك اليومية.'}];
+const phaseOf=L=>L<=2?1:L<=4?2:L<=6?3:4;
+const level=()=>S.settings.level;
+function calWeek(){return clamp(Math.floor(daysBetween(S.settings.start,today())/7)+1,1,8)}
+function painAround(fromDay,toDay){const a=[];for(let i=fromDay;i<=toDay;i++){const k=keyOf(addDays(new Date(),-i));if(S.pain[k])a.push(S.pain[k])}return a}
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+function worsening(){
+  const rec=painAround(0,6),prev=painAround(7,13);
+  const ra=avg(rec.map(p=>p.level)),pa=avg(prev.map(p=>p.level));
+  let flares=0;for(let i=0;i<7;i++){flares+=S.flares[keyOf(addDays(new Date(),-i))]||0}
+  const latest=painAround(0,2)[0];
+  const legNew=rec.some(p=>(p.sym||[]).some(s=>SYM_LEG.includes(s)))&&!prev.some(p=>(p.sym||[]).some(s=>SYM_LEG.includes(s)))&&prev.length>0;
+  return (ra!=null&&pa!=null&&ra-pa>=1.5)||(latest&&latest.level>=7)||flares>=2||legNew;
+}
+function updateLevel(){
+  const s=S.settings,cw=calWeek();
+  if(s.hold||cw<=s.level||s.lastAdv===today())return;
+  if(worsening()){S._held=today()}else{s.level=Math.min(8,s.level+1);s.lastAdv=today();S._adv=today()}
+  save();
+}
+function swimMin(L=level()){return L===1?'15':L===2?'20':L<=4?'20–25':'25–30'}
+function swimMinNum(L=level()){return L===1?15:L===2?20:L<=4?20:25}
+function isSwimDay(d=new Date()){return S.settings.swimDays.includes(d.getDay())}
+
+function routine(kind,L=level()){
+  const p=phaseOf(L);
+  if(kind==='evening')return[
+    {id:'walk',min:5,max:5},{id:'tilt',reps:8},{id:'brace',reps:8,hold:5},{id:'hipflexor',hold:20,perSide:true},{id:'breath',min:1,max:2}];
+  const W=[[5,10],[8,12],[10,15],[12,20]][p-1];
+  const r=[
+    {id:'walk',min:W[0],max:W[1]},
+    {id:'brace',reps:10,hold:[5,7,8,10][p-1]},
+    {id:'tilt',reps:[10,12,12,12][p-1]},
+    {id:'heel',reps:[8,10,10,12][p-1],perSide:true},
+    {id:'birddog',reps:[6,8,8,10][p-1],hold:[5,5,7,8][p-1],perSide:true},
+    [{id:'bridge',reps:8,label:'8–10 تكرار'},{id:'bridge',reps:10,hold:2},{id:'bridge',reps:10,hold:3,sets:2},{id:'bridge',reps:12,hold:3,sets:2}][p-1]];
+  if(L>=2)r.push(L===2?{id:'sideplank',reps:1,sets:2,hold:12,perSide:true,optional:true,label:'2 × 10–15 ث لكل جهة'}:
+    [null,null,{id:'sideplank',reps:1,sets:2,hold:15,perSide:true,label:'2 × 15–20 ث لكل جهة'},{id:'sideplank',reps:1,sets:3,hold:20,perSide:true},{id:'sideplank',reps:1,sets:3,hold:25,perSide:true,label:'3 × 25–30 ث لكل جهة'}][p]);
+  if(p===4)r.push({id:'sts',reps:8,sets:2});
+  r.push({id:'hipflexor',hold:[20,20,25,30][p-1],perSide:true},{id:'hamstring',hold:[20,25,30,30][p-1],perSide:true,label:p===1?'15–20 ث لكل جهة':null});
+  return r;
+}
+function targetLabel(it){
+  if(it.label)return it.label;
+  const ex=EX[it.id];
+  if(ex.kind==='timed')return it.min===it.max?`${it.min} دقائق`:`${it.min}–${it.max} دقائق`;
+  const side=it.perSide?' لكل جهة':'';
+  if(ex.kind==='stretch')return `${it.hold} ث${side}`;
+  if(it.reps===1)return `${it.sets} × ${it.hold} ث${side}`;
+  let s=it.hold?`${it.reps} × ${it.hold} ث`:`${it.reps} تكرار`;
+  s+=side; if(it.sets>1)s=`${it.sets} مجموعات · `+s; return s;
+}
+function buildSteps(it){
+  const ex=EX[it.id];const st=[{k:'ready',d:5,l:'استعد',side:it.perSide?'R':null}];
+  if(ex.kind==='timed'){st.push({k:'timed',d:(it.id==='breath'?2:it.min)*60,l:it.id==='breath'?'تنفّس ببطء':'امشِ بخطوات مريحة'});return st}
+  const sides=it.perSide?['R','L']:[null];
+  if(ex.kind==='stretch'){sides.forEach((s,i)=>{if(i)st.push({k:'rest',d:6,l:'بدّل الجهة',side:s});st.push({k:'stretch',d:it.hold,l:'اثبت مع تنفّس هادئ',side:s})});return st}
+  const sets=it.sets||1;
+  for(let set=1;set<=sets;set++){
+    if(set>1)st.push({k:'rest',d:it.reps===1?20:30,l:'راحة بين المجموعات',side:sides[0],set});
+    sides.forEach((s,si)=>{
+      if(si)st.push({k:'rest',d:it.reps===1?8:5,l:'بدّل الجهة',side:s,set});
+      for(let r=1;r<=it.reps;r++){
+        if(it.hold){st.push({k:'hold',d:it.hold,l:'اثبت',side:s,rep:r,set});if(r<it.reps)st.push({k:'rest',d:3,l:'ارتخِ',side:s,rep:r,set})}
+        else st.push({k:'tempo',d:ex.tempo||4,l:'ببطء وتحكّم',side:s,rep:r,set});
+      }
+    });
+  }
+  return st;
+}
+const stepsDur=it=>buildSteps(it).reduce((a,s)=>a+s.d,0);
+const routineMin=kind=>Math.round(routine(kind).reduce((a,it)=>a+stepsDur(it),0)/60);
+const required=kind=>routine(kind).filter(i=>!i.optional);
+function routineDoneCount(kind,k=today()){const d=dayRec(k)[kind].done;return routine(kind).filter(i=>d.includes(i.id)).length}
+
+/* ================== exercises ================== */
+const SYM_LEG=['ألم ممتد للساق','تنميل في الساق أو القدم'];
+const SYM=['تيبّس صباحي','ألم مع الجلوس الطويل','ألم ممتد للساق','تنميل في الساق أو القدم','ألم يوقظني من النوم','تحسّن واضح'];
+const SYM_RED=['ضعف في الساق أو القدم','تنميل في منطقة السرج','صعوبة التحكم في البول أو البراز'];
+
+/* poses: side view, viewBox 0 0 300 200, floor ≈ 168 */
+const HOOK={head:[62,146],neck:[80,152],hip:[140,156],knN:[176,120],anN:[202,160],toN:[218,163],knF:[172,122],anF:[198,160],toF:[214,163],elN:[106,162],haN:[130,163],elF:[104,160],haF:[128,161],f:[0,-1]};
+const P=(base,over)=>({...base,...over});
+const EX={
+ walk:{name:'المشي',en:'Walking',kind:'timed',anim:'walk',prop:'ground',
+  A:{head:[152,28],neck:[150,46],hip:[148,100],knN:[160,134],anN:[168,168],toN:[181,170],knF:[138,135],anF:[126,165],toF:[138,170],elN:[138,74],haN:[133,98],elF:[161,74],haF:[171,95],f:[1,0]},
+  B:{knN:[138,135],anN:[126,165],toN:[138,170],knF:[160,134],anF:[168,168],toF:[181,170],elN:[161,74],haN:[171,95],elF:[138,74],haF:[133,98]},
+  short:'امشِ بخطوات مريحة على أرض مستوية، مع استقامة الظهر وارتخاء الكتفين.',
+  ben:['يحرّك العمود الفقري بلطف ويقلل التيبّس','يحسّن الدورة الدموية وتغذية الأقراص','يرفع المزاج ويقلل الإحساس بالألم'],
+  mis:['خطوات طويلة جدًا أو سرعة تزيد الألم','الانحناء للأمام والنظر للأرض','حمل أشياء ثقيلة أثناء المشي'],
+  safe:'إذا امتد الألم إلى الساق أو زاد أثناء المشي، أبطئ وقلّل المدة.',
+  det:'ابدأ بإيقاع هادئ لدقيقة، ثم امشِ بسرعتك المريحة. انظر للأمام، واترك ذراعيك تتأرجحان طبيعيًا، وتنفّس بانتظام. حذاء مريح وأرض مستوية أفضل. يمكنك تقسيم المدة على فترتين إن احتجت.'},
+ brace:{name:'شدّ عضلات البطن',en:'Abdominal Bracing',kind:'reps',anim:'hold',prop:'mat',core:true,
+  A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{},
+  short:'على ظهرك والركبتان مثنيتان: شدّ عضلات البطن بلطف كأنك تستعد لنكزة خفيفة، واستمر في التنفس.',
+  ben:['يفعّل العضلات العميقة الداعمة للظهر','أساس آمن لكل التمارين التالية','يحسّن التحكم في الجذع أثناء الحركة'],
+  mis:['حبس النفس','شفط البطن للداخل بقوة أو شدّ زائد','تقويس الظهر أو رفع الحوض'],
+  safe:'الشدّ خفيف (حوالي 30% من أقصى قوتك) ولا يجب أن يسبب ألمًا.',
+  det:'ضع أطراف أصابعك على جانبي البطن فوق عظمة الحوض الأمامية مباشرة. شدّ عضلات البطن حتى تشعر بها تتصلّب تحت أصابعك دون أن يتحرك ظهرك أو حوضك. اثبت مع تنفّس طبيعي ثم ارتخِ تمامًا.'},
+ tilt:{name:'إمالة الحوض',en:'Pelvic Tilt',kind:'reps',anim:'tempo',tempo:4,prop:'mat',core:true,
+  A:HOOK,B:{hip:[140,152],knN:[178,117],knF:[174,119]},
+  short:'على ظهرك والركبتان مثنيتان: أمِل الحوض بلطف ليقترب أسفل ظهرك من الأرض، ثم عد للوضع المريح.',
+  ben:['يحرّك أسفل الظهر حركة صغيرة ولطيفة','يخفف التيبّس','يحسّن إحساسك بوضع الحوض'],
+  mis:['الحركة السريعة أو المندفعة','رفع الحوض عن الأرض','الدفع بالقدمين بدل عضلات البطن'],
+  safe:'حركة صغيرة وفي المدى المريح فقط. توقف إذا زاد الألم أو امتد للساق.',
+  det:'خذ نفسًا، ومع الزفير شدّ البطن بلطف وأمِل الحوض كأنك تقرّب عظمة العانة نحو السرة، فيقترب أسفل الظهر من الأرض. اثبت لحظة ثم عد ببطء. الحركة من الحوض وليست من الأرجل.'},
+ heel:{name:'انزلاق الكعب',en:'Heel Slides',kind:'reps',anim:'tempo',tempo:5,prop:'mat',
+  A:HOOK,B:{knN:[178,150],anN:[216,158],toN:[228,150]},
+  short:'على ظهرك: شدّ البطن بلطف وازلق كعبًا واحدًا على الأرض حتى تفرد الساق، ثم أرجعه ببطء.',
+  ben:['يدرّب ثبات الجذع أثناء حركة الساق','حركة آمنة ولطيفة لمفصل الورك'],
+  mis:['تقويس أسفل الظهر عند فرد الساق','رفع الكعب عن الأرض','الحركة السريعة'],
+  safe:'إذا شعرت بشدّ في الظهر، قلّل مسافة الانزلاق.',
+  det:'حافظ على شدّ البطن الخفيف طوال الحركة وظهرك ثابت. ازلق الكعب حتى تقترب الساق من الاستقامة، ثم اسحبه للوضع الأول. نفّذ كل التكرارات على جهة ثم الجهة الأخرى.'},
+ birddog:{name:'الطائر والكلب',en:'Bird Dog',kind:'reps',anim:'hold',prop:'mat',
+  A:{head:[210,90],neck:[192,102],hip:[118,106],elN:[194,130],haN:[196,160],elF:[188,130],haF:[190,160],knN:[118,158],anN:[80,161],toN:[70,158],knF:[122,158],anF:[84,161],toF:[74,158],f:[1,.35]},
+  B:{elN:[222,98],haN:[250,94],knF:[82,106],anF:[46,103],toF:[38,96]},
+  short:'على اليدين والركبتين: شدّ البطن، ثم افرد ذراعًا للأمام والساق المعاكسة للخلف ببطء واثبت.',
+  ben:['يقوّي العضلات المثبّتة للعمود الفقري','يحسّن التوازن والتناسق','يدرّب الظهر بضغط منخفض على الأقراص'],
+  mis:['رفع الساق أعلى من الجسم وتقويس الظهر','دوران الحوض للجانب','حبس النفس أو الحركة السريعة'],
+  safe:'إذا كانت الحركة الكاملة صعبة، ابدأ بفرد الساق وحدها. الظهر يبقى مستويًا كسطح طاولة.',
+  det:'اليدان تحت الكتفين والركبتان تحت الوركين. تخيّل كوب ماء على أسفل ظهرك لا يجب أن ينسكب. افرد الذراع والساق المعاكسة حتى مستوى الجسم فقط، اثبت، ثم ارجع ببطء.'},
+ bridge:{name:'جسر الأرداف',en:'Glute Bridge',kind:'reps',anim:'hold',tempo:4,prop:'mat',
+  A:HOOK,B:{hip:[140,126],neck:[82,151],knN:[178,110],knF:[174,112]},
+  short:'على ظهرك والركبتان مثنيتان: شدّ البطن والأرداف وارفع الحوض حتى يستقيم الجسم من الكتفين للركبتين، ثم انزل ببطء.',
+  ben:['يقوّي الأرداف التي تحمي أسفل الظهر','يقلل الحمل على الظهر في حركتك اليومية'],
+  mis:['الارتفاع الزائد وتقويس الظهر','الدفع من الرقبة والكتفين','انهيار الركبتين للداخل'],
+  safe:'ارتفع للمدى المريح فقط. إذا شعرت بالجهد في الظهر بدل الأرداف، قلّل الارتفاع.',
+  det:'القدمان على عرض الوركين وقريبتان من الأرداف. ابدأ بشدّ البطن، ثم اعصر الأرداف وارفع الحوض. انزل فقرةً فقرة ببطء.'},
+ sideplank:{name:'البلانك الجانبي المعدّل',en:'Modified Side Plank',kind:'reps',anim:'hold',prop:'mat',
+  A:{head:[70,106],neck:[86,120],hip:[150,155],sh:[92,124],elN:[94,160],haN:[122,162],elF:[114,114],haF:[142,138],knN:[196,159],anN:[170,150],toN:[160,144],knF:[192,155],anF:[166,145],toF:[156,139],f:[.6,-.8]},
+  B:{hip:[150,134],elF:[116,106],haF:[144,126]},
+  short:'على جانبك مستندًا على الساعد والركبتان مثنيتان: ارفع الحوض حتى يستقيم الجسم من الرأس للركبتين، واثبت.',
+  ben:['يقوّي العضلات الجانبية للجذع','يحسّن ثبات العمود الفقري'],
+  mis:['هبوط الحوض أثناء الثبات','الكوع بعيد عن مستوى الكتف','حبس النفس'],
+  safe:'يبدأ من الأسبوع الثاني فقط إذا كان مريحًا. توقف فورًا إذا زاد ألم الظهر أو الساق.',
+  det:'الكوع تحت الكتف مباشرة، والركبتان مثنيتان خلفك. شدّ البطن ثم ارفع الحوض حتى يصبح الجسم خطًا مستقيمًا. يمكنك البدء بثوانٍ أقل والزيادة تدريجيًا.'},
+ hipflexor:{name:'إطالة الفخذ الأمامي',en:'Hip Flexor Stretch',kind:'stretch',anim:'stretch',prop:'mat',
+  A:{head:[140,34],neck:[138,52],hip:[134,108],knN:[178,110],anN:[182,162],toN:[198,166],knF:[112,160],anF:[74,162],toF:[64,158],elN:[158,82],haN:[174,104],elF:[152,84],haF:[170,106],f:[1,0]},
+  B:{head:[149,36],neck:[146,54],hip:[146,110],knN:[184,110],elN:[166,84],haN:[180,106],elF:[160,86],haF:[176,108]},
+  short:'على ركبة واحدة والقدم الأخرى للأمام: شدّ البطن والأرداف وادفع الحوض للأمام قليلًا حتى تشعر بشدّ لطيف أمام الفخذ.',
+  ben:['يخفف شدّ عضلات الورك التي تسحب أسفل الظهر','مفيد جدًا لمن يجلس ساعات طويلة'],
+  mis:['تقويس أسفل الظهر للأمام','الاندفاع بعيدًا للأمام','الإطالة حتى الألم'],
+  safe:'شدّ لطيف فقط وبلا ألم. ضع وسادة تحت الركبة.',
+  det:'الجذع مستقيم والبطن مشدود بلطف. اعصر أرداف الساق الخلفية، فتشعر بالشدّ أمام الورك. اثبت مع تنفّس هادئ، ثم بدّل.'},
+ hamstring:{name:'إطالة الفخذ الخلفي',en:'Hamstring Stretch',kind:'stretch',anim:'stretch',prop:'mat',
+  A:P(HOOK,{knN:[168,118],anN:[190,86],toN:[200,79],elN:[112,130],haN:[150,128],elF:[110,134],haF:[148,132]}),
+  B:{knN:[162,112],anN:[172,70],toN:[183,64],haN:[146,124],haF:[144,128]},
+  short:'على ظهرك: ارفع ساقًا وامسك خلف الفخذ، ثم افرد الركبة تدريجيًا حتى تشعر بشدّ لطيف.',
+  ben:['يخفف شدّ الفخذ الخلفي','يحسّن حركة الحوض وأسفل الظهر'],
+  mis:['شدّ الساق بقوة أو بحركات ارتدادية','رفع الرأس أو الحوض عن الأرض','الإطالة حتى الألم'],
+  safe:'إذا ظهر تنميل أو ألم ممتد في الساق، أنزل الساق فورًا وقلّل المدى؛ قد يكون تهيّجًا للعصب.',
+  det:'الساق الأخرى مثنية والقدم على الأرض لحماية الظهر. يمكنك استخدام منشفة حول القدم. لا تحاول فرد الركبة بالكامل إن لم يكن مريحًا.'},
+ breath:{name:'التنفّس المريح',en:'Relaxed Breathing',kind:'timed',anim:'breath',prop:'mat',core:true,
+  A:P(HOOK,{elN:[100,140],haN:[122,146]}),B:{},
+  short:'استلقِ بارتخاء ويدك على بطنك: شهيق هادئ من الأنف يرفع البطن، ثم زفير أطول وأبطأ.',
+  ben:['يرخي العضلات المتوترة','يقلل الإحساس بالألم والتوتر','يساعد على نوم أفضل'],
+  mis:['رفع الكتفين مع الشهيق','التنفّس السريع'],
+  safe:'إذا شعرت بدوخة، عد إلى تنفّسك الطبيعي.',
+  det:'اتبع الإيقاع على الشاشة: شهيق 4 ثوانٍ، زفير 6 ثوانٍ. اترك الكتفين والفك مرتخيين.'},
+ sts:{name:'الجلوس والوقوف',en:'Sit to Stand',kind:'reps',anim:'tempo',tempo:5,prop:'chair',
+  A:{head:[156,56],neck:[150,72],hip:[122,118],knN:[168,120],anN:[170,166],toN:[184,170],knF:[164,122],anF:[166,166],toF:[180,170],elN:[160,96],haN:[178,104],elF:[156,98],haF:[174,106],f:[1,.15]},
+  B:{head:[148,28],neck:[146,46],hip:[140,100],knN:[150,134],anN:[158,168],toN:[172,170],knF:[146,135],anF:[154,166],toF:[168,170],elN:[156,72],haN:[174,80],elF:[152,74],haF:[170,82]},
+  short:'على حافة كرسي والقدمان على الأرض: شدّ البطن، مِل للأمام من الورك وقف، ثم اجلس ببطء.',
+  ben:['يدرّب حركة يومية أساسية بطريقة آمنة','يقوّي الأرداف والفخذين'],
+  mis:['انحناء الظهر بدل الميل من الورك','السقوط على الكرسي عند الجلوس','دخول الركبتين للداخل'],
+  safe:'استخدم يديك للمساعدة إن احتجت. توقف إذا زاد الألم.',
+  det:'ظهرك مستقيم والميل من مفصل الورك. ادفع الأرض بقدميك لتقف، ثم ارجع للخلف وانزل ببطء كأنك تلمس الكرسي فقط.'}
+};
+const SWIM={prop:'water',anim:'walk',
+  A:{head:[222,95],neck:[206,100],hip:[140,104],knN:[102,100],anN:[64,104],toN:[52,100],knF:[102,108],anF:[64,112],toF:[52,116],elN:[236,90],haN:[264,92],elF:[178,118],haF:[152,121],f:[1,.5]},
+  B:{knN:[102,106],anN:[64,110],toN:[52,106],knF:[102,102],anF:[64,100],toF:[52,96],elN:[178,118],haN:[152,121],elF:[236,90],haF:[264,92]}};
+
+/* ================== figure renderer ================== */
+const NS='http://www.w3.org/2000/svg';
+const C={skin:'#E5AE88',skinD:'#C88F69',shirt:'#2A8C82',shirtD:'#1D665F',shorts:'#1E3157',shortsD:'#142240',hair:'#2A211C',shoe:'#3B4357',shoeD:'#2A3042'};
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+const norm=v=>{const l=Math.hypot(v[0],v[1])||1;return[v[0]/l,v[1]/l]};
+function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+const FIGS=new Set();
+class Figure{
+  constructor(el,id,opt={}){
+    this.def=id==='swim'?SWIM:EX[id];this.id=id;this.el=el;this.mode=opt.mode||'loop';this.off=Math.random()*3;this.t=0;this.side=null;
+    const svg=mk('svg',{viewBox:'0 0 300 200','aria-hidden':'true',preserveAspectRatio:'xMidYMid meet'});
+    this.svg=svg;const d=this.def;
+    mk('circle',{cx:252,cy:44,r:30,fill:'#fff',opacity:.6},svg);
+    if(d.prop==='mat'){mk('rect',{x:24,y:166,width:252,height:9,rx:4.5,fill:'#C9D9C5'},svg);mk('rect',{x:24,y:166,width:252,height:3,rx:1.5,fill:'#B5C9B0'},svg)}
+    if(d.prop==='ground'){mk('line',{x1:30,y1:173,x2:270,y2:173,stroke:'#D8D2C6','stroke-width':3,'stroke-linecap':'round','stroke-dasharray':'2 9'},svg)}
+    if(d.prop==='chair'){const g=mk('g',{fill:'none',stroke:'#9C8B74','stroke-width':6,'stroke-linecap':'round'},svg);mk('path',{d:'M96 70 V172 M96 126 H140 M138 126 V172'},g);mk('line',{x1:30,y1:174,x2:270,y2:174,stroke:'#D8D2C6','stroke-width':3,'stroke-linecap':'round'},svg)}
+    this.shadow=mk('ellipse',{cx:150,cy:173,rx:60,ry:4,fill:'rgba(19,33,60,.08)'},svg);
+    if(d.prop==='water'){this.shadow.setAttribute('opacity',0)}
+    const g=mk('g',{'stroke-linecap':'round','stroke-linejoin':'round',fill:'none'},svg);this.g=g;
+    const L=(c,w)=>mk('line',{stroke:c,'stroke-width':w},g);
+    this.e={
+      fThigh:L(C.skinD,14),fShorts:L(C.shortsD,15.5),fShin:L(C.skinD,11),fFoot:L(C.shoeD,9),
+      fUpper:L(C.skinD,9.5),fSleeve:L(C.shirtD,12),fFore:L(C.skinD,8.5),
+      torso:L(C.shirt,25),hipC:mk('circle',{r:12.5,fill:C.shorts},g),
+      nThigh:L(C.skin,15),nShorts:L(C.shorts,16.5),nShin:L(C.skin,11.5),nFoot:L(C.shoe,9.5),
+      neck:L(C.skin,9.5),hair:mk('circle',{r:12.6,fill:C.hair},g),face:mk('circle',{r:11.3,fill:C.skin},g),
+      beard:mk('path',{stroke:C.hair,'stroke-width':4.2,opacity:.9},g),eye:mk('circle',{r:1.5,fill:C.hair},g),
+      core:d.core?mk('circle',{fill:'#F2B84B',opacity:.3},g):null,
+      nUpper:L(C.skin,10),nSleeve:L(C.shirt,12.5),nFore:L(C.skin,9)
+    };
+    if(d.core){g.insertBefore(this.e.core,this.e.nThigh)}
+    if(d.prop==='water'){
+      mk('path',{d:'M0 106 Q25 98 50 106 T100 106 T150 106 T200 106 T250 106 T300 106 V200 H0Z',fill:'#5FB3C9',opacity:.42},svg);
+      mk('path',{d:'M0 112 Q25 104 50 112 T100 112 T150 112 T200 112 T250 112 T300 112',stroke:'#fff',fill:'none','stroke-width':2.5,opacity:.7},svg);
+    }
+    el.innerHTML='';el.appendChild(svg);
+    this.draw(0,null);FIGS.add(this);
+  }
+  draw(t,side){
+    const d=this.def,A=d.A,B=d.B||{};const p={};
+    const e=t<0?0:t>1?1:t;
+    for(const k in A){p[k]=B[k]&&k!=='f'?lerp(A[k],B[k],e):A[k]}
+    const sh=p.sh||lerp(p.neck,p.hip,.13);const E=this.e;
+    const Ln=(el,a,b)=>{el.setAttribute('x1',a[0].toFixed(1));el.setAttribute('y1',a[1].toFixed(1));el.setAttribute('x2',b[0].toFixed(1));el.setAttribute('y2',b[1].toFixed(1))};
+    const Ci=(el,c)=>{el.setAttribute('cx',c[0].toFixed(1));el.setAttribute('cy',c[1].toFixed(1))};
+    Ln(E.fThigh,p.hip,p.knF);Ln(E.fShorts,p.hip,lerp(p.hip,p.knF,.55));Ln(E.fShin,p.knF,p.anF);Ln(E.fFoot,p.anF,p.toF);
+    Ln(E.fUpper,sh,p.elF);Ln(E.fSleeve,sh,lerp(sh,p.elF,.45));Ln(E.fFore,p.elF,p.haF);
+    Ln(E.torso,p.neck,lerp(p.neck,p.hip,.92));Ci(E.hipC,p.hip);
+    Ln(E.nThigh,p.hip,p.knN);Ln(E.nShorts,p.hip,lerp(p.hip,p.knN,.55));Ln(E.nShin,p.knN,p.anN);Ln(E.nFoot,p.anN,p.toN);
+    Ln(E.nUpper,sh,p.elN);Ln(E.nSleeve,sh,lerp(sh,p.elN,.45));Ln(E.nFore,p.elN,p.haN);
+    Ln(E.neck,p.neck,lerp(p.neck,p.head,.65));
+    const c=p.head,u=norm([c[0]-p.neck[0],c[1]-p.neck[1]]),f=norm(A.f||[1,0]);
+    Ci(E.hair,[c[0]-f[0]*2.3+u[0]*1.4,c[1]-f[1]*2.3+u[1]*1.4]);
+    const fc=[c[0]+f[0]*.9-u[0]*.3,c[1]+f[1]*.9-u[1]*.3];Ci(E.face,fc);
+    Ci(E.eye,[fc[0]+f[0]*6.6+u[0]*2.4,fc[1]+f[1]*6.6+u[1]*2.4]);
+    const d1=norm([f[0]-u[0]*.35,f[1]-u[1]*.35]),d2=norm([-u[0]-f[0]*.35,-u[1]-f[1]*.35]),r=9.6;
+    const p1=[fc[0]+d1[0]*r,fc[1]+d1[1]*r],p2=[fc[0]+d2[0]*r,fc[1]+d2[1]*r];
+    const sweep=(d1[0]*d2[1]-d1[1]*d2[0])>0?1:0;
+    E.beard.setAttribute('d',`M${p1[0].toFixed(1)} ${p1[1].toFixed(1)} A${r} ${r} 0 0 ${sweep} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`);
+    if(E.core){const cc=lerp(p.neck,p.hip,.66);Ci(E.core,cc);E.core.setAttribute('r',(8+9*e).toFixed(1));E.core.setAttribute('opacity',(.18+.4*e).toFixed(2))}
+    const xs=['hip','knN','anN','toN','knF','anF','toF','head','haN'].map(k=>p[k][0]);const mn=Math.min(...xs),mx=Math.max(...xs);
+    this.shadow.setAttribute('cx',((mn+mx)/2).toFixed(1));this.shadow.setAttribute('rx',((mx-mn)/2+14).toFixed(1));
+    if(side!==this.side){this.side=side;this.g.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'');
+      [...this.svg.children].forEach(ch=>{if(ch!==this.g&&ch!==this.shadow&&ch.tagName!=='path')ch.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'')})}
+  }
+}
+function demoT(anim,s){
+  if(anim==='walk'){return (1-Math.cos(2*Math.PI*s/1.5))/2}
+  if(anim==='breath'){const x=s%10;return x<4?Math.sin(x/4*Math.PI/2):Math.cos((x-4)/6*Math.PI/2)}
+  if(anim==='tempo'){return (1-Math.cos(2*Math.PI*s/3.6))/2}
+  const x=s%(anim==='stretch'?6:5);const up=1.1,hold=anim==='stretch'?3:2.2;
+  if(x<up)return ease(x/up);if(x<up+hold)return 1;if(x<up*2+hold)return 1-ease((x-up-hold)/up);return 0;
+}
+const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+function mountFigures(root){$$('.fig[data-ex]',root).forEach(el=>{if(!el._fig)el._fig=new Figure(el,el.dataset.ex,{mode:el.dataset.mode})})}
+let lastTs=0;
+function loop(ts){
+  const s=ts/1000;
+  FIGS.forEach(f=>{if(!f.el.isConnected){FIGS.delete(f);return}if(f.mode==='loop'){f.draw(demoT(f.def.anim,s+f.off),null)}});
+  if(W)wkTick(ts);
+  requestAnimationFrame(loop);
+}
+
+/* ================== icons ================== */
+const I={
+ home:'<path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
+ ex:'<path d="M3 9v6M6.5 6.5v11M17.5 6.5v11M21 9v6M6.5 12h11"/>',
+ pain:'<path d="M12 21s-7.5-4.6-7.5-10.5A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.9C19.5 16.4 12 21 12 21z"/><path d="M7.5 12.5h2.5l1.3-2.3 1.8 4.4 1.2-2.1H17"/>',
+ prog:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ set:'<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>',
+ sun:'<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>',
+ moon:'<path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/>',
+ wave:'<path d="M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 19c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><circle cx="15" cy="6" r="2"/><path d="m6 11 4-4 3 2"/>',
+ check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+ play:'<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/>',
+ pause:'<path d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z" fill="currentColor"/>',
+ next:'<path d="m14 6-6 6 6 6"/>',prev:'<path d="m10 6 6 6-6 6"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/>',
+ alert:'<path d="M12 3.5 22 20.5H2z"/><path d="M12 10v4.5M12 17.5v.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+ flame:'<path d="M12 21c4 0 6.5-2.6 6.5-6.3 0-3.9-3.2-6.2-4.3-10.2-2.6 1.7-4 4.2-3.6 6.9C9 10.6 8.3 9.6 8.1 8.3 6.6 9.8 5.5 12 5.5 14.7 5.5 18.4 8 21 12 21z"/>',
+ dl:'<path d="M12 4v11M7 10.5l5 5 5-5M4 20h16"/>',up:'<path d="M12 16V5M7 9.5l5-5 5 5M4 20h16"/>',
+ phone:'<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>',
+ vol:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+ cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const ic=(n,cls='icon',sw=2)=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const LOGO=`<svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round"><path d="M32 8c-7 8-7 16 0 24s7 16 0 24" stroke="#8FAE8B" stroke-width="6"/><g stroke="#fff" stroke-width="5"><path d="M24 14h16M22 25h20M22 39h20M24 50h16"/></g></g></svg>`;
+function ring(pct,size,stroke,col,bg){const r=(size-stroke)/2,c=2*Math.PI*r;return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${bg}" stroke-width="${stroke}"/><circle class="rg" cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${(c*(1-clamp(pct,0,1))).toFixed(2)}" style="transition:stroke-dashoffset .4s"/></svg>`}
+
+/* ================== app shell ================== */
+const TABS=[['home','الرئيسية'],['ex','التمارين'],['pain','الألم'],['prog','التقدّم'],['set','الإعدادات']];
+let tab=(location.hash||'').slice(1);if(!TABS.some(t=>t[0]===tab))tab='home';
+function renderTabs(){$('#tabs .in').innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}" aria-label="${l}">${ic(k)}<span>${l}</span></button>`).join('')}
+function go(t){tab=t;try{history.replaceState(null,'','#'+t)}catch(e){}render();window.scrollTo(0,0)}
+function render(){
+  renderTabs();
+  const v=$('#view');
+  v.innerHTML={home:viewHome,ex:viewLibrary,pain:viewPain,prog:viewProgress,set:viewSettings}[tab]();
+  mountFigures(v);
+  if(tab==='pain')bindPain();
+}
+function todayTasks(){const d=dayRec();const t=[{k:'morning',done:d.morning.fin},{k:'evening',done:d.evening.fin}];if(isSwimDay())t.push({k:'swim',done:!!(d.swim&&d.swim.done)});return t}
+function todayPct(){const d=dayRec();let tot=required('morning').length+required('evening').length,dn=required('morning').filter(i=>d.morning.done.includes(i.id)).length+required('evening').filter(i=>d.evening.done.includes(i.id)).length;if(isSwimDay()){tot+=4;if(d.swim&&d.swim.done)dn+=4}return tot?dn/tot:0}
+function nextSwim(){for(let i=0;i<8;i++){const d=addDays(new Date(),i);if(isSwimDay(d))return{d,i}}return null}
+function greeting(){const h=new Date().getHours();return h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
+const toMin=hm=>{const[h,m]=hm.split(':').map(Number);return h*60+m};
+
+function viewHome(){
+  updateLevel();
+  const L=level(),ph=PHASES[phaseOf(L)-1],d=dayRec(),pct=todayPct(),cw=calWeek();
+  const banners=[];
+  if(deferredInstall&&!isStandalone())banners.push(`<div class="banner teal">${ic('phone')}<div style="flex:1"><b>ثبّت BackCare على موبايلك</b>يفتح كتطبيق مستقل ويشتغل من غير إنترنت.<div style="margin-top:10px"><button class="btn sm primary" data-act="install">تثبيت التطبيق</button></div></div></div>`);
+  if(!S.settings.hold&&cw>L&&worsening())banners.push(`<div class="banner amber">${ic('info')}<div><b>ثبّتنا مستواك على الأسبوع ${L}</b>لاحظنا زيادة في الأعراض مؤخرًا، فلن نزيد الصعوبة حتى تهدأ. استمر بالمستوى الحالي أو خفّف.</div></div>`);
+  if(S._adv===today())banners.push(`<div class="banner teal">${ic('check')}<div><b>انتقلت للأسبوع ${L} 👏</b>الأعراض مستقرة، فتدرّج البرنامج خطوة بسيطة.</div></div>`);
+  const lp=S.pain[today()];if(lp&&(lp.sym||[]).some(s=>SYM_RED.includes(s)))banners.push(redBanner());
+  const nm=nowMin();
+  if(!d.morning.fin&&nm>=toMin(S.settings.morning)&&nm<toMin(S.settings.morning)+240)banners.push(`<div class="banner amber">${ic('bell')}<div><b>حان وقت روتين الصباح</b>${routine('morning').length} تمارين · حوالي ${routineMin('morning')} دقيقة.</div></div>`);
+  if(!d.evening.fin&&nm>=toMin(S.settings.evening))banners.push(`<div class="banner amber">${ic('bell')}<div><b>حان وقت روتين المساء</b>تمارين خفيفة قبل النوم · ${routineMin('evening')} دقائق.</div></div>`);
+  const ns=nextSwim();
+  const swimToday=isSwimDay(),swimDone=!!(d.swim&&d.swim.done);
+  const swimDaysTxt=S.settings.swimDays.slice().sort((a,b)=>WEEK_ORDER.indexOf(a)-WEEK_ORDER.indexOf(b)).map(x=>DAY[x]).join(' و ');
+  return `
+  <div class="top">
+    <div class="brand"><div class="brand-mark">${LOGO}</div><div><h3 style="font-size:17px">BackCare</h3><div class="date">${fmtDate(new Date(),{weekday:'long',day:'numeric',month:'long'})}</div></div></div>
+    <button class="pill" data-act="redflags" style="background:var(--red-l);color:var(--red)">${ic('alert','icon',2.2).replace('icon','icon" style="width:16px;height:16px')} علامات تحذيرية</button>
+  </div>
+  <div class="hero">
+    <div class="row between" style="position:relative;z-index:1;align-items:center">
+      <div style="flex:1;min-width:0">
+        <div style="opacity:.8;font-size:14px">${greeting()}</div>
+        <h1 style="font-size:26px;margin-top:2px">الأسبوع ${L} من 8</h1>
+        <div class="pill navy" style="margin-top:8px">المرحلة ${ph.n} · ${ph.t}</div>
+      </div>
+      <div class="ring-wrap">${ring(pct,104,10,'#8FAE8B','rgba(255,255,255,.14)')}<div class="val"><div>${Math.round(pct*100)}%<small>إنجاز اليوم</small></div></div></div>
+    </div>
+    <div class="weeks">${Array.from({length:8},(_,i)=>`<i class="${i+1<L?'on':i+1===L?'cur':''}"></i>`).join('')}</div>
+  </div>
+  ${banners.length?`<div class="stack" style="margin-top:14px">${banners.join('')}</div>`:''}
+  <div class="sec-title"><h2>تمارين اليوم</h2><span class="muted small">${todayTasks().filter(t=>t.done).length} من ${todayTasks().length} مكتمل</span></div>
+  <div class="stack">
+    ${routineCard('morning')}
+    ${routineCard('evening')}
+  </div>
+  <div class="sec-title"><h2>روتين الصباح</h2><button class="link" data-tab="ex">كل التمارين</button></div>
+  <div class="card" style="padding:8px 12px"><div class="ex-list">
+    ${routine('morning').map(it=>exRow(it,d.morning.done.includes(it.id))).join('')}
+  </div></div>
+  <div class="sec-title"><h2>السباحة</h2><span class="muted small">${swimDaysTxt} · ${fmt12(S.settings.swimTime)}</span></div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="fig" data-ex="swim" style="height:120px;background:linear-gradient(180deg,#EAF5F3,#fff)"></div>
+    <div style="padding:14px 18px 18px">
+      <div class="row between"><div><h3>${swimToday?'اليوم يوم سباحة':'السباحة القادمة: '+(ns?(ns.i===1?'بكرة':DAY[ns.d.getDay()]):'—')}</h3>
+      <div class="muted small">${swimMin()} دقيقة بإيقاع مريح · ${swimWeekCount()} من 2 هذا الأسبوع</div></div>
+      ${swimDone?`<span class="check on">${ic('check','icon" style="width:16px;height:16px;color:#fff',3)}</span>`:''}</div>
+      <div class="muted small" style="margin-top:8px">ابدأ بسباحة الصدر الخفيفة أو الظهر، وتجنّب أي ضربة تزيد الألم.</div>
+      <button class="btn ${swimDone?'ghost':'primary'} block" style="margin-top:14px" data-act="swim">${swimDone?'تم تسجيل سباحة اليوم ✓ (تراجع)':'سجّلت سباحة اليوم'}</button>
+    </div>
+  </div>
+  <div class="sec-title"><h2>كيف ظهرك اليوم؟</h2><button class="link" data-tab="pain">السجل</button></div>
+  ${lp?`<div class="card row between"><div class="row"><div class="pain-num" style="font-size:40px;color:${painCol(lp.level)}">${lp.level}</div><div><b>${painWord(lp.level)}</b><div class="muted small">سجّلت ألمك اليوم</div></div></div><button class="btn sm ghost" data-tab="pain">تعديل</button></div>`
+  :`<div class="card"><div class="muted small">سجّل مستوى الألم من 0 إلى 10، يساعدنا نعرف إمتى نتدرّج.</div><button class="btn navy block" style="margin-top:12px" data-tab="pain">${ic('pain')} تسجيل الألم الآن</button></div>`}
+  <div class="sec-title"><h2>التذكيرات</h2><button class="link" data-tab="set">تعديل</button></div>
+  <div class="card flat"><div class="row" style="gap:14px;flex-wrap:wrap">
+    <span class="pill amber">${ic('sun','icon" style="width:15px;height:15px')} الصباح ${fmt12(S.settings.morning)}</span>
+    <span class="pill" style="background:#E4E8F3;color:var(--navy2)">${ic('moon','icon" style="width:15px;height:15px')} المساء ${fmt12(S.settings.evening)}</span>
+    <span class="pill teal">${ic('wave','icon" style="width:15px;height:15px')} السباحة ${fmt12(S.settings.swimTime)}</span>
+  </div></div>
+  <p class="muted small" style="text-align:center;margin-top:22px;padding:0 10px">BackCare رفيق للتمارين المنزلية ولا يشخّص ولا يغني عن الطبيب أو أخصائي العلاج الطبيعي.</p>`;
+}
+function routineCard(kind){
+  const d=dayRec()[kind],items=routine(kind),dn=routineDoneCount(kind),m=kind==='morning';
+  const pct=items.length?dn/items.length:0;
+  return `<div class="card"><div class="routine">
+    <div class="ico ${m?'sun':'moon'}" style="color:${m?'#B7791F':'#2B4170'}">${ic(m?'sun':'moon')}</div>
+    <div class="meta"><h3>${m?'روتين الصباح':'روتين المساء'}</h3><div class="muted small">${items.length} تمارين · حوالي ${routineMin(kind)} دقيقة · ${fmt12(m?S.settings.morning:S.settings.evening)}</div>
+    <div class="mini-bar"><b style="width:${pct*100}%"></b></div></div>
+    ${d.fin?`<span class="check on">${ic('check','icon" style="width:16px;height:16px;color:#fff',3)}</span>`:''}
+  </div>
+  <button class="btn ${d.fin?'ghost':'primary'} block" style="margin-top:14px" data-act="start" data-kind="${kind}">${d.fin?'أعد التمرين':dn?'كمّل التمرين':'ابدأ التمرين'} ${ic('play','icon" style="width:18px;height:18px')}</button></div>`;
+}
+function exRow(it,done){const ex=EX[it.id];return `<button class="ex-item" data-act="detail" data-id="${it.id}" data-lv="1">
+  <div class="ex-thumb"><div class="fig" data-ex="${it.id}" style="width:100%;height:100%"></div></div>
+  <div class="t"><b>${ex.name}${it.optional?' <span class="pill amber" style="font-size:11px;padding:1px 8px">اختياري</span>':''}</b><span>${targetLabel(it)}</span></div>
+  <span class="check ${done?'on':''}">${done?ic('check','icon" style="width:15px;height:15px;color:#fff',3):''}</span></button>`}
+function swimWeekCount(){const t=new Date();const off=WEEK_ORDER.indexOf(t.getDay());let n=0;for(let i=0;i<=off;i++){const k=keyOf(addDays(t,-i));if(S.days[k]&&S.days[k].swim&&S.days[k].swim.done)n++}return n}
+
+/* library */
+function viewLibrary(){
+  const L=level();const all=Object.keys(EX);
+  const mT=routine('morning'),eT=routine('evening');
+  const lbl=id=>{const a=mT.find(i=>i.id===id),b=eT.find(i=>i.id===id);return [a?'الصباح: '+targetLabel(a):'',b?'المساء: '+targetLabel(b):''].filter(Boolean).join(' · ')||(id==='sideplank'?'يبدأ من الأسبوع 2':id==='sts'?'الأسبوعان 7–8':'')};
+  return `<div class="top"><div><h1>التمارين</h1><div class="date">مكتبة تمارين برنامجك · المستوى ${L}</div></div></div>
+  <div class="stack">${all.map(id=>`<button class="card" style="display:block;width:100%;text-align:right;padding:0;overflow:hidden" data-act="detail" data-id="${id}">
+    <div class="fig" data-ex="${id}" style="aspect-ratio:3/1.6;background:linear-gradient(160deg,var(--sage-xl),#fff 75%)"></div>
+    <div style="padding:12px 16px 16px"><div class="row between"><h3>${EX[id].name}</h3><span class="muted small" style="direction:ltr">${EX[id].en}</span></div>
+    <div class="muted small" style="margin-top:4px">${lbl(id)}</div></div></button>`).join('')}</div>
+  <div class="card flat" style="margin-top:16px">${safetyEdu()}</div>`;
+}
+function openDetail(id){
+  const ex=EX[id];const it=routine('morning').find(i=>i.id===id)||routine('evening').find(i=>i.id===id);
+  sheet(`<div class="fig-card"><div class="fig" data-ex="${id}" style="width:100%;height:100%"></div></div>
+  <div class="row between" style="margin-top:14px;align-items:flex-start"><div><h1 style="font-size:22px">${ex.name}</h1><div class="muted small" style="direction:ltr;text-align:right">${ex.en}</div></div>${it?`<span class="pill teal">${targetLabel(it)}</span>`:''}</div>
+  <p style="margin-top:10px;font-size:16px">${ex.short}</p>
+  <div class="stack" style="margin-top:14px">
+   <div class="box green"><h3>${ic('check','icon" style="width:17px;height:17px;color:var(--sage-d)',2.6)} الفائدة</h3><ul class="lst">${ex.ben.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+   <div class="box amber"><h3>${ic('x','icon" style="width:17px;height:17px;color:#9A6415',2.6)} أخطاء شائعة</h3><ul class="lst">${ex.mis.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+   <div class="box red"><h3>${ic('alert','icon" style="width:17px;height:17px;color:var(--red)',2.2)} تنبيه أمان</h3><p>${ex.safe}</p></div>
+   <details class="card flat"><summary>تعليمات تفصيلية</summary><p style="margin-top:6px">${ex.det}</p></details>
+  </div>`);
+}
+
+/* ================== workout ================== */
+let W=null,wakeLock=null;
+function startWorkout(kind){
+  const items=routine(kind),done=dayRec()[kind].done;
+  let idx=items.findIndex(i=>!done.includes(i.id));
+  if(idx<0){idx=0;if(dayRec()[kind].fin){dayRec()[kind].done=[];dayRec()[kind].fin=false;save()}}
+  W={kind,items,idx,steps:[],si:0,el:0,run:false,last:0,lastSec:-1};
+  const o=document.createElement('div');o.className='overlay';o.id='wk';document.body.appendChild(o);document.body.style.overflow='hidden';
+  wkLoad();unlockAudio();
+}
+function wkLoad(){
+  const it=W.items[W.idx],ex=EX[it.id];W.steps=buildSteps(it);W.si=0;W.el=0;W.lastSec=-1;
+  const o=$('#wk');
+  o.innerHTML=`<div class="wk">
+   <div class="wk-top"><button class="x" data-act="wk-close" aria-label="إغلاق">${ic('x')}</button><div class="wk-prog"><b style="width:${(W.idx/W.items.length)*100}%"></b></div><b class="small">${W.idx+1} / ${W.items.length}</b></div>
+   <div class="wk-fig"><div class="fig-card"><div class="fig" id="wkfig" style="width:100%;height:100%"></div></div>
+     <span class="pill teal side" id="wkside" style="display:none"></span><span class="pill phase" id="wkphase">${W.kind==='morning'?'الصباح':'المساء'}</span></div>
+   <div class="wk-name"><div><h1>${ex.name}${it.optional?' <span class="pill amber" style="font-size:12px">اختياري</span>':''}</h1><div class="muted small">${targetLabel(it)}</div></div><button class="btn sm ghost" data-act="detail" data-id="${it.id}">التفاصيل</button></div>
+   <p class="wk-short">${ex.short}</p>
+   ${it.optional?`<div class="banner amber small" style="margin-top:10px">${ic('info')}<div>نفّذه فقط إذا كان مريحًا. إذا زاد الألم، تخطَّه.</div></div>`:''}
+   <div class="timer"><div class="ring" id="wkring"></div><div style="flex:1;min-width:0"><div class="lbl" id="wklbl">استعد</div><div class="sub" id="wksub"></div>
+     ${ex.kind==='timed'?`<div class="row" style="margin-top:8px;gap:8px"><button class="btn sm ghost" data-act="wk-min" data-v="-1">− دقيقة</button><button class="btn sm ghost" data-act="wk-min" data-v="1">+ دقيقة</button></div>`:''}</div></div>
+   <div class="ctrls">
+     <button class="btn ghost" data-act="wk-prev" ${W.idx===0?'disabled':''}>${ic('prev')}السابق</button>
+     <button class="btn primary" data-act="wk-toggle" id="wktog">${ic('play')}<span>ابدأ</span></button>
+     <button class="btn ghost" data-act="wk-skip">${ic('next')}تخطَّ</button>
+   </div>
+   <div class="ctrls2"><button class="btn navy" data-act="wk-done">${ic('check')} تم التمرين</button><button class="btn danger" data-act="wk-pain">الألم زاد</button></div>
+  </div>`;
+  W.fig=new Figure($('#wkfig'),it.id,{mode:'ext'});
+  wkUpdate(true);
+}
+function stepT(st,el,anim){
+  if(!st)return 0;
+  switch(st.k){
+    case 'ready':return 0;
+    case 'tempo':return (1-Math.cos(2*Math.PI*el/st.d))/2;
+    case 'hold':return ease(Math.min(1,el/1));
+    case 'stretch':return ease(Math.min(1,el/2));
+    case 'rest':{const prev=W.steps[W.si-1];const from=prev&&(prev.k==='hold'||prev.k==='stretch')?1:0;return from*Math.max(0,1-ease(Math.min(1,el/1)))}
+    case 'timed':return anim==='breath'?demoT('breath',el):demoT('walk',el);
+  }
+  return 0;
+}
+function wkUpdate(force){
+  if(!W||!$('#wkring'))return;
+  const st=W.steps[W.si];const it=W.items[W.idx];const ex=EX[it.id];
+  if(!st)return;
+  W.fig.draw(stepT(st,W.el,ex.anim),st.side);
+  const left=Math.max(0,st.d-W.el);
+  const sec=Math.ceil(left);
+  const r=$('#wkring');
+  const pct=st.d?W.el/st.d:0;
+  if(force||W._k!==W.si){
+    r.innerHTML=ring(pct,96,9,st.k==='rest'||st.k==='ready'?'#D99A3B':'#2A8C82','#EEEAE2')+'<div class="num" id="wknum"></div>';
+    W._k=W.si;
+    let lbl=st.l;if(st.k==='timed'&&ex.anim==='breath')lbl='تنفّس';
+    $('#wklbl').textContent=lbl;
+    const sub=[];
+    if(st.rep)sub.push(`تكرار ${st.rep} من ${it.reps}`);
+    if(it.sets>1&&st.set)sub.push(`مجموعة ${st.set} من ${it.sets}`);
+    if(st.k==='ready')sub.push('التمرين يبدأ تلقائيًا');
+    if(st.k==='timed'&&ex.anim==='walk')sub.push(`الهدف ${targetLabel(it)}`);
+    $('#wksub').textContent=sub.join(' · ');
+    const sd=$('#wkside');if(st.side){sd.style.display='';sd.textContent=st.side==='R'?'الجهة اليمنى':'الجهة اليسرى'}else sd.style.display='none';
+  }else{
+    const c=r.querySelector('.rg');if(c){const R=(96-9)/2,cc=2*Math.PI*R;c.setAttribute('stroke-dashoffset',(cc*(1-clamp(pct,0,1))).toFixed(2))}
+  }
+  if(st.k==='timed'&&ex.anim==='breath'){const x=W.el%10;$('#wklbl').textContent=x<4?'شهيق… 🌬️':'زفير ببطء…'}
+  const num=$('#wknum');if(num){num.textContent=st.d>=60?`${Math.floor(sec/60)}:${pad(sec%60)}`:sec}
+  const tg=$('#wktog');if(tg){const want=W.run?'p':'r';if(tg.dataset.s!==want){tg.dataset.s=want;tg.innerHTML=W.run?ic('pause')+'<span>إيقاف مؤقت</span>':ic('play')+`<span>${W.el>0||W.si>0?'استكمل':'ابدأ'}</span>`}}
+  const pb=$('.wk-prog b');if(pb){const tot=W.steps.reduce((a,s)=>a+s.d,0),dn=W.steps.slice(0,W.si).reduce((a,s)=>a+s.d,0)+W.el;pb.style.width=((W.idx+(tot?dn/tot:0))/W.items.length*100)+'%'}
+}
+function wkTick(ts){
+  const dt=W.last?Math.min(.25,(ts-W.last)/1000):0;W.last=ts;
+  if(W.run&&W.steps.length){
+    const st=W.steps[W.si];W.el+=dt;
+    const left=Math.ceil(st.d-W.el);
+    if(left!==W.lastSec){W.lastSec=left;if(left<=3&&left>0&&(st.k==='ready'||st.k==='hold'||st.k==='stretch'||(st.k==='rest'&&st.d>=5)))beep(660,.08,.15)}
+    if(W.el>=st.d){wkNextStep()}
+  }
+  wkUpdate(false);
+}
+function wkNextStep(){
+  W.si++;W.el=0;W.lastSec=-1;
+  if(W.si>=W.steps.length){wkComplete();return}
+  const st=W.steps[W.si];
+  if(st.k==='hold'||st.k==='stretch'||st.k==='timed'){beep(880,.14,.2);buzz(60)}
+  else if(st.k==='rest'){beep(520,.12,.16)}
+  else if(st.k==='tempo'){beep(740,.06,.12)}
+}
+function markDone(id){const r=dayRec()[W.kind];if(!r.done.includes(id))r.done.push(id);r.fin=required(W.kind).every(i=>r.done.includes(i.id));save()}
+function wkComplete(){
+  const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);
+  if(W.idx>=W.items.length-1){wkFinish();return}
+  W.idx++;const keep=W.run;wkLoad();W.run=keep;toast('أحسنت! التمرين التالي: '+EX[W.items[W.idx].id].name);
+}
+function wkFinish(){
+  W.run=false;releaseWake();
+  const r=dayRec()[W.kind];const n=routineDoneCount(W.kind);
+  $('#wk').innerHTML=`<div class="wk"><div class="done-hero"><div class="big">${ic('check','icon" style="width:52px;height:52px;color:#fff',3)}</div>
+   <h1>${r.fin?'أحسنت، الروتين اكتمل!':'تم حفظ ما أنجزته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${W.kind==='morning'?'روتين الصباح':'روتين المساء'}</p></div>
+   <div class="card" style="margin-top:18px"><h3>كيف الألم الآن؟</h3><div class="row between" style="margin-top:8px"><span class="muted small">حرّك المؤشر</span><b id="fpv" class="pain-num" style="font-size:34px">${(S.pain[today()]||{}).level??2}</b></div>
+   <input type="range" min="0" max="10" step="1" value="${(S.pain[today()]||{}).level??2}" id="fpr" aria-label="مستوى الألم"><div class="scale"><span>0</span><span>5</span><span>10</span></div>
+   <button class="btn navy block" style="margin-top:14px" data-act="wk-savepain">حفظ وإغلاق</button></div>
+   <button class="btn ghost block" style="margin-top:12px" data-act="wk-exit">إغلاق بدون تسجيل</button>
+   <p class="muted small" style="text-align:center;margin-top:16px">ألم خفيف ومؤقت (حتى 3 من 10) يهدأ خلال 24 ساعة أمر مقبول. إذا زاد أو امتد للساق، خفّف التمارين.</p></div>`;
+  $('#fpr').addEventListener('input',e=>{$('#fpv').textContent=e.target.value;$('#fpv').style.color=painCol(+e.target.value)});
+}
+function wkClose(){W=null;releaseWake();const o=$('#wk');if(o)o.remove();document.body.style.overflow='';render()}
+
+/* audio & haptics */
+let AC=null;
+function unlockAudio(){if(!S.settings.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}}
+function beep(f,d=.1,v=.15){if(!S.settings.sound||!AC)return;try{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d+.15);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d+.2)}catch(e){}}
+function chime(){beep(660,.12,.14);setTimeout(()=>beep(880,.12,.14),130);setTimeout(()=>beep(1175,.2,.12),260)}
+function buzz(p){if(S.settings.vibrate&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+async function requestWake(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
+function releaseWake(){try{wakeLock&&wakeLock.release()}catch(e){}wakeLock=null}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(W&&W.run)requestWake();if(!W&&tab==='home')render();scheduleLocal()}});
+
+/* ================== pain ================== */
+const painCol=v=>v<=2?'#4E9A78':v<=4?'#B99421':v<=6?'#D07A32':'#B8402F';
+const painWord=v=>v===0?'بدون ألم':v<=2?'ألم خفيف جدًا':v<=4?'ألم خفيف':v<=6?'ألم متوسط':v<=8?'ألم شديد':'ألم شديد جدًا';
+let PD=null;
+function viewPain(){
+  const p=S.pain[today()]||{level:2,sym:[],note:''};PD={level:p.level,sym:[...(p.sym||[])],note:p.note||''};
+  const days=[];for(let i=6;i>=0;i--){const d=addDays(new Date(),-i);days.push({d,p:S.pain[keyOf(d)]})}
+  const hist=Object.keys(S.pain).sort().reverse().slice(0,7);
+  return `<div class="top"><div><h1>متابعة الألم</h1><div class="date">${fmtDate(new Date(),{weekday:'long',day:'numeric',month:'long'})}</div></div></div>
+  <div class="card">
+    <div class="row between"><div><h3>مستوى الألم الآن</h3><div class="muted small" id="pw">${painWord(PD.level)}</div></div><div class="pain-num" id="pn" style="color:${painCol(PD.level)}">${PD.level}</div></div>
+    <input type="range" min="0" max="10" step="1" value="${PD.level}" id="pr" aria-label="مستوى الألم من 0 إلى 10">
+    <div class="scale"><span>0 بلا ألم</span><span>5</span><span>10 أسوأ ألم</span></div>
+    <h3 style="margin-top:18px">أعراض (اختياري)</h3>
+    <div class="chips" style="margin-top:8px">${SYM.map(s=>`<button class="chip ${PD.sym.includes(s)?'on':''}" data-sym="${s}">${s}</button>`).join('')}</div>
+    <h3 style="margin-top:16px;color:var(--red)">أعراض تحتاج انتباه</h3>
+    <div class="chips" style="margin-top:8px">${SYM_RED.map(s=>`<button class="chip flag ${PD.sym.includes(s)?'on':''}" data-sym="${s}">${s}</button>`).join('')}</div>
+    <h3 style="margin-top:16px">ملاحظات</h3>
+    <textarea id="pnote" placeholder="مثلًا: الألم زاد بعد جلوس طويل في الشغل…" style="margin-top:8px">${esc(PD.note)}</textarea>
+    <button class="btn primary block" style="margin-top:14px" data-act="pain-save">${S.pain[today()]?'تحديث سجل اليوم':'حفظ سجل اليوم'}</button>
+  </div>
+  <div class="sec-title"><h2>آخر 7 أيام</h2></div>
+  <div class="card"><div class="hist">${days.map(x=>`<div class="b"><b class="small" style="color:${x.p?painCol(x.p.level):'var(--muted)'}">${x.p?x.p.level:'–'}</b><i style="height:${x.p?Math.max(6,x.p.level*9):4}px;background:${x.p?painCol(x.p.level):'#E3DFD6'}"></i><span>${DAYS[x.d.getDay()]}</span></div>`).join('')}</div></div>
+  ${hist.length?`<div class="sec-title"><h2>السجل</h2></div><div class="card" style="padding:6px 16px">${hist.map(k=>{const x=S.pain[k];return `<div class="set-row" style="align-items:flex-start"><div style="flex:1"><b>${fmtDate(parseKey(k),{weekday:'long',day:'numeric',month:'short'})}</b>${(x.sym||[]).length?`<div class="muted small">${x.sym.map(esc).join('، ')}</div>`:''}${x.note?`<div class="small" style="margin-top:2px">${esc(x.note)}</div>`:''}</div><b style="font-size:22px;color:${painCol(x.level)}">${x.level}</b></div>`}).join('')}</div>`:''}
+  <div class="sec-title"><h2>قاعدة الإشارة</h2></div>
+  <div class="stack">
+   <div class="box green"><h3>🟢 0–3 من 10</h3><p>مقبول أثناء التمرين إذا هدأ خلال 24 ساعة. استمر.</p></div>
+   <div class="box amber"><h3>🟡 4–5 أو ألم يمتد للفخذ</h3><p>خفّف التكرارات أو المدى، ولا تتدرّج هذا الأسبوع.</p></div>
+   <div class="box red"><h3>🔴 6+ أو ألم/تنميل ممتد أسفل الركبة</h3><p>أوقف التمارين المسببة، وتواصل مع طبيبك أو أخصائي العلاج الطبيعي.</p></div>
+  </div>
+  <div style="margin-top:14px">${redBanner()}</div>`;
+}
+function bindPain(){
+  const r=$('#pr');if(!r)return;
+  r.addEventListener('input',()=>{PD.level=+r.value;$('#pn').textContent=PD.level;$('#pn').style.color=painCol(PD.level);$('#pw').textContent=painWord(PD.level)});
+}
+function savePain(){
+  PD.note=$('#pnote').value.trim();
+  S.pain[today()]={level:PD.level,sym:PD.sym,note:PD.note,at:Date.now()};save();
+  if(PD.sym.some(s=>SYM_RED.includes(s))){showRedFlags(true)}else toast('تم حفظ سجل الألم');
+  render();
+}
+function redBanner(){return `<div class="banner red">${ic('alert')}<div style="flex:1"><b>علامات تستدعي الطبيب فورًا</b>ضعف بالساق، تنميل منطقة السرج، أو مشكلة في التحكم بالبول أو البراز.<div style="margin-top:8px"><button class="btn sm danger" style="background:#fff" data-act="redflags">اعرف العلامات كاملة</button></div></div></div>`}
+function showRedFlags(urgent){
+  modal(`<div style="text-align:center"><div style="width:64px;height:64px;border-radius:22px;background:var(--red-l);display:grid;place-items:center;margin:0 auto 12px;color:var(--red)">${ic('alert','icon" style="width:32px;height:32px',2.2)}</div>
+  <h2>${urgent?'سجّلت عرضًا يحتاج تقييمًا عاجلًا':'العلامات التحذيرية'}</h2></div>
+  <p style="margin-top:10px">${urgent?'توقف عن التمارين، وتواصل مع طبيبك أو توجّه للطوارئ اليوم إذا ظهرت أيّ من هذه العلامات:':'توقف عن التمارين واطلب رعاية طبية عاجلة إذا ظهرت:'}</p>
+  <ul class="lst" style="margin-top:8px">
+   <li>ضعف مفاجئ أو متزايد في الساق أو القدم (صعوبة رفع مقدمة القدم مثلًا).</li>
+   <li>تنميل في منطقة السرج: بين الفخذين وحول الشرج والأعضاء التناسلية.</li>
+   <li>صعوبة أو فقدان التحكم في التبول أو التبرز، أو احتباس البول.</li>
+   <li>ضعف أو تنميل في الساقين الاثنتين معًا.</li>
+   <li>ضعف جنسي مفاجئ مع ألم الظهر.</li>
+   <li>ألم شديد متزايد لا يهدأ بالراحة أو ليلًا، أو مع حمى أو نقص وزن غير مبرر، أو بعد سقوط أو إصابة.</li>
+  </ul>
+  <button class="btn navy block" style="margin-top:16px" data-act="modal-close">فهمت</button>`);
+}
+function safetyEdu(){return `<h3>${ic('info','icon" style="width:18px;height:18px;color:var(--teal)')} معلومات مهمة تطمّنك</h3>
+  <ul class="lst small" style="margin-top:8px">
+   <li>التطبيق لا يشخّص ولا يغني عن الطبيب أو أخصائي العلاج الطبيعي.</li>
+   <li>التمارين لا «ترجع الغضروف لمكانه»؛ هدفها تحسين الحركة وتقوية العضلات الداعمة وتهدئة الأعراض.</li>
+   <li>تحسّن الألم لا يتطلب بالضرورة تحسّن صورة الرنين؛ كثيرون يتحسنون مع بقاء البروز في الصورة.</li>
+   <li>كثير من حالات بروز القرص تتحسن مع الوقت والحركة المتدرجة، لكن لا يوجد ضمان للشفاء.</li>
+   <li>تجنّب الإطالة العنيفة وأي حركة تزيد الأعراض أو تجعلها تمتد للساق.</li>
+  </ul>`}
+
+/* ================== progress ================== */
+function streak(){let n=0;let d=new Date();const any=k=>{const r=S.days[k];return r&&(r.morning.fin||r.evening.fin||(r.swim&&r.swim.done)||r.morning.done.length||r.evening.done.length)};if(!any(keyOf(d)))d=addDays(d,-1);while(any(keyOf(d))){n++;d=addDays(d,-1)}return n}
+function viewProgress(){
+  const L=level(),cp=phaseOf(L);let fin=0,swims=0;Object.values(S.days).forEach(r=>{if(r.morning.fin)fin++;if(r.evening.fin)fin++;if(r.swim&&r.swim.done)swims++});
+  let pl=0,dn=0;for(let i=0;i<7;i++){const k=keyOf(addDays(new Date(),-i));if(daysBetween(S.settings.start,k)<0)continue;pl+=routine('morning').length+routine('evening').length;const r=S.days[k];if(r)dn+=r.morning.done.length+r.evening.done.length}
+  const comp=pl?Math.round(dn/pl*100):0;
+  const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay()),ws=addDays(t,-off);
+  return `<div class="top"><div><h1>التقدّم</h1><div class="date">بدأت في ${fmtDate(parseKey(S.settings.start),{day:'numeric',month:'long',year:'numeric'})}</div></div></div>
+  <div class="stats">
+   <div class="stat"><div class="k">${ic('flame','icon" style="width:18px;height:18px;color:var(--amber)')} أيام متتالية</div><div class="v">${streak()}</div></div>
+   <div class="stat"><div class="k">جلسات مكتملة</div><div class="v">${fin}</div></div>
+   <div class="stat"><div class="k">إنجاز التمارين (7 أيام)</div><div class="v">${comp}%</div><div class="mini-bar"><b style="width:${comp}%"></b></div></div>
+   <div class="stat"><div class="k">جلسات السباحة</div><div class="v">${swims}</div><div class="muted small">${swimWeekCount()} من 2 هذا الأسبوع</div></div>
+  </div>
+  <div class="sec-title"><h2>هذا الأسبوع</h2></div>
+  <div class="card"><div class="cal">${Array.from({length:7},(_,i)=>{const d=addDays(ws,i),k=keyOf(d),r=S.days[k];const sw=isSwimDay(d);return `<div class="d ${k===today()?'today':''}"><div class="n">${DAYS[d.getDay()]}</div><div class="dt">${d.getDate()}</div><div class="dots"><i class="${r&&r.morning.fin?'m':''}"></i><i class="${r&&r.evening.fin?'e':''}"></i>${sw?`<i class="${r&&r.swim&&r.swim.done?'s':''}" style="${r&&r.swim&&r.swim.done?'':'outline:1.5px solid var(--teal);background:transparent'}"></i>`:''}</div></div>`}).join('')}</div>
+  <div class="legend"><span><i style="background:var(--amber)"></i>الصباح</span><span><i style="background:var(--navy3)"></i>المساء</span><span><i style="background:var(--teal)"></i>السباحة</span></div></div>
+  <div class="sec-title"><h2>الألم آخر 4 أسابيع</h2></div>
+  <div class="card">${painChart()}</div>
+  <div class="sec-title"><h2>مراحل البرنامج</h2><span class="muted small">الأسبوع ${L} من 8</span></div>
+  <div class="phases">${PHASES.map(p=>`<div class="ph ${p.n===cp?'on':p.n<cp?'done':''}"><div class="no">${p.n<cp?'✓':p.n}</div><div><b>${p.t}</b><div class="small" style="opacity:.75">الأسابيع ${p.w} · ${p.d}</div></div></div>`).join('')}</div>
+  <p class="muted small" style="margin-top:14px;text-align:center">التدرّج يحدث فقط إذا كانت الأعراض مستقرة. لا مشكلة في البقاء على نفس المستوى أسبوعًا إضافيًا.</p>`;
+}
+function painChart(){
+  const pts=[];for(let i=27;i>=0;i--){const k=keyOf(addDays(new Date(),-i));if(S.pain[k])pts.push({i:27-i,v:S.pain[k].level})}
+  if(pts.length<2)return `<div class="muted small" style="text-align:center;padding:24px 0">سجّل ألمك يوميًا لتظهر هنا المتابعة.</div>`;
+  const w=320,h=150,px=24,py=14,X=i=>px+(w-px*2)*i/27,Y=v=>py+(h-py*2)*(1-v/10);
+  const line=pts.map((p,j)=>`${j?'L':'M'}${X(p.i).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(' ');
+  const area=line+` L${X(pts[pts.length-1].i).toFixed(1)} ${h-py} L${X(pts[0].i).toFixed(1)} ${h-py}Z`;
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;direction:ltr"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A8C82" stop-opacity=".25"/><stop offset="1" stop-color="#2A8C82" stop-opacity="0"/></linearGradient></defs>
+  ${[0,5,10].map(v=>`<line x1="${px}" x2="${w-px}" y1="${Y(v)}" y2="${Y(v)}" stroke="#ECE8E0"/><text x="${px-8}" y="${Y(v)+4}" font-size="10" fill="#8A93A5" text-anchor="end">${v}</text>`).join('')}
+  <path d="${area}" fill="url(#pg)"/><path d="${line}" fill="none" stroke="#2A8C82" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+  ${pts.map(p=>`<circle cx="${X(p.i).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="3.6" fill="#fff" stroke="${painCol(p.v)}" stroke-width="2.2"/>`).join('')}
+  <text x="${px}" y="${h-1}" font-size="10" fill="#8A93A5">قبل 4 أسابيع</text><text x="${w-px}" y="${h-1}" font-size="10" fill="#8A93A5" text-anchor="end">اليوم</text></svg>`;
+}
+
+/* ================== settings ================== */
+function viewSettings(){
+  const s=S.settings;const perm=('Notification' in window)?Notification.permission:'unsupported';
+  return `<div class="top"><div><h1>الإعدادات</h1><div class="date">التذكيرات، البرنامج، والبيانات</div></div></div>
+  ${!isStandalone()?`<div class="card" style="background:var(--navy);color:#fff"><div class="row">${ic('phone')}<h3>تثبيت التطبيق</h3></div>
+   <p class="small" style="opacity:.85;margin-top:6px">${deferredInstall?'ثبّته ليفتح كتطبيق مستقل ويعمل بدون إنترنت.':'من قائمة كروم (⋮) اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».'}</p>
+   ${deferredInstall?`<button class="btn light block" style="margin-top:12px" data-act="install">تثبيت الآن</button>`:''}</div>`:''}
+  <div class="sec-title"><h2>التذكيرات</h2></div>
+  <div class="card" style="padding:4px 18px">
+   <div class="set-row"><label for="s-m">${ic('sun','icon" style="width:18px;height:18px;vertical-align:-3px;color:#B7791F')} تمارين الصباح</label><input type="time" id="s-m" value="${s.morning}" data-set="morning"></div>
+   <div class="set-row"><label for="s-e">${ic('moon','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--navy3)')} تمارين المساء</label><input type="time" id="s-e" value="${s.evening}" data-set="evening"></div>
+   <div class="set-row" style="display:block"><div class="row between"><label>${ic('wave','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--teal)')} أيام السباحة</label><span class="muted small">${s.swimDays.length} أيام</span></div>
+     <div class="daychips">${WEEK_ORDER.map(d=>`<button class="chip ${s.swimDays.includes(d)?'on':''}" data-swimday="${d}">${DAY[d]}</button>`).join('')}</div></div>
+   <div class="set-row"><label for="s-s">وقت السباحة</label><input type="time" id="s-s" value="${s.swimTime}" data-set="swimTime"></div>
+   <div class="set-row"><div><label>إشعارات التطبيق</label><div class="muted small">${perm==='denied'?'الإشعارات محظورة من إعدادات المتصفح':perm==='unsupported'?'غير مدعومة على هذا المتصفح':'تعمل بشكل موثوق والتطبيق مفتوح أو في الخلفية'}</div></div><label class="switch"><input type="checkbox" data-toggle="notify" ${s.notify&&perm==='granted'?'checked':''} ${perm==='denied'||perm==='unsupported'?'disabled':''}><span></span></label></div>
+  </div>
+  <div class="banner teal small" style="margin-top:12px">${ic('info')}<div><b>للتذكير المضمون والتطبيق مقفول</b>أندرويد لا يضمن إشعارات تطبيقات الويب وهي مقفولة. أضِف التذكيرات لتقويم موبايلك مرة واحدة وستصلك يوميًا.<div style="margin-top:10px"><button class="btn sm primary" data-act="ics">${ic('cal','icon" style="width:18px;height:18px')} أضف التذكيرات للتقويم</button></div></div></div>
+  <div class="sec-title"><h2>البرنامج</h2></div>
+  <div class="card" style="padding:4px 18px">
+   <div class="set-row"><label for="s-st">تاريخ البداية</label><input type="date" id="s-st" value="${s.start}" max="${today()}" data-set="start"></div>
+   <div class="set-row"><div><label for="s-lv">المستوى الحالي</label><div class="muted small">حسب التقويم: الأسبوع ${calWeek()}</div></div><select id="s-lv" data-set="level">${Array.from({length:8},(_,i)=>`<option value="${i+1}" ${s.level===i+1?'selected':''}>الأسبوع ${i+1}</option>`).join('')}</select></div>
+   <div class="set-row"><div><label>تثبيت المستوى</label><div class="muted small">لا تتدرّج تلقائيًا (مفيد لو الأعراض زادت)</div></div><label class="switch"><input type="checkbox" data-toggle="hold" ${s.hold?'checked':''}><span></span></label></div>
+  </div>
+  <div class="sec-title"><h2>أثناء التمرين</h2></div>
+  <div class="card" style="padding:4px 18px">
+   <div class="set-row"><label>${ic('vol','icon" style="width:18px;height:18px;vertical-align:-3px')} الأصوات</label><label class="switch"><input type="checkbox" data-toggle="sound" ${s.sound?'checked':''}><span></span></label></div>
+   <div class="set-row"><label>الاهتزاز</label><label class="switch"><input type="checkbox" data-toggle="vibrate" ${s.vibrate?'checked':''}><span></span></label></div>
+  </div>
+  <div class="sec-title"><h2>بياناتك</h2></div>
+  <div class="card">
+   <p class="muted small">كل بياناتك محفوظة على هذا الموبايل فقط. خُد نسخة احتياطية من وقت للتاني، خصوصًا قبل تغيير الموبايل أو مسح بيانات المتصفح.</p>
+   <div class="row" style="margin-top:12px;gap:10px"><button class="btn sm ghost" style="flex:1" data-act="export">${ic('dl','icon" style="width:18px;height:18px')} تصدير نسخة</button><button class="btn sm ghost" style="flex:1" data-act="import">${ic('up','icon" style="width:18px;height:18px')} استرجاع نسخة</button></div>
+   <input type="file" id="imp" accept="application/json,.json" hidden>
+   <button class="btn sm danger block" style="margin-top:10px" data-act="reset">مسح كل البيانات</button>
+  </div>
+  <div class="sec-title"><h2>الأمان</h2></div>
+  <div class="card flat">${safetyEdu()}<button class="btn sm danger block" style="margin-top:12px" data-act="redflags">العلامات التحذيرية</button></div>
+  <p class="muted small" style="text-align:center;margin-top:18px">BackCare · الإصدار 1.0</p>`;
+}
+function applySetting(k,v){
+  const s=S.settings;
+  if(k==='level'){s.level=+v;s.lastAdv=today();toast('تم تغيير المستوى للأسبوع '+v)}
+  else if(k==='start'){if(!v)return;s.start=v;toast('تم تحديث تاريخ البداية')}
+  else{s[k]=v;toast('تم الحفظ')}
+  save();scheduleLocal();
+}
+async function toggleSetting(k,on,el){
+  if(k==='notify'&&on){
+    if(!('Notification' in window)){el.checked=false;return}
+    let p=Notification.permission;if(p==='default')p=await Notification.requestPermission();
+    if(p!=='granted'){el.checked=false;toast('لم يتم السماح بالإشعارات');return}
+    S.settings.notify=true;save();scheduleLocal();registerPeriodic();toast('تم تفعيل الإشعارات');return;
+  }
+  S.settings[k]=on;save();if(k==='hold')toast(on?'تم تثبيت المستوى':'التدرّج التلقائي مفعّل');if(k==='sound'&&on)unlockAudio();scheduleLocal();
+}
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+function exportData(){download(`backcare-backup-${today()}.json`,JSON.stringify(S,null,1),'application/json');toast('تم تصدير النسخة الاحتياطية')}
+function importData(file){const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!o.settings||!o.days)throw 0;S={...defaults(),...o,settings:{...defaults().settings,...o.settings}};save();toast('تم استرجاع البيانات');render()}catch(e){toast('الملف غير صالح')}};r.readAsText(file)}
+function icsFile(){
+  const s=S.settings,st=parseKey(today()),ds=keyOf(st).replace(/-/g,'');
+  const BY=['SU','MO','TU','WE','TH','FR','SA'];
+  const ev=(uid,title,hm,rule,desc)=>{const t=hm.replace(':','')+'00';return `BEGIN:VEVENT\r\nUID:${uid}@backcare\r\nDTSTAMP:${ds}T000000Z\r\nDTSTART;TZID=Africa/Cairo:${ds}T${t}\r\nDURATION:PT${uid==='swim'?'30':'15'}M\r\nRRULE:${rule}\r\nSUMMARY:${title}\r\nDESCRIPTION:${desc}\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${title}\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`};
+  let out='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//BackCare//AR\r\nCALSCALE:GREGORIAN\r\n';
+  out+=ev('morning','BackCare – تمارين الصباح',s.morning,'FREQ=DAILY;COUNT=56','افتح تطبيق BackCare وابدأ روتين الصباح');
+  out+=ev('evening','BackCare – تمارين المساء',s.evening,'FREQ=DAILY;COUNT=56','روتين المساء الخفيف قبل النوم');
+  if(s.swimDays.length)out+=ev('swim','BackCare – السباحة',s.swimTime,`FREQ=WEEKLY;COUNT=${s.swimDays.length*8};BYDAY=${s.swimDays.map(d=>BY[d]).join(',')}`,'سباحة بإيقاع مريح – سجّلها في التطبيق');
+  return out+'END:VCALENDAR\r\n';
+}
+
+/* ================== reminders ================== */
+let timers=[];
+function reminderList(d=new Date()){const s=S.settings,k=keyOf(d),r=S.days[k];const l=[
+  {id:'morning',hm:s.morning,title:'روتين الصباح 🌿',body:`${routine('morning').length} تمارين · حوالي ${routineMin('morning')} دقيقة`,done:!!(r&&r.morning.fin)},
+  {id:'evening',hm:s.evening,title:'روتين المساء 🌙',body:'تمارين خفيفة وتنفّس قبل النوم',done:!!(r&&r.evening.fin)}];
+  if(isSwimDay(d))l.push({id:'swim',hm:s.swimTime,title:'وقت السباحة 🏊',body:`${swimMin()} دقيقة بإيقاع مريح`,done:!!(r&&r.swim&&r.swim.done)});return l}
+function scheduleLocal(){
+  timers.forEach(clearTimeout);timers=[];
+  if(!S.settings.notify||!('Notification' in window)||Notification.permission!=='granted')return;
+  const now=new Date();
+  reminderList().forEach(r=>{const[h,m]=r.hm.split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);const ms=t-now;if(ms>0&&ms<864e5&&!r.done)timers.push(setTimeout(()=>notify(r),ms))});
+}
+async function notify(r){try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();const o={body:r.body,icon:'icons/icon-192.png',badge:'icons/badge.png',tag:'bc-'+r.id,lang:'ar',dir:'rtl',data:{url:'./#home'}};if(reg)reg.showNotification(r.title,o);else new Notification(r.title,o)}catch(e){}}
+async function registerPeriodic(){try{const reg=await navigator.serviceWorker.ready;if('periodicSync' in reg){const st=await navigator.permissions.query({name:'periodic-background-sync'});if(st.state==='granted')await reg.periodicSync.register('bc-reminders',{minInterval:60*60*1000})}}catch(e){}}
+async function syncSWConfig(){try{if(!('caches' in window))return;const c=await caches.open('bc-config');const days={};for(let i=0;i<2;i++){const d=addDays(new Date(),i);days[keyOf(d)]=reminderList(d)}await c.put('config.json',new Response(JSON.stringify({notify:S.settings.notify,days}),{headers:{'Content-Type':'application/json'}}))}catch(e){}}
+
+/* ================== sheets & modals ================== */
+function sheet(html){closeSheet();const bg=document.createElement('div');bg.className='sheet-bg';bg.id='sheet';bg.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div class="row" style="justify-content:flex-end;margin:-6px 0 6px"><button class="x" data-act="sheet-close" aria-label="إغلاق" style="width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center">${ic('x')}</button></div>${html}</div>`;document.body.appendChild(bg);mountFigures(bg);bg.addEventListener('click',e=>{if(e.target===bg)closeSheet()})}
+function closeSheet(){const s=$('#sheet');if(s)s.remove()}
+function modal(html){closeModal();const bg=document.createElement('div');bg.className='modal-bg';bg.id='modal';bg.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(bg);bg.addEventListener('click',e=>{if(e.target===bg&&!bg.dataset.lock)closeModal()});return bg}
+function closeModal(){const m=$('#modal');if(m)m.remove()}
+function confirmBox(title,text,okLabel,onOk,danger){const m=modal(`<h2>${title}</h2><p class="muted" style="margin-top:8px">${text}</p><div class="row" style="margin-top:18px;gap:10px"><button class="btn sm ghost" style="flex:1" data-act="modal-close">إلغاء</button><button class="btn sm ${danger?'danger':'primary'}" style="flex:1" id="okb">${okLabel}</button></div>`);$('#okb',m).onclick=()=>{closeModal();onOk()}}
+
+function onboarding(){
+  const m=modal(`<div style="text-align:center"><div class="brand-mark" style="width:68px;height:68px;border-radius:22px;margin:0 auto 12px">${LOGO.replace(/26/g,'40')}</div>
+   <h1 style="font-size:22px">BackCare</h1><p class="muted">رحلة تعافي ظهرك · برنامج منزلي متدرّج 8 أسابيع</p></div>
+   <div class="box green small" style="margin-top:16px"><ul class="lst" style="margin:0">
+    <li>روتين صباحي ومسائي موجّه خطوة بخطوة، وسباحة مرتين أسبوعيًا.</li>
+    <li>التدرّج يحدث فقط إذا كانت الأعراض مستقرة.</li>
+    <li>بياناتك محفوظة على موبايلك فقط.</li></ul></div>
+   <div class="box amber small" style="margin-top:10px"><b>تنبيه:</b> التطبيق لا يشخّص ولا يغني عن الطبيب أو أخصائي العلاج الطبيعي. التمارين لا «ترجع الغضروف لمكانه» ولا تضمن الشفاء. توقف عن أي حركة تزيد الأعراض.</div>
+   <label class="small" style="display:block;margin-top:14px;font-weight:600">تاريخ بداية البرنامج</label>
+   <input type="date" id="ob-start" value="${S.settings.start}" max="${today()}" style="margin-top:6px">
+   <button class="btn primary block" style="margin-top:16px" id="ob-go">فهمت، يلا نبدأ</button>
+   <button class="link" style="display:block;margin:12px auto 0" data-act="redflags">اعرض العلامات التحذيرية</button>`);
+  m.dataset.lock='1';
+  $('#ob-go',m).onclick=()=>{const v=$('#ob-start',m).value;if(v)S.settings.start=v;S.settings.level=calWeek();S.settings.lastAdv=today();S.settings.onboarded=true;save();closeModal();render()};
+}
+
+/* ================== events ================== */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday]');if(!t)return;
+  if(t.dataset.tab){closeSheet();go(t.dataset.tab);return}
+  if(t.dataset.sym){const s=t.dataset.sym;const i=PD.sym.indexOf(s);if(i<0)PD.sym.push(s);else PD.sym.splice(i,1);t.classList.toggle('on');return}
+  if(t.dataset.swimday){const d=+t.dataset.swimday,a=S.settings.swimDays;const i=a.indexOf(d);if(i<0)a.push(d);else a.splice(i,1);save();scheduleLocal();render();return}
+  const a=t.dataset.act;
+  switch(a){
+    case 'start':startWorkout(t.dataset.kind);break;
+    case 'detail':openDetail(t.dataset.id);break;
+    case 'sheet-close':closeSheet();break;
+    case 'modal-close':closeModal();break;
+    case 'redflags':showRedFlags(false);break;
+    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();toast('رائع! تم تسجيل السباحة 🏊')}save();render();break}
+    case 'pain-save':savePain();break;
+    case 'install':doInstall();break;
+    case 'ics':download('backcare-reminders.ics',icsFile(),'text/calendar');toast('افتح الملف لإضافته لتقويم جوجل');break;
+    case 'export':exportData();break;
+    case 'import':$('#imp').click();break;
+    case 'reset':confirmBox('مسح كل البيانات؟','سيتم حذف سجل التمارين والألم والإعدادات من هذا الموبايل. لا يمكن التراجع.','مسح',()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defaults();save();render();onboarding()},true);break;
+    case 'wk-toggle':unlockAudio();W.run=!W.run;if(W.run)requestWake();W.last=0;wkUpdate(false);break;
+    case 'wk-skip':if(W.idx>=W.items.length-1){wkFinish()}else{const k=W.run;W.idx++;wkLoad();W.run=k}break;
+    case 'wk-prev':if(W.idx>0){W.idx--;wkLoad()}break;
+    case 'wk-done':wkComplete();break;
+    case 'wk-min':{const st=W.steps[W.si];const tm=W.steps.find(s=>s.k==='timed');if(tm){tm.d=Math.max(60,tm.d+60*(+t.dataset.v));if(st===tm&&W.el>=tm.d)W.el=tm.d-1;toast(`المدة: ${Math.round(tm.d/60)} دقائق`);W._k=-1}break}
+    case 'wk-pain':W.run=false;S.flares[today()]=(S.flares[today()]||0)+1;save();
+      modal(`<h2>خلّيك مرتاح</h2><p style="margin-top:8px">أوقف هذا التمرين الآن. الألم المسموح خفيف ومؤقت فقط. إذا امتد الألم للساق أو ظهر تنميل أو ضعف، راجع العلامات التحذيرية.</p>
+      <div class="stack" style="margin-top:16px"><button class="btn primary block" id="pf-skip">تخطَّ هذا التمرين</button><button class="btn ghost block" id="pf-end">أنهِ الجلسة وسجّل ما تم</button><button class="btn ghost block" data-act="modal-close">أكمل بحذر وبمدى أصغر</button><button class="link" style="display:block;margin:4px auto" data-act="redflags">العلامات التحذيرية</button></div>`);
+      $('#pf-skip').onclick=()=>{closeModal();if(W.idx>=W.items.length-1)wkFinish();else{W.idx++;wkLoad()}};
+      $('#pf-end').onclick=()=>{closeModal();wkFinish()};break;
+    case 'wk-close':{const n=routineDoneCount(W.kind);W.run=false;confirmBox('إنهاء التمرين؟',n?`تم حفظ ${n} تمارين. يمكنك الاستكمال لاحقًا من نفس المكان.`:'لم تكمل أي تمرين بعد.','إنهاء',wkClose);break}
+    case 'wk-savepain':{const v=+$('#fpr').value;const p=S.pain[today()]||{sym:[],note:''};S.pain[today()]={...p,level:v,at:Date.now()};save();wkClose();toast('تم الحفظ. أحسنت 👏');break}
+    case 'wk-exit':wkClose();break;
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.set){applySetting(t.dataset.set,t.value);if(t.dataset.set!=='morning'&&t.dataset.set!=='evening'&&t.dataset.set!=='swimTime')render();return}
+  if(t.dataset.toggle){toggleSetting(t.dataset.toggle,t.checked,t);return}
+  if(t.id==='imp'&&t.files[0]){importData(t.files[0]);t.value=''}
+});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(TABS.some(x=>x[0]===h)&&h!==tab){tab=h;render()}});
+
+/* install */
+let deferredInstall=null;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(!W&&(tab==='home'||tab==='set'))render()});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;toast('تم تثبيت BackCare ✓');render()});
+async function doInstall(){if(!deferredInstall)return;deferredInstall.prompt();try{await deferredInstall.userChoice}catch(e){}deferredInstall=null;render()}
+
+/* boot */
+if('serviceWorker' in navigator&&location.protocol==='https:'||location.hostname==='localhost'){if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').then(()=>{syncSWConfig();if(S.settings.notify)registerPeriodic()}).catch(()=>{})}
+render();requestAnimationFrame(loop);scheduleLocal();
+if(!S.settings.onboarded)onboarding();
+setInterval(()=>{if(!W&&tab==='home'&&!$('#sheet')&&!$('#modal')&&document.visibilityState==='visible'){const sy=scrollY;render();scrollTo(0,sy)}},5*60*1000);
+</script>
+</body>
+</html>
