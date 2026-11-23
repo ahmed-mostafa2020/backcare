@@ -352,19 +352,20 @@ function isSwimDay(d=new Date()){return S.settings.swimDays.includes(d.getDay())
 
 function routine(kind,L=level()){
   const p=phaseOf(L);
-  if(kind==='evening')return[
-    {id:'walk',min:5,max:5},{id:'tilt',reps:8},{id:'brace',reps:8,hold:5},{id:'hipflexor',hold:20,perSide:true},{id:'breath',min:1,max:2}];
+  if(kind==='evening'){const r=[{id:'walk',min:5,max:5},{id:'tilt',reps:8},{id:'brace',reps:8,hold:5},{id:'hipflexor',hold:20,perSide:true}];if(L>=3)r.push({id:'piriformis',hold:20,perSide:true,optional:true});r.push({id:'breath',min:1,max:2});return r}
   const W=[[5,10],[8,12],[10,15],[12,20]][p-1];
-  const r=[
-    {id:'walk',min:W[0],max:W[1]},
-    {id:'brace',reps:10,hold:[5,7,8,10][p-1]},
-    {id:'tilt',reps:[10,12,12,12][p-1]},
-    {id:'heel',reps:[8,10,10,12][p-1],perSide:true},
-    {id:'birddog',reps:[6,8,8,10][p-1],hold:[5,5,7,8][p-1],perSide:true},
-    [{id:'bridge',reps:8,label:'8–10 تكرار'},{id:'bridge',reps:10,hold:2},{id:'bridge',reps:10,hold:3,sets:2},{id:'bridge',reps:12,hold:3,sets:2}][p-1]];
+  const r=[{id:'walk',min:W[0],max:W[1]},{id:'catcamel',reps:8}];
+  if(p<4)r.push({id:'brace',reps:10,hold:[5,7,8][p-1]});
+  if(p===1)r.push({id:'tilt',reps:10},{id:'heel',reps:8,perSide:true});
+  if(p===2)r.push({id:'tilt',reps:12});
+  if(p>=2)r.push({id:'curlup',reps:[0,5,6,6][p-1],hold:[0,8,8,10][p-1]});
+  r.push({id:'birddog',reps:[6,8,8,10][p-1],hold:[5,5,7,8][p-1],perSide:true});
+  r.push([{id:'bridge',reps:8,label:'8–10 تكرار'},{id:'bridge',reps:10,hold:2},{id:'slbridge',reps:6,hold:3,perSide:true},{id:'slbridge',reps:8,hold:3,perSide:true}][p-1]);
   if(L>=2)r.push(L===2?{id:'sideplank',reps:1,sets:2,hold:12,perSide:true,optional:true,label:'2 × 10–15 ث لكل جهة'}:
     [null,null,{id:'sideplank',reps:1,sets:2,hold:15,perSide:true,label:'2 × 15–20 ث لكل جهة'},{id:'sideplank',reps:1,sets:3,hold:20,perSide:true},{id:'sideplank',reps:1,sets:3,hold:25,perSide:true,label:'3 × 25–30 ث لكل جهة'}][p]);
-  if(p===4)r.push({id:'sts',reps:8,sets:2});
+  if(p===2||p===3)r.push({id:'clamshell',reps:10,hold:2,perSide:true,label:p===3?'10 × 2 ث لكل جهة · بشريط خفيف لو مريح':null});
+  if(p===4)r.push({id:'splitsquat',reps:8,perSide:true},{id:'stepup',reps:8,perSide:true},{id:'farmer',min:1,max:2});
+  if(p>=2)r.push({id:'adductor',reps:8,optional:true});
   r.push({id:'hipflexor',hold:[20,20,25,30][p-1],perSide:true},{id:'hamstring',hold:[20,25,30,30][p-1],perSide:true,label:p===1?'15–20 ث لكل جهة':null});
   return r;
 }
@@ -454,7 +455,7 @@ const EX={
   mis:['الارتفاع الزائد وتقويس الظهر','الدفع من الرقبة والكتفين','انهيار الركبتين للداخل'],
   safe:'ارتفع للمدى المريح فقط. إذا شعرت بالجهد في الظهر بدل الأرداف، قلّل الارتفاع.',
   det:'القدمان على عرض الوركين وقريبتان من الأرداف. ابدأ بشدّ البطن، ثم اعصر الأرداف وارفع الحوض. انزل فقرةً فقرة ببطء.'},
- sideplank:{name:'البلانك الجانبي المعدّل',en:'Modified Side Plank',kind:'reps',anim:'hold',prop:'mat',
+ sideplank:{name:'البلانك الجانبي المعدّل',en:'Modified Side Plank',kind:'reps',anim:'hold',prop:'mat',from:2,
   A:{head:[70,106],neck:[86,120],hip:[150,155],sh:[92,124],elN:[94,160],haN:[122,162],elF:[114,114],haF:[142,138],knN:[196,159],anN:[170,150],toN:[160,144],knF:[192,155],anF:[166,145],toF:[156,139],f:[.6,-.8]},
   B:{hip:[150,134],elF:[116,106],haF:[144,126]},
   short:'على جانبك مستندًا على الساعد والركبتان مثنيتان: ارفع الحوض حتى يستقيم الجسم من الرأس للركبتين، واثبت.',
@@ -485,14 +486,78 @@ const EX={
   mis:['رفع الكتفين مع الشهيق','التنفّس السريع'],
   safe:'إذا شعرت بدوخة، عد إلى تنفّسك الطبيعي.',
   det:'اتبع الإيقاع على الشاشة: شهيق 4 ثوانٍ، زفير 6 ثوانٍ. اترك الكتفين والفك مرتخيين.'},
- sts:{name:'الجلوس والوقوف',en:'Sit to Stand',kind:'reps',anim:'tempo',tempo:5,prop:'chair',
-  A:{head:[156,56],neck:[150,72],hip:[122,118],knN:[168,120],anN:[170,166],toN:[184,170],knF:[164,122],anF:[166,166],toF:[180,170],elN:[160,96],haN:[178,104],elF:[156,98],haF:[174,106],f:[1,.15]},
-  B:{head:[148,28],neck:[146,46],hip:[140,100],knN:[150,134],anN:[158,168],toN:[172,170],knF:[146,135],anF:[154,166],toF:[168,170],elN:[156,72],haN:[174,80],elF:[152,74],haF:[170,82]},
-  short:'على حافة كرسي والقدمان على الأرض: شدّ البطن، مِل للأمام من الورك وقف، ثم اجلس ببطء.',
-  ben:['يدرّب حركة يومية أساسية بطريقة آمنة','يقوّي الأرداف والفخذين'],
-  mis:['انحناء الظهر بدل الميل من الورك','السقوط على الكرسي عند الجلوس','دخول الركبتين للداخل'],
-  safe:'استخدم يديك للمساعدة إن احتجت. توقف إذا زاد الألم.',
-  det:'ظهرك مستقيم والميل من مفصل الورك. ادفع الأرض بقدميك لتقف، ثم ارجع للخلف وانزل ببطء كأنك تلمس الكرسي فقط.'}
+ catcamel:{name:'القطة والجمل',en:'Cat-Camel',kind:'reps',anim:'tempo',tempo:6,prop:'mat',from:1,
+  A:{head:[204,116],neck:[190,107],mid:[155,93],hip:[120,108],elN:[194,132],haN:[196,160],elF:[188,132],haF:[190,160],knN:[118,158],anN:[80,161],toN:[70,158],knF:[122,158],anF:[84,161],toF:[74,158],f:[1,.6]},
+  B:{head:[210,88],neck:[192,100],mid:[155,108],hip:[120,102],elN:[195,128],elF:[189,128]},
+  short:'على اليدين والركبتين: قوّس ظهرك لأعلى بهدوء، ثم اخفضه قليلًا لأسفل، في مدى صغير ومريح.',
+  ben:['يحرّك الفقرات بلطف ويقلل التيبّس','تحضير ممتاز قبل باقي التمارين'],
+  mis:['الضغط لآخر المدى','الحركة السريعة','حبس النفس'],
+  safe:'المقصود تحريك لطيف وليس إطالة. لا تضغط في آخر المدى، خاصة عند خفض الظهر لأسفل.',
+  det:'زفير مع تقويس الظهر لأعلى، وشهيق مع العودة. 8 حركات بطيئة تكفي.'},
+ curlup:{name:'ثني البطن المعدّل',en:'McGill Curl-Up',kind:'reps',anim:'hold',prop:'mat',from:3,
+  A:P(HOOK,{knF:[172,160],anF:[208,162],toF:[214,152],elN:[100,161],haN:[122,165],elF:[98,160],haF:[120,163]}),
+  B:{head:[66,134],neck:[84,145]},
+  short:'على ظهرك، ركبة مثنية والأخرى ممدودة، ويداك تحت أسفل الظهر: ارفع الرأس والكتفين قليلًا جدًا واثبت.',
+  ben:['يقوّي عضلات البطن دون ثني الظهر','من تمارين ماكجيل المعروفة لثبات الظهر'],
+  mis:['رفع الجسم كله كتمرين البطن العادي','ثني الرقبة وشدّ الذقن للصدر','تسطيح الظهر على اليدين'],
+  safe:'الرفع بسيط جدًا (بضعة سنتيمترات). إذا شعرت بألم في الظهر أو الرقبة، قلّل الارتفاع.',
+  det:'اليدان تحت انحناءة أسفل الظهر للحفاظ على وضعه الطبيعي. الرأس والرقبة والصدر قطعة واحدة. بدّل الساق الممدودة في منتصف التكرارات.'},
+ clamshell:{name:'تمرين الصدفة',en:'Clamshell',kind:'reps',anim:'hold',prop:'mat',from:3,
+  A:{head:[62,138],neck:[80,145],hip:[140,150],knN:[184,146],anN:[168,163],toN:[158,165],knF:[184,152],anF:[168,166],toF:[158,167],elN:[112,148],haN:[132,152],elF:[64,162],haF:[52,146],f:[.4,-1]},
+  B:{knN:[168,102],anN:[166,158]},
+  short:'على جانبك والركبتان مثنيتان والقدمان متلاصقتان: افتح الركبة العلوية ببطء دون أن يتحرك الحوض، ثم أغلقها.',
+  ben:['يقوّي عضلات الورك الجانبية التي تثبّت الحوض','يحسّن توزيع الحمل على أسفل الظهر'],
+  mis:['دوران الحوض للخلف مع فتح الركبة','فصل القدمين','الحركة السريعة'],
+  safe:'ابدأ بدون شريط. أضف شريطًا خفيفًا من الأسبوع 5 فقط إذا كان مريحًا.',
+  det:'ضع يدك العلوية على الحوض لتتأكد أنه ثابت. افتح الركبة للمدى الذي يبقى فيه الحوض ثابتًا فقط.'},
+ slbridge:{name:'جسر بساق واحدة',en:'Single-Leg Bridge',kind:'reps',anim:'hold',prop:'mat',from:5,
+  A:P(HOOK,{knN:[178,126],anN:[218,128],toN:[226,118]}),
+  B:{hip:[140,126],neck:[82,151],knF:[174,112],knN:[184,116],anN:[226,104],toN:[232,93]},
+  short:'مثل جسر الأرداف، لكن مع فرد ساق واحدة: ارفع الحوض وحافظ عليه مستويًا.',
+  ben:['يقوّي الأرداف كل جهة على حدة','يتحدّى ثبات الحوض أكثر من الجسر العادي'],
+  mis:['ميل الحوض لجهة الساق المرفوعة','تقويس الظهر','الدفع من الكتفين'],
+  safe:'إذا مال الحوض أو شعرت بالجهد في الظهر، ارجع للجسر العادي.',
+  det:'شدّ البطن أولًا، ثم افرد الساق، ثم ارفع الحوض بدفع الكعب المثبّت. اثبت، وانزل ببطء.'},
+ piriformis:{name:'إطالة العضلة الكمثرية',en:'Piriformis Stretch',kind:'stretch',anim:'stretch',prop:'mat',from:3,
+  A:P(HOOK,{knN:[166,128],anN:[178,124],toN:[188,120],knF:[178,122],anF:[202,160],toF:[216,163],elN:[110,150],haN:[136,150]}),
+  B:{knF:[162,108],anF:[190,100],toF:[200,94],knN:[154,118],anN:[166,108],toN:[176,104],elN:[112,134],haN:[150,116],elF:[110,138],haF:[148,120]},
+  short:'على ظهرك: ضع كاحلًا فوق ركبة الساق الأخرى، ثم اسحب الساق نحوك بلطف حتى تشعر بشدّ في الأرداف.',
+  ben:['يخفف شدّ عضلات الأرداف العميقة','قد يريح الإحساس بالشدّ في الورك'],
+  mis:['السحب بقوة','رفع الرأس أو الحوض','الإطالة حتى الألم'],
+  safe:'إذا زاد ألم الظهر أو ظهر تنميل في الساق، أوقف هذه الإطالة. هي اختيارية.',
+  det:'ابقَ مرتخيًا والرأس على الأرض. يكفي وضع الكاحل على الركبة دون سحب إذا كان الشدّ كافيًا.'},
+ adductor:{name:'المرجحة للخلف',en:'Adductor Rock Back',kind:'reps',anim:'tempo',tempo:5,prop:'mat',from:3,
+  A:{head:[210,90],neck:[192,102],hip:[124,106],elN:[194,130],haN:[196,160],elF:[188,130],haF:[190,160],knN:[156,138],anN:[184,161],toN:[196,158],knF:[124,158],anF:[86,161],toF:[76,158],f:[1,.35]},
+  B:{head:[192,104],neck:[176,112],hip:[100,118],knN:[138,142],anN:[176,161],toN:[188,158],knF:[118,160],anF:[82,162],toF:[72,159],elN:[188,136],elF:[182,136]},
+  short:'على اليدين والركبتين مع فرد ساق للجانب: ارجع بالحوض للخلف ببطء مع ظهر مستقيم، ثم عد.',
+  ben:['يحرّك الورك ويطيل الفخذ الداخلي بلطف','يعلّم تحريك الورك مع ثبات الظهر'],
+  mis:['تقويس الظهر أثناء الرجوع','الرجوع لمدى أكبر من المريح'],
+  safe:'تمرين اختياري. الظهر يبقى مستقيمًا، والحركة من الورك فقط.',
+  det:'القدم الممدودة على الأرض. ارجع حتى تشعر بشدّ لطيف في الفخذ الداخلي، ثم تقدّم.'},
+ splitsquat:{name:'القرفصاء المنقسمة',en:'Split Squat',kind:'reps',anim:'tempo',tempo:5,prop:'ground',from:7,
+  A:{head:[150,28],neck:[148,46],hip:[146,100],knN:[172,134],anN:[176,168],toN:[190,170],knF:[124,134],anF:[106,160],toF:[118,170],elN:[162,74],haN:[150,98],elF:[158,74],haF:[146,98],f:[1,0]},
+  B:{head:[150,52],neck:[148,70],hip:[146,124],knN:[180,128],anN:[178,168],knF:[124,160],anF:[100,160],toF:[112,170],elN:[162,98],haN:[150,122],elF:[158,98],haF:[146,122]},
+  short:'قف بخطوة واسعة، قدم أمام والأخرى خلف: انزل عموديًا ببطء مع جذع مستقيم، ثم اصعد.',
+  ben:['يقوّي الأرجل والأرداف لحركات يومية كالانحناء والطلوع','يحسّن التوازن'],
+  mis:['ميل الجذع للأمام','دخول الركبة الأمامية للداخل','النزول لمدى يسبب ألمًا'],
+  safe:'انزل لمدى صغير في البداية، واستند على حائط أو كرسي إن احتجت.',
+  det:'الوزن على القدم الأمامية، والركبة فوق منتصف القدم. البطن مشدود بلطف.'},
+ stepup:{name:'تمرين الصعود',en:'Step Up',kind:'reps',anim:'tempo',tempo:5,prop:'step',from:7,
+  A:{head:[136,30],neck:[134,48],hip:[132,102],knN:[164,120],anN:[168,148],toN:[182,150],knF:[130,136],anF:[128,168],toF:[142,170],elN:[124,76],haN:[120,100],elF:[144,76],haF:[150,98],f:[1,0]},
+  B:{head:[164,20],neck:[162,38],hip:[160,92],knN:[168,122],anN:[168,148],knF:[156,124],anF:[150,142],toF:[162,145],elN:[154,66],haN:[150,90],elF:[172,66],haF:[178,88]},
+  short:'ضع قدمًا على درجة ثابتة منخفضة، ادفع بالكعب واصعد بجذع مستقيم، ثم انزل ببطء.',
+  ben:['يدرّب طلوع السلم بطريقة آمنة','يقوّي الأرداف والفخذين'],
+  mis:['الدفع بالقدم الخلفية بدل الأمامية','انحناء الظهر','درجة عالية جدًا'],
+  safe:'استخدم درجة منخفضة (15–20 سم) وثابتة، وامسك درابزين إن وُجد.',
+  det:'نفّذ كل التكرارات على جهة ثم بدّل. النزول ببطء وبتحكم.'},
+ farmer:{name:'مشية المزارع',en:"Farmer's Carry",kind:'timed',anim:'walk',prop:'ground',db:true,from:7,
+  A:{head:[152,28],neck:[150,46],hip:[148,100],knN:[160,134],anN:[168,168],toN:[181,170],knF:[138,135],anF:[126,165],toF:[138,170],elN:[150,76],haN:[150,104],elF:[146,76],haF:[146,104],f:[1,0]},
+  B:{knN:[138,135],anN:[126,165],toN:[138,170],knF:[160,134],anF:[168,168],toF:[181,170]},
+  short:'امشِ ببطء وأنت تحمل وزنًا خفيفًا في كل يد، والكتفان للخلف والجذع مستقيم.',
+  ben:['يقوّي الجذع أثناء الحمل والمشي','يحاكي حمل الأكياس في الحياة اليومية'],
+  mis:['أوزان ثقيلة','ميل الجسم أو رفع الكتفين','حبس النفس'],
+  safe:'ابدأ بوزن خفيف جدًا (2–5 كجم، أو زجاجتي ماء). توقف إذا زاد الألم.',
+  det:'انزل بالركبتين والورك لالتقاط الأوزان، لا بالظهر. خطوات قصيرة وتنفّس منتظم.'}
 };
 const SWIM={prop:'water',anim:'walk',
   A:{head:[222,95],neck:[206,100],hip:[140,104],knN:[102,100],anN:[64,104],toN:[52,100],knF:[102,108],anF:[64,112],toF:[52,116],elN:[236,90],haN:[264,92],elF:[178,118],haF:[152,121],f:[1,.5]},
@@ -513,6 +578,7 @@ class Figure{
     mk('circle',{cx:252,cy:44,r:30,fill:'#fff',opacity:.6,class:'c-deco'},svg);
     if(d.prop==='mat'){mk('rect',{x:24,y:166,width:252,height:9,rx:4.5,fill:'#C9D9C5',class:'c-mat'},svg);mk('rect',{x:24,y:166,width:252,height:3,rx:1.5,fill:'#B5C9B0',class:'c-mat2'},svg)}
     if(d.prop==='ground'){mk('line',{x1:30,y1:173,x2:270,y2:173,stroke:'#D8D2C6','stroke-width':3,'stroke-linecap':'round','stroke-dasharray':'2 9',class:'c-ground'},svg)}
+    if(d.prop==='step'){mk('rect',{x:140,y:150,width:76,height:21,rx:4,fill:'#B9A88F',stroke:'#22302F','stroke-width':2},svg);mk('line',{x1:30,y1:172,x2:270,y2:172,stroke:'#D8D2C6','stroke-width':3,'stroke-linecap':'round',class:'c-ground'},svg)}
     if(d.prop==='chair'){const g=mk('g',{fill:'none',stroke:'#9C8B74','stroke-width':6,'stroke-linecap':'round'},svg);mk('path',{d:'M96 70 V172 M96 126 H140 M138 126 V172'},g);mk('line',{x1:30,y1:174,x2:270,y2:174,stroke:'#D8D2C6','stroke-width':3,'stroke-linecap':'round'},svg)}
     this.shadow=mk('ellipse',{cx:150,cy:173,rx:60,ry:4,fill:'rgba(19,33,60,.08)',class:'c-shadow'},svg);
     if(d.prop==='water'){this.shadow.setAttribute('opacity',0)}
@@ -521,17 +587,19 @@ class Figure{
     this.e={
       fThigh:L(C.skinD,14),fShorts:L(C.shortsD,15.5,'c-shd'),fShin:L(C.skinD,11),fFoot:L(C.shoeD,9,'c-shoed'),
       fUpper:L(C.skinD,9.5),fSleeve:L(C.shirtD,12),fFore:L(C.skinD,8.5),
-      torso:L(C.shirt,25),hipC:mk('circle',{r:12.5,fill:C.shorts,class:'c-shf'},g),
+      torso:mk('path',{stroke:C.shirt,'stroke-width':25},g),hipC:mk('circle',{r:12.5,fill:C.shorts,class:'c-shf'},g),
       nThigh:L(C.skin,15),nShorts:L(C.shorts,16.5,'c-sh'),nShin:L(C.skin,11.5),nFoot:L(C.shoe,9.5,'c-shoe'),
       neck:L(C.skin,9.5),hair:mk('circle',{r:12.6,fill:C.hair,class:'c-hair'},g),face:mk('circle',{r:11.3,fill:C.skin,stroke:C.ol,'stroke-width':1.6},g),
       beard:mk('path',{stroke:C.hair,'stroke-width':4.2,opacity:.9,class:'c-beard'},g),eye:mk('circle',{r:1.5,fill:C.hair,class:'c-eye'},g),
       core:d.core?mk('circle',{fill:'#F2B84B',opacity:.3},g):null,ring:d.core?mk('circle',{fill:'none',stroke:'#E39B2D','stroke-width':2.5,opacity:0},g):null,
-      nUpper:L(C.skin,10),nSleeve:L(C.shirt,12.5),nFore:L(C.skin,9)
+      nUpper:L(C.skin,10),nSleeve:L(C.shirt,12.5),nFore:L(C.skin,9),
+      dbF:d.db?L('#3A4256',8):null,dbN:d.db?L('#3A4256',8):null
     };
+    if(d.db){g.insertBefore(this.e.dbF,this.e.torso)}
     if(d.core){g.insertBefore(this.e.core,this.e.nThigh);g.insertBefore(this.e.ring,this.e.nThigh)}
     this.pairs=[];
-    ['fThigh','fShin','fFoot','fUpper','fFore','torso','hipC','nThigh','nShin','nFoot','neck','hair','nUpper','nFore'].forEach(k=>{const el=this.e[k];const cl=el.cloneNode();cl.removeAttribute('class');
-      if(el.tagName==='line'){cl.setAttribute('stroke',C.ol);cl.setAttribute('stroke-width',(+el.getAttribute('stroke-width')+3.4).toFixed(1))}else{cl.setAttribute('fill',C.ol);cl.setAttribute('r',(+el.getAttribute('r')+1.7).toFixed(1))}
+    ['fThigh','fShin','fFoot','fUpper','fFore','dbF','torso','hipC','nThigh','nShin','nFoot','neck','hair','nUpper','nFore','dbN'].forEach(k=>{const el=this.e[k];if(!el)return;const cl=el.cloneNode();cl.removeAttribute('class');
+      if(el.tagName!=='circle'){cl.setAttribute('stroke',C.ol);cl.setAttribute('stroke-width',(+el.getAttribute('stroke-width')+3.4).toFixed(1))}else{cl.setAttribute('fill',C.ol);cl.setAttribute('r',(+el.getAttribute('r')+1.7).toFixed(1))}
       cl.setAttribute('class','c-ol');g.insertBefore(cl,el);this.pairs.push([el,cl])});
     if(d.prop==='water'){
       mk('path',{d:'M0 106 Q25 98 50 106 T100 106 T150 106 T200 106 T250 106 T300 106 V200 H0Z',fill:'#5FB3C9',opacity:.42},svg);
@@ -549,7 +617,8 @@ class Figure{
     const Ci=(el,c)=>{el.setAttribute('cx',c[0].toFixed(1));el.setAttribute('cy',c[1].toFixed(1))};
     Ln(E.fThigh,p.hip,p.knF);Ln(E.fShorts,p.hip,lerp(p.hip,p.knF,.55));Ln(E.fShin,p.knF,p.anF);Ln(E.fFoot,p.anF,p.toF);
     Ln(E.fUpper,sh,p.elF);Ln(E.fSleeve,sh,lerp(sh,p.elF,.45));Ln(E.fFore,p.elF,p.haF);
-    Ln(E.torso,p.neck,lerp(p.neck,p.hip,.92));Ci(E.hipC,p.hip);
+    {const mid=p.mid||lerp(p.neck,p.hip,.5),end=p.mid?lerp(mid,p.hip,.85):lerp(p.neck,p.hip,.92),c=[2*mid[0]-(p.neck[0]+end[0])/2,2*mid[1]-(p.neck[1]+end[1])/2];E.torso.setAttribute('d',`M${p.neck[0].toFixed(1)} ${p.neck[1].toFixed(1)}Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${end[0].toFixed(1)} ${end[1].toFixed(1)}`)}Ci(E.hipC,p.hip);
+    if(E.dbN){Ln(E.dbN,[p.haN[0]-9,p.haN[1]+3],[p.haN[0]+9,p.haN[1]+3]);Ln(E.dbF,[p.haF[0]-9,p.haF[1]+3],[p.haF[0]+9,p.haF[1]+3])}
     Ln(E.nThigh,p.hip,p.knN);Ln(E.nShorts,p.hip,lerp(p.hip,p.knN,.55));Ln(E.nShin,p.knN,p.anN);Ln(E.nFoot,p.anN,p.toN);
     Ln(E.nUpper,sh,p.elN);Ln(E.nSleeve,sh,lerp(sh,p.elN,.45));Ln(E.nFore,p.elN,p.haN);
     Ln(E.neck,p.neck,lerp(p.neck,p.head,.65));
@@ -564,7 +633,7 @@ class Figure{
     if(E.core){const cc=lerp(p.neck,p.hip,.66);Ci(E.core,cc);E.core.setAttribute('r',(7+13*e).toFixed(1));E.core.setAttribute('opacity',(.12+.5*e).toFixed(2));Ci(E.ring,cc);E.ring.setAttribute('r',(14+16*e).toFixed(1));E.ring.setAttribute('opacity',(e*(1-e)*2.4).toFixed(2))}
     const xs=['hip','knN','anN','toN','knF','anF','toF','head','haN'].map(k=>p[k][0]);const mn=Math.min(...xs),mx=Math.max(...xs);
     this.shadow.setAttribute('cx',((mn+mx)/2).toFixed(1));this.shadow.setAttribute('rx',((mx-mn)/2+14).toFixed(1));
-    for(const[a,b]of this.pairs){if(a.tagName==='line'){b.setAttribute('x1',a.getAttribute('x1'));b.setAttribute('y1',a.getAttribute('y1'));b.setAttribute('x2',a.getAttribute('x2'));b.setAttribute('y2',a.getAttribute('y2'))}else{b.setAttribute('cx',a.getAttribute('cx'));b.setAttribute('cy',a.getAttribute('cy'))}}
+    for(const[a,b]of this.pairs){if(a.tagName==='path'){b.setAttribute('d',a.getAttribute('d'))}else if(a.tagName==='line'){b.setAttribute('x1',a.getAttribute('x1'));b.setAttribute('y1',a.getAttribute('y1'));b.setAttribute('x2',a.getAttribute('x2'));b.setAttribute('y2',a.getAttribute('y2'))}else{b.setAttribute('cx',a.getAttribute('cx'));b.setAttribute('cy',a.getAttribute('cy'))}}
     if(side!==this.side){this.side=side;this.g.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'');
       [...this.svg.children].forEach(ch=>{if(ch!==this.g&&ch!==this.shadow&&ch.tagName!=='path')ch.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'')})}
   }
@@ -700,7 +769,7 @@ function swimWeekCount(){const t=new Date();const off=WEEK_ORDER.indexOf(t.getDa
 /* library */
 function viewLibrary(){
   const L=level(),mT=routine('morning'),eT=routine('evening');
-  const lbl=id=>{const a=mT.find(i=>i.id===id)||eT.find(i=>i.id===id);return a?targetLabel(a):(id==='sideplank'?'من الأسبوع 2':id==='sts'?'الأسبوعان 7–8':'')};
+  const lbl=id=>{const a=mT.find(i=>i.id===id)||eT.find(i=>i.id===id);return a?targetLabel(a):(EX[id].from>L?`من الأسبوع ${EX[id].from}`:'')};
   return `<div class="top"><div><h1>التمارين</h1><div class="date">اضغط على أي تمرين لشرحه · المستوى ${L}</div></div></div>
   <div class="grid2">${Object.keys(EX).map(id=>`<button class="tile" data-act="detail" data-id="${id}"><div class="fig figbg" data-ex="${id}"></div><div class="t"><b>${EX[id].name}</b><span>${lbl(id)}</span></div></button>`).join('')}</div>
   <details class="card" style="margin-top:18px"><summary>${ic('info','icon" style="width:20px;height:20px;color:var(--teal)')} <span style="flex:1">معلومات تطمّنك</span></summary><div style="margin-top:8px">${safetyEdu(true)}</div></details>`;
