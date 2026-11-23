@@ -378,7 +378,6 @@ function routine(kind,L=level()){
     [null,null,{id:'sideplank',reps:1,sets:2,hold:15,perSide:true,label:'2 × 15–20 ث لكل جهة'},{id:'sideplank',reps:1,sets:3,hold:20,perSide:true},{id:'sideplank',reps:1,sets:3,hold:25,perSide:true,label:'3 × 25–30 ث لكل جهة'}][p]);
   if(p===2||p===3)r.push({id:'clamshell',reps:10,hold:2,perSide:true,label:p===3?'10 × 2 ث لكل جهة · بشريط خفيف لو مريح':null});
   if(p===4)r.push({id:'splitsquat',reps:8,perSide:true},{id:'stepup',reps:8,perSide:true},{id:'farmer',min:1,max:2});
-  if(p>=2)r.push({id:'adductor',reps:8,optional:true});
   r.push({id:'hipflexor',hold:[20,20,25,30][p-1],perSide:true},{id:'hamstring',hold:[20,25,30,30][p-1],perSide:true,label:p===1?'15–20 ث لكل جهة':null});
   return r;
 }
@@ -539,14 +538,6 @@ const EX={
   mis:['السحب بقوة','رفع الرأس أو الحوض','الإطالة حتى الألم'],
   safe:'إذا زاد ألم الظهر أو ظهر تنميل في الساق، أوقف هذه الإطالة. هي اختيارية.',
   det:'ابقَ مرتخيًا والرأس على الأرض. يكفي وضع الكاحل على الركبة دون سحب إذا كان الشدّ كافيًا.'},
- adductor:{img:'adductor',name:'المرجحة للخلف',en:'Adductor Rock Back',kind:'reps',anim:'tempo',tempo:5,prop:'mat',from:3,
-  A:{head:[210,90],neck:[192,102],hip:[124,106],elN:[194,130],haN:[196,160],elF:[188,130],haF:[190,160],knN:[156,138],anN:[184,161],toN:[196,158],knF:[124,158],anF:[86,161],toF:[76,158],f:[1,.35]},
-  B:{head:[192,104],neck:[176,112],hip:[100,118],knN:[138,142],anN:[176,161],toN:[188,158],knF:[118,160],anF:[82,162],toF:[72,159],elN:[188,136],elF:[182,136]},
-  short:'على اليدين والركبتين مع فرد ساق للجانب: ارجع بالحوض للخلف ببطء مع ظهر مستقيم، ثم عد.',
-  ben:['يحرّك الورك ويطيل الفخذ الداخلي بلطف','يعلّم تحريك الورك مع ثبات الظهر'],
-  mis:['تقويس الظهر أثناء الرجوع','الرجوع لمدى أكبر من المريح'],
-  safe:'تمرين اختياري. الظهر يبقى مستقيمًا، والحركة من الورك فقط.',
-  det:'القدم الممدودة على الأرض. ارجع حتى تشعر بشدّ لطيف في الفخذ الداخلي، ثم تقدّم.'},
  splitsquat:{img:'splitsquat',name:'القرفصاء المنقسمة',en:'Split Squat',kind:'reps',anim:'tempo',tempo:5,prop:'ground',from:7,
   A:{head:[150,28],neck:[148,46],hip:[146,100],knN:[172,134],anN:[176,168],toN:[190,170],knF:[124,134],anF:[106,160],toF:[118,170],elN:[162,74],haN:[150,98],elF:[158,74],haF:[146,98],f:[1,0]},
   B:{head:[150,52],neck:[148,70],hip:[146,124],knN:[180,128],anN:[178,168],knF:[124,160],anF:[100,160],toF:[112,170],elN:[162,98],haN:[150,122],elF:[158,98],haF:[146,122]},
@@ -623,7 +614,7 @@ class Figure{
     this.draw(0,null);FIGS.add(this);
   }
   draw(t,side){
-    if(this.isImg){const x=t<0?0:t>1?1:t,u=x<.12?0:x>.88?1:(x-.12)/.76,e=u*u*(3-2*u);this.pb.style.opacity=e.toFixed(3);this.side=side;this.wrap.style.transform=`${side==='L'?'scaleX(-1) ':''}scale(${(1+.015*e).toFixed(4)})`;if(this.ind){this.ind.querySelector('b').style.width=(e*100).toFixed(1)+'%';const sp=this.ind.querySelectorAll('span');sp[0].classList.toggle('on',e<.5);sp[1].classList.toggle('on',e>=.5)}return}
+    if(this.isImg){const x=t<0?0:t>1?1:t,u=x<.22?0:x>.78?1:(x-.22)/.56,e=u*u*(3-2*u);this.pb.style.opacity=e.toFixed(3);this.side=side;this.wrap.style.transform=`${side==='L'?'scaleX(-1) ':''}scale(${(1+.015*e).toFixed(4)})`;if(this.ind){this.ind.querySelector('b').style.width=(e*100).toFixed(1)+'%';const sp=this.ind.querySelectorAll('span');sp[0].classList.toggle('on',e<.5);sp[1].classList.toggle('on',e>=.5)}return}
     const d=this.def,A=d.A,B=d.B||{};const p={};
     const e=t<0?0:t>1?1:t;
     for(const k in A){p[k]=B[k]&&k!=='f'?lerp(A[k],B[k],e):A[k]}
