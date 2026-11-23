@@ -156,8 +156,6 @@ button.li:active{background:var(--sage-xl)}
 .fig svg{display:block;width:100%;height:100%}
 .fig-card{background:linear-gradient(160deg,var(--fig1),var(--fig2) 75%);border-radius:24px;overflow:hidden;aspect-ratio:3/2;border:1px solid var(--line)}
 .figbg{background:linear-gradient(160deg,var(--fig1),var(--fig2) 80%)}
-[data-theme=dark] .fig .c-sh{stroke:#3F5C93}[data-theme=dark] .fig .c-shd{stroke:#304A7C}[data-theme=dark] .fig .c-shf{fill:#3F5C93}
-[data-theme=dark] .fig .c-shoe{stroke:#68748F}[data-theme=dark] .fig .c-shoed{stroke:#4F5A72}
 [data-theme=dark] .fig .c-hair{fill:#47372C}[data-theme=dark] .fig .c-beard{stroke:#47372C}[data-theme=dark] .fig .c-eye{fill:#2A211C}
 [data-theme=dark] .fig .c-mat{fill:#2C4637}[data-theme=dark] .fig .c-mat2{fill:#3A5947}[data-theme=dark] .fig .c-deco{fill:#ffffff;opacity:.05}
 [data-theme=dark] .fig .c-ground{stroke:#34445E}[data-theme=dark] .fig .c-shadow{fill:rgba(0,0,0,.28)}
@@ -270,6 +268,21 @@ textarea{min-height:80px;resize:vertical}
 
 .done-hero{text-align:center;padding:30px 10px 10px}
 .done-hero .big{width:96px;height:96px;border-radius:32px;background:var(--teal);display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 12px 30px rgba(42,140,130,.35)}
+:root{--heart-bg:#F7E4E7;--heart-line:#EBB0B9}[data-theme=dark]{--heart-bg:#2A2133;--heart-line:#5B3A4B}
+.heart rect{transition:y .7s cubic-bezier(.2,.8,.2,1)}
+.heart.full{animation:beat 1.6s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(224,68,92,.35))}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.08)}30%{transform:scale(1)}45%{transform:scale(1.05)}}
+.hwrap{position:relative;display:inline-grid;place-items:center}
+.hwrap>b{position:absolute;inset:0;display:grid;place-items:center;padding-bottom:6%;font-size:16px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.hero .hwrap>b{font-size:20px}
+.hcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px 2px;text-align:center}
+.hcal .hd{font-size:11.5px;color:var(--muted);padding-bottom:4px}
+.hc{display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:12px;position:relative}
+.hc span{font-size:12px;font-weight:600;margin-top:-2px}
+.hc em{font-style:normal;font-size:9.5px;color:var(--muted);line-height:1}
+.hc.today{background:var(--sage-xl);outline:1.5px solid var(--teal)}
+.hc.off{opacity:.35}
+.resume{margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--teal-l);color:var(--teal-ink);font-size:14px;display:flex;gap:8px;align-items:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -487,7 +500,7 @@ const SWIM={prop:'water',anim:'walk',
 
 /* ================== figure renderer ================== */
 const NS='http://www.w3.org/2000/svg';
-const C={skin:'#E5AE88',skinD:'#C88F69',shirt:'#2A8C82',shirtD:'#1D665F',shorts:'#1E3157',shortsD:'#142240',hair:'#2A211C',shoe:'#3B4357',shoeD:'#2A3042'};
+const C={skin:'#F2AC80',skinD:'#D98D63',shirt:'#34A66E',shirtD:'#268253',shorts:'#1F6B5E',shortsD:'#17544A',hair:'#3A2A22',shoe:'#3FAE73',shoeD:'#2E8A59',ol:'#22302F'};
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 const norm=v=>{const l=Math.hypot(v[0],v[1])||1;return[v[0]/l,v[1]/l]};
 function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
@@ -510,12 +523,16 @@ class Figure{
       fUpper:L(C.skinD,9.5),fSleeve:L(C.shirtD,12),fFore:L(C.skinD,8.5),
       torso:L(C.shirt,25),hipC:mk('circle',{r:12.5,fill:C.shorts,class:'c-shf'},g),
       nThigh:L(C.skin,15),nShorts:L(C.shorts,16.5,'c-sh'),nShin:L(C.skin,11.5),nFoot:L(C.shoe,9.5,'c-shoe'),
-      neck:L(C.skin,9.5),hair:mk('circle',{r:12.6,fill:C.hair,class:'c-hair'},g),face:mk('circle',{r:11.3,fill:C.skin},g),
+      neck:L(C.skin,9.5),hair:mk('circle',{r:12.6,fill:C.hair,class:'c-hair'},g),face:mk('circle',{r:11.3,fill:C.skin,stroke:C.ol,'stroke-width':1.6},g),
       beard:mk('path',{stroke:C.hair,'stroke-width':4.2,opacity:.9,class:'c-beard'},g),eye:mk('circle',{r:1.5,fill:C.hair,class:'c-eye'},g),
       core:d.core?mk('circle',{fill:'#F2B84B',opacity:.3},g):null,ring:d.core?mk('circle',{fill:'none',stroke:'#E39B2D','stroke-width':2.5,opacity:0},g):null,
       nUpper:L(C.skin,10),nSleeve:L(C.shirt,12.5),nFore:L(C.skin,9)
     };
     if(d.core){g.insertBefore(this.e.core,this.e.nThigh);g.insertBefore(this.e.ring,this.e.nThigh)}
+    this.pairs=[];
+    ['fThigh','fShin','fFoot','fUpper','fFore','torso','hipC','nThigh','nShin','nFoot','neck','hair','nUpper','nFore'].forEach(k=>{const el=this.e[k];const cl=el.cloneNode();cl.removeAttribute('class');
+      if(el.tagName==='line'){cl.setAttribute('stroke',C.ol);cl.setAttribute('stroke-width',(+el.getAttribute('stroke-width')+3.4).toFixed(1))}else{cl.setAttribute('fill',C.ol);cl.setAttribute('r',(+el.getAttribute('r')+1.7).toFixed(1))}
+      cl.setAttribute('class','c-ol');g.insertBefore(cl,el);this.pairs.push([el,cl])});
     if(d.prop==='water'){
       mk('path',{d:'M0 106 Q25 98 50 106 T100 106 T150 106 T200 106 T250 106 T300 106 V200 H0Z',fill:'#5FB3C9',opacity:.42},svg);
       mk('path',{d:'M0 112 Q25 104 50 112 T100 112 T150 112 T200 112 T250 112 T300 112',stroke:'#fff',fill:'none','stroke-width':2.5,opacity:.7},svg);
@@ -547,6 +564,7 @@ class Figure{
     if(E.core){const cc=lerp(p.neck,p.hip,.66);Ci(E.core,cc);E.core.setAttribute('r',(7+13*e).toFixed(1));E.core.setAttribute('opacity',(.12+.5*e).toFixed(2));Ci(E.ring,cc);E.ring.setAttribute('r',(14+16*e).toFixed(1));E.ring.setAttribute('opacity',(e*(1-e)*2.4).toFixed(2))}
     const xs=['hip','knN','anN','toN','knF','anF','toF','head','haN'].map(k=>p[k][0]);const mn=Math.min(...xs),mx=Math.max(...xs);
     this.shadow.setAttribute('cx',((mn+mx)/2).toFixed(1));this.shadow.setAttribute('rx',((mx-mn)/2+14).toFixed(1));
+    for(const[a,b]of this.pairs){if(a.tagName==='line'){b.setAttribute('x1',a.getAttribute('x1'));b.setAttribute('y1',a.getAttribute('y1'));b.setAttribute('x2',a.getAttribute('x2'));b.setAttribute('y2',a.getAttribute('y2'))}else{b.setAttribute('cx',a.getAttribute('cx'));b.setAttribute('cy',a.getAttribute('cy'))}}
     if(side!==this.side){this.side=side;this.g.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'');
       [...this.svg.children].forEach(ch=>{if(ch!==this.g&&ch!==this.shadow&&ch.tagName!=='path')ch.setAttribute('transform',side==='L'?'translate(300 0) scale(-1 1)':'')})}
   }
@@ -608,7 +626,8 @@ function render(){
   if(tab==='pain')bindPain();
 }
 function todayTasks(){const d=dayRec();const t=[{k:'morning',done:d.morning.fin},{k:'evening',done:d.evening.fin}];if(isSwimDay())t.push({k:'swim',done:!!(d.swim&&d.swim.done)});return t}
-function todayPct(){const d=dayRec();let tot=required('morning').length+required('evening').length,dn=required('morning').filter(i=>d.morning.done.includes(i.id)).length+required('evening').filter(i=>d.evening.done.includes(i.id)).length;if(isSwimDay()){tot+=4;if(d.swim&&d.swim.done)dn+=4}return tot?dn/tot:0}
+function todayPct(){return dayPct(today())}
+function todayPctOld(){const d=dayRec();let tot=required('morning').length+required('evening').length,dn=required('morning').filter(i=>d.morning.done.includes(i.id)).length+required('evening').filter(i=>d.evening.done.includes(i.id)).length;if(isSwimDay()){tot+=4;if(d.swim&&d.swim.done)dn+=4}return tot?dn/tot:0}
 function nextSwim(){for(let i=0;i<8;i++){const d=addDays(new Date(),i);if(isSwimDay(d))return{d,i}}return null}
 function greeting(){const h=new Date().getHours();return h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
@@ -636,6 +655,7 @@ function viewHome(){
       <h2>${m?'روتين الصباح':'روتين المساء'}</h2>
       <div class="muted small" style="margin-top:2px">${items.length} تمارين · حوالي ${routineMin(nk)} دقيقة</div>
       ${dn?`<div class="mini-bar"><b style="width:${dn/items.length*100}%"></b></div>`:''}
+      ${resumeNote(nk)}
       <button class="btn primary block" style="margin-top:18px" data-act="start" data-kind="${nk}">${ic('play','icon" style="width:18px;height:18px')} ${dn?'كمّل من مكانك':'ابدأ التمرين'}</button>
       ${first?`<p class="tip">هنمشي معاك تمرين تمرين، بالرسمة والتايمر والصوت.</p>`:''}
     </div>`;
@@ -664,7 +684,7 @@ function viewHome(){
         <h1 style="font-size:26px;margin-top:2px;color:#fff">الأسبوع ${L} من 8</h1>
         <div class="pill navy" style="margin-top:8px">${ph.t}</div>
       </div>
-      <div class="ring-wrap">${ring(pct,96,9,'#8FAE8B','rgba(255,255,255,.14)')}<div class="val"><div>${Math.round(pct*100)}%<small>النهارده</small></div></div></div>
+      <button data-tab="prog" style="text-align:center;color:#fff"><div class="hwrap">${heart(pct,92,{bg:'rgba(255,255,255,.13)',line:'rgba(255,255,255,.35)'})}<b>${Math.round(pct*100)}%</b></div><div class="small" style="opacity:.8;margin-top:-4px">هدف النهارده</div></button>
     </div>
     <div class="weeks">${Array.from({length:8},(_,i)=>`<i class="${i+1<L?'on':i+1===L?'cur':''}"></i>`).join('')}</div>
   </div>
@@ -707,7 +727,12 @@ function startWorkout(kind){
   W={kind,items,idx,steps:[],si:0,el:0,run:false,last:0,lastSec:-1};
   const o=document.createElement('div');o.className='overlay';o.id='wk';document.body.appendChild(o);document.body.style.overflow='hidden';
   wkLoad();unlockAudio();
+  const R=S.resume;
+  if(R&&R.d===today()&&R.kind===kind&&W.items[W.idx].id===R.id&&R.si>0&&R.si<W.steps.length){W.si=R.si;W.el=Math.min(R.el||0,W.steps[R.si].d-1);W._k=-1;wkUpdate(true);toast('كمّلنا من مكان ما وقفت 👌')}
+  else if(done.length)toast(`هتكمّل من: ${EX[W.items[W.idx].id].name}`);
 }
+function saveResume(quiet){if(!W||!W.steps.length)return;const it=W.items[W.idx];S.resume={d:today(),kind:W.kind,id:it.id,si:W.si,el:Math.floor(W.el)};if(quiet){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}else save()}
+function resumeNote(kind){const R=S.resume;if(!R||R.d!==today()||R.kind!==kind||dayRec()[kind].done.includes(R.id)||!EX[R.id])return '';const it=routine(kind).find(i=>i.id===R.id);if(!it)return '';const st=buildSteps(it)[R.si]||{};const bits=[EX[R.id].name];if(st.rep)bits.push(`تكرار ${st.rep} من ${it.reps}`);if(st.side)bits.push(st.side==='R'?'الجهة اليمنى':'الجهة اليسرى');return `<div class="resume">${ic('play','icon" style="width:16px;height:16px')}<span>هتكمّل من: <b>${bits.join(' · ')}</b></span></div>`}
 function wkLoad(){
   const it=W.items[W.idx],ex=EX[it.id];W.steps=buildSteps(it);W.si=0;W.el=0;W.lastSec=-1;
   const o=$('#wk');
@@ -779,6 +804,7 @@ function wkTick(ts){
     const left=Math.ceil(st.d-W.el);
     if(left!==W.lastSec){W.lastSec=left;if(left<=3&&left>0&&(st.k==='ready'||st.k==='hold'||st.k==='stretch'||(st.k==='rest'&&st.d>=5)))beep(660,.08,.15)}
     if(W.el>=st.d){wkNextStep()}
+    if(!W._sv||ts-W._sv>4000){W._sv=ts;saveResume(true)}
   }
   wkUpdate(false);
 }
@@ -792,13 +818,14 @@ function wkNextStep(){
 }
 function markDone(id){const r=dayRec()[W.kind];if(!r.done.includes(id))r.done.push(id);r.fin=required(W.kind).every(i=>r.done.includes(i.id));save()}
 function wkComplete(){
-  const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);
+  const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);if(W.idx<W.items.length-1)celebrate(false);
   if(W.idx>=W.items.length-1){wkFinish();return}
-  W.idx++;const keep=W.run;wkLoad();W.run=keep;toast('أحسنت! التمرين التالي: '+EX[W.items[W.idx].id].name);
+  W.idx++;const keep=W.run;wkLoad();W.run=keep;saveResume();toast('أحسنت 👏 الجاي: '+EX[W.items[W.idx].id].name);
 }
 function wkFinish(){
   W.run=false;releaseWake();
   const r=dayRec()[W.kind];const n=routineDoneCount(W.kind);
+  if(r.fin){S.resume=null;save();setTimeout(()=>{if(!checkDayComplete())celebrate(true)},300)}else saveResume();
   $('#wk').innerHTML=`<div class="wk"><div class="done-hero"><div class="big">${ic('check','icon" style="width:52px;height:52px;color:#fff',3)}</div>
    <h1>${r.fin?'أحسنت، الروتين اكتمل!':'تم حفظ ما أنجزته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${W.kind==='morning'?'روتين الصباح':'روتين المساء'}</p></div>
    <div class="card" style="margin-top:18px"><h3>كيف الألم الآن؟</h3><div class="row between" style="margin-top:8px"><span class="muted small">حرّك المؤشر</span><b id="fpv" class="pain-num" style="font-size:34px">${(S.pain[today()]||{}).level??2}</b></div>
@@ -808,7 +835,7 @@ function wkFinish(){
    <p class="muted small" style="text-align:center;margin-top:16px">ألم خفيف ومؤقت (حتى 3 من 10) يهدأ خلال 24 ساعة أمر مقبول. إذا زاد أو امتد للساق، خفّف التمارين.</p></div>`;
   $('#fpr').addEventListener('input',e=>{$('#fpv').textContent=e.target.value;$('#fpv').style.color=painCol(+e.target.value)});
 }
-function wkClose(){W=null;releaseWake();const o=$('#wk');if(o)o.remove();document.body.style.overflow='';render()}
+function wkClose(){if(W&&W.steps.length&&!dayRec()[W.kind].fin)saveResume();W=null;releaseWake();const o=$('#wk');if(o)o.remove();document.body.style.overflow='';render()}
 
 /* audio & haptics */
 let AC=null;
@@ -818,7 +845,7 @@ function chime(){beep(660,.12,.14);setTimeout(()=>beep(880,.12,.14),130);setTime
 function buzz(p){if(S.settings.vibrate&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
 async function requestWake(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
 function releaseWake(){try{wakeLock&&wakeLock.release()}catch(e){}wakeLock=null}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(W&&W.run)requestWake();if(!W&&tab==='home')render();scheduleLocal()}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&W){if(W.run){W.run=false}saveResume()}if(document.visibilityState==='visible'){if(W&&W.run)requestWake();if(!W&&tab==='home')render();scheduleLocal()}});
 
 /* ================== pain ================== */
 const painCol=v=>v<=2?'#4E9A78':v<=4?'#B99421':v<=6?'#D07A32':'#B8402F';
@@ -889,28 +916,71 @@ function safetyEdu(noTitle){return `${noTitle?'':`<h3>${ic('info','icon" style="
   </ul>`}
 
 /* ================== progress ================== */
-function streak(){let n=0;let d=new Date();const any=k=>{const r=S.days[k];return r&&(r.morning.fin||r.evening.fin||(r.swim&&r.swim.done)||r.morning.done.length||r.evening.done.length)};if(!any(keyOf(d)))d=addDays(d,-1);while(any(keyOf(d))){n++;d=addDays(d,-1)}return n}
+let HID=0;
+const HEART='M12 20.6s-7.3-4.4-9.4-9C1.2 8.3 3.1 4.8 6.6 4.8c2.1 0 3.6 1.1 5.4 3 1.8-1.9 3.3-3 5.4-3 3.5 0 5.4 3.5 4 6.8-2.1 4.6-9.4 9-9.4 9z';
+function heart(pct,size,o={}){const id='h'+(++HID),p=clamp(pct||0,0,1),y=4.6+16.2*(1-p);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart${p>=1?' full':''}" role="img" aria-label="${Math.round(p*100)}%"><defs><clipPath id="${id}"><rect x="0" y="${y.toFixed(2)}" width="24" height="24"/></clipPath><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8494"/><stop offset="1" stop-color="#E0445C"/></linearGradient></defs><path d="${HEART}" style="fill:${o.bg||'var(--heart-bg)'}"/><path d="${HEART}" fill="url(#${id}g)" clip-path="url(#${id})"/><path d="${HEART}" fill="none" style="stroke:${o.line||'var(--heart-line)'}" stroke-width="${o.sw||1}"/></svg>`}
+function dayPct(k){const r=S.days[k];if(!r)return 0;const m=required('morning'),e=required('evening');let tot=m.length+e.length,dn=m.filter(i=>r.morning.done.includes(i.id)).length+e.filter(i=>r.evening.done.includes(i.id)).length;if(isSwimDay(parseKey(k))){tot+=4;if(r.swim&&r.swim.done)dn+=4}return tot?Math.min(1,dn/tot):0}
+function weekPct(){const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay());let s=0,n=0;for(let i=0;i<=off;i++){const k=keyOf(addDays(t,-i));if(daysBetween(S.settings.start,k)<0)continue;s+=dayPct(k);n++}return n?s/n:0}
+function programPct(){let s=0;const n=Math.min(56,daysBetween(S.settings.start,today())+1);for(let i=0;i<n;i++)s+=dayPct(keyOf(addDays(parseKey(S.settings.start),i)));return s/56}
+function streak(){let n=0;let d=new Date();const any=k=>dayPct(k)>0||(S.days[k]&&S.days[k].swim&&S.days[k].swim.done);if(!any(keyOf(d)))d=addDays(d,-1);while(any(keyOf(d))){n++;d=addDays(d,-1)}return n}
 function viewProgress(){
   const L=level(),cp=phaseOf(L);let fin=0,swims=0;Object.values(S.days).forEach(r=>{if(r.morning.fin)fin++;if(r.evening.fin)fin++;if(r.swim&&r.swim.done)swims++});
-  let pl=0,dn=0;for(let i=0;i<7;i++){const k=keyOf(addDays(new Date(),-i));if(daysBetween(S.settings.start,k)<0)continue;pl+=routine('morning').length+routine('evening').length;const r=S.days[k];if(r)dn+=r.morning.done.length+r.evening.done.length}
-  const comp=pl?Math.round(dn/pl*100):0;
-  const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay()),ws=addDays(t,-off);
-  return `<div class="top"><div><h1>التقدّم</h1><div class="date">بدأت في ${fmtDate(parseKey(S.settings.start),{day:'numeric',month:'long',year:'numeric'})}</div></div></div>
-  <div class="stats">
-   <div class="stat"><div class="k">${ic('flame','icon" style="width:18px;height:18px;color:var(--amber)')} أيام متتالية</div><div class="v">${streak()}</div></div>
-   <div class="stat"><div class="k">جلسات مكتملة</div><div class="v">${fin}</div></div>
-   <div class="stat"><div class="k">إنجاز التمارين (7 أيام)</div><div class="v">${comp}%</div><div class="mini-bar"><b style="width:${comp}%"></b></div></div>
-   <div class="stat"><div class="k">جلسات السباحة</div><div class="v">${swims}</div><div class="muted small">${swimWeekCount()} من 2 هذا الأسبوع</div></div>
+  const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay()),gridStart=addDays(t,-off-21);
+  const tp=dayPct(today()),wp=weekPct(),pp=programPct();
+  const big=(p,l,s)=>`<div style="text-align:center;flex:1"><div class="hwrap">${heart(p,74)}<b>${Math.round(p*100)}%</b></div><div style="font-weight:700;margin-top:4px">${l}</div><div class="muted small">${s}</div></div>`;
+  return `<div class="top"><div><h1>التقدّم</h1><div class="date">بدأت ${fmtDate(parseKey(S.settings.start),{day:'numeric',month:'long'})} · الأسبوع ${L} من 8</div></div></div>
+  <div class="card"><div class="row" style="align-items:flex-start">${big(tp,'النهارده','هدف اليوم')}${big(wp,'الأسبوع ده','متوسط أيامك')}${big(pp,'البرنامج','رحلة 8 أسابيع')}</div></div>
+  <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
+   <div class="stat"><div class="k">${ic('flame','icon" style="width:16px;height:16px;color:var(--amber)')} أيام ورا بعض</div><div class="v">${streak()}</div></div>
+   <div class="stat"><div class="k">روتين مكتمل</div><div class="v">${fin}</div></div>
+   <div class="stat"><div class="k">سباحة</div><div class="v">${swims}</div></div>
   </div>
-  <div class="sec-title"><h2>هذا الأسبوع</h2></div>
-  <div class="card"><div class="cal">${Array.from({length:7},(_,i)=>{const d=addDays(ws,i),k=keyOf(d),r=S.days[k];const sw=isSwimDay(d);return `<div class="d ${k===today()?'today':''}"><div class="n">${DAYS[d.getDay()]}</div><div class="dt">${d.getDate()}</div><div class="dots"><i class="${r&&r.morning.fin?'m':''}"></i><i class="${r&&r.evening.fin?'e':''}"></i>${sw?`<i class="${r&&r.swim&&r.swim.done?'s':''}" style="${r&&r.swim&&r.swim.done?'':'outline:1.5px solid var(--teal);background:transparent'}"></i>`:''}</div></div>`}).join('')}</div>
-  <div class="legend"><span><i style="background:var(--amber)"></i>الصباح</span><span><i style="background:var(--navy3)"></i>المساء</span><span><i style="background:var(--teal)"></i>السباحة</span></div></div>
+  <div class="sec-title"><h2>أيامك</h2><span class="muted small">دوس على أي يوم</span></div>
+  <div class="card"><div class="hcal">${WEEK_ORDER.map(d=>`<div class="hd">${DAYS[d]}</div>`).join('')}
+   ${Array.from({length:28},(_,i)=>{const d=addDays(gridStart,i),k=keyOf(d),fut=k>today(),pre=daysBetween(S.settings.start,k)<0,p=dayPct(k);
+     return `<button class="hc ${k===today()?'today':''} ${fut||pre?'off':''}" ${fut||pre?'disabled':`data-day="${k}"`}>${heart(fut||pre?0:p,30)}<span>${d.getDate()}</span>${!fut&&!pre&&p>0?`<em>${Math.round(p*100)}%</em>`:''}</button>`}).join('')}
+  </div></div>
   <div class="sec-title"><h2>الألم آخر 4 أسابيع</h2></div>
   <div class="card">${painChart()}</div>
-  <div class="sec-title"><h2>مراحل البرنامج</h2><span class="muted small">الأسبوع ${L} من 8</span></div>
-  <div class="phases">${PHASES.map(p=>`<div class="ph ${p.n===cp?'on':p.n<cp?'done':''}"><div class="no">${p.n<cp?'✓':p.n}</div><div><b>${p.t}</b><div class="small" style="opacity:.75">الأسابيع ${p.w} · ${p.d}</div></div></div>`).join('')}</div>
-  <p class="muted small" style="margin-top:14px;text-align:center">التدرّج يحدث فقط إذا كانت الأعراض مستقرة. لا مشكلة في البقاء على نفس المستوى أسبوعًا إضافيًا.</p>`;
+  <div class="gap"></div>
+  <details class="card"><summary><span style="flex:1">مراحل البرنامج</span></summary><div class="phases" style="margin-top:12px">${PHASES.map(p=>`<div class="ph ${p.n===cp?'on':p.n<cp?'done':''}"><div class="no">${p.n<cp?'✓':p.n}</div><div><b>${p.t}</b><div class="small" style="opacity:.75">الأسابيع ${p.w} · ${p.d}</div></div></div>`).join('')}</div>
+  <p class="muted small" style="margin-top:12px">بنتدرّج بس لما الأعراض تكون مستقرة. عادي جدًا تفضل على نفس المستوى أسبوع زيادة.</p></details>`;
 }
+function openDay(k){
+  const r=S.days[k]||{morning:{done:[]},evening:{done:[]}},p=dayPct(k),pn=S.pain[k];
+  const m=required('morning'),e=required('evening');
+  const md=m.filter(i=>r.morning.done.includes(i.id)).length,ed=e.filter(i=>r.evening.done.includes(i.id)).length;
+  const row=(ico,cls,t,s,ok)=>`<div class="li"><div class="ico ${cls}">${ic(ico)}</div><div class="t"><b>${t}</b><span>${s}</span></div>${ok?`<span class="check on">${ic('check','icon" style="width:16px;height:16px',3)}</span>`:''}</div>`;
+  sheet(`<div style="text-align:center"><div class="hwrap" style="width:120px;height:120px">${heart(p,120)}<b style="font-size:24px">${Math.round(p*100)}%</b></div>
+   <h2 style="margin-top:6px">${fmtDate(parseKey(k),{weekday:'long',day:'numeric',month:'long'})}</h2>
+   <p class="muted small">${p>=1?'يوم كامل! 🎉':p>=.5?'يوم كويس 👏':p>0?'بداية حلوة، كل خطوة بتفرق':'يوم راحة'}</p></div>
+   <div class="list" style="margin-top:16px">
+    ${row('sun','sun','روتين الصباح',`${md} من ${m.length} تمارين`,md===m.length)}
+    ${row('moon','moon','روتين المساء',`${ed} من ${e.length} تمارين`,ed===e.length)}
+    ${isSwimDay(parseKey(k))||(r.swim&&r.swim.done)?row('wave','wave','السباحة',r.swim&&r.swim.done?`${r.swim.min||''} دقيقة`:'ماتسجّلتش',!!(r.swim&&r.swim.done)):''}
+    ${pn?row('pain','heart','الألم',`${pn.level} من 10 · ${painWord(pn.level)}`,false):''}
+   </div>`);
+}
+
+/* celebration */
+function celebrate(big){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:150';document.body.appendChild(c);
+  const dpr=Math.min(2,devicePixelRatio||1),W0=innerWidth,H0=innerHeight;c.width=W0*dpr;c.height=H0*dpr;const x=c.getContext('2d');x.scale(dpr,dpr);
+  const cols=['#FF5C7A','#FFC94D','#2A8C82','#8FAE8B','#6FA8FF','#FF9F45','#ffffff'];const P=[];
+  const burst=(cx,cy,n,sp)=>{for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=sp*(.4+Math.random()*.8);P.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,c:cols[i%cols.length],r:2+Math.random()*2.5,t:Math.random()<.5?'c':'r',rot:Math.random()*6})}};
+  const rockets=[];
+  if(big){for(let i=0;i<6;i++)setTimeout(()=>rockets.push({x:W0*(.2+Math.random()*.6),y:H0,vy:-(9+Math.random()*3),ty:H0*(.18+Math.random()*.25)}),i*330)}
+  else{burst(W0/2,H0*.38,70,7)}
+  const end=performance.now()+(big?4200:2200);
+  (function f(now){x.clearRect(0,0,W0,H0);
+    rockets.forEach((r,i)=>{r.y+=r.vy;r.vy*=.985;x.fillStyle='#FFE29A';x.beginPath();x.arc(r.x,r.y,2.6,0,7);x.fill();if(r.y<=r.ty){burst(r.x,r.y,70,6.5);rockets.splice(i,1)}});
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.vx*=.985;p.life-=.012;p.rot+=.2;x.globalAlpha=Math.max(0,p.life);x.fillStyle=p.c;if(p.t==='c'){x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}else{x.save();x.translate(p.x,p.y);x.rotate(p.rot);x.fillRect(-p.r,-p.r/2,p.r*2.2,p.r);x.restore()}});
+    x.globalAlpha=1;for(let i=P.length-1;i>=0;i--)if(P[i].life<=0)P.splice(i,1);
+    if(now<end||P.length)requestAnimationFrame(f);else c.remove()})(performance.now());
+}
+function checkDayComplete(){const k=today(),r=dayRec(k);if(dayPct(k)>=1&&!r.cel){r.cel=true;save();setTimeout(()=>{celebrate(true);toast('يوم كامل 100% ❤️ أحسنت!')},400);return true}return false}
 function painChart(){
   const pts=[];for(let i=27;i>=0;i--){const k=keyOf(addDays(new Date(),-i));if(S.pain[k])pts.push({i:27-i,v:S.pain[k].level})}
   if(pts.length<2)return `<div class="muted small" style="text-align:center;padding:24px 0">سجّل ألمك يوميًا لتظهر هنا المتابعة.</div>`;
@@ -1061,7 +1131,8 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if
 
 /* ================== events ================== */
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset],[data-day]');if(!t)return;
+  if(t.dataset.day){openDay(t.dataset.day);return}
   if(t.dataset.themeset){S.settings.theme=t.dataset.themeset;save();applyTheme();render();return}
   if(t.dataset.tab){closeSheet();go(t.dataset.tab);return}
   if(t.dataset.sym){const s=t.dataset.sym;const i=PD.sym.indexOf(s);if(i<0)PD.sym.push(s);else PD.sym.splice(i,1);t.classList.toggle('on');return}
@@ -1074,15 +1145,15 @@ document.addEventListener('click',e=>{
     case 'sheet-close':closeSheet();break;
     case 'modal-close':closeModal();break;
     case 'redflags':showRedFlags(false);break;
-    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();toast('رائع! تم تسجيل السباحة 🏊')}save();render();break}
+    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();if(!checkDayComplete()){celebrate(false);toast('رائع! تم تسجيل السباحة 🏊')}}save();render();break}
     case 'pain-save':savePain();break;
     case 'install':doInstall();break;
     case 'ics':download('backcare-reminders.ics',icsFile(),'text/calendar');toast('افتح الملف لإضافته لتقويم جوجل');break;
     case 'export':exportData();break;
     case 'import':$('#imp').click();break;
     case 'reset':confirmBox('مسح كل البيانات؟','سيتم حذف سجل التمارين والألم والإعدادات من هذا الموبايل. لا يمكن التراجع.','مسح',()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defaults();save();render();onboarding()},true);break;
-    case 'wk-toggle':unlockAudio();W.run=!W.run;if(W.run)requestWake();W.last=0;wkUpdate(false);break;
-    case 'wk-skip':if(W.idx>=W.items.length-1){wkFinish()}else{const k=W.run;W.idx++;wkLoad();W.run=k}break;
+    case 'wk-toggle':unlockAudio();W.run=!W.run;if(W.run)requestWake();else saveResume();W.last=0;wkUpdate(false);break;
+    case 'wk-skip':if(W.idx>=W.items.length-1){wkFinish()}else{const k=W.run;W.idx++;wkLoad();W.run=k;saveResume()}break;
     case 'wk-prev':if(W.idx>0){W.idx--;wkLoad()}break;
     case 'wk-done':wkComplete();break;
     case 'wk-min':{const st=W.steps[W.si];const tm=W.steps.find(s=>s.k==='timed');if(tm){tm.d=Math.max(60,tm.d+60*(+t.dataset.v));if(st===tm&&W.el>=tm.d)W.el=tm.d-1;toast(`المدة: ${Math.round(tm.d/60)} دقائق`);W._k=-1}break}
