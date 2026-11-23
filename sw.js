@@ -1,4 +1,4 @@
-const VERSION='bc-v13';
+const VERSION='bc-v14';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/badge.png','./img/birddog-a.webp','./img/birddog-b.webp','./img/brace-a.webp','./img/brace-b.webp','./img/breath-a.webp','./img/breath-b.webp','./img/bridge-a.webp','./img/bridge-b.webp','./img/catcamel-a.webp','./img/catcamel-b.webp','./img/clamshell-a.webp','./img/clamshell-b.webp','./img/curlup-a.webp','./img/curlup-b.webp','./img/farmer-a.webp','./img/farmer-b.webp','./img/hamstring-a.webp','./img/hamstring-b.webp','./img/heel-a.webp','./img/heel-b.webp','./img/hipflexor-a.webp','./img/hipflexor-b.webp','./img/piriformis-a.webp','./img/piriformis-b.webp','./img/sideplank-a.webp','./img/sideplank-b.webp','./img/slbridge-a.webp','./img/slbridge-b.webp','./img/splitsquat-a.webp','./img/splitsquat-b.webp','./img/stepup-a.webp','./img/stepup-b.webp','./img/tilt-a.webp','./img/tilt-b.webp','./img/walk-a.webp','./img/walk-b.webp'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==VERSION&&k!=='bc-config'&&k!=='bc-fonts').map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -23,8 +23,8 @@ async function checkReminders(){
     const list=cfg.days[k]||[];const sentR=await c.match('sent-'+k);const sent=sentR?await sentR.json():[];
     const nm=now.getHours()*60+now.getMinutes();
     for(const it of list){const[h,m]=it.hm.split(':').map(Number);const t=h*60+m;
-      if(!it.done&&nm>=t&&nm<t+180&&!sent.includes(it.id)){
-        await self.registration.showNotification(it.title,{body:it.body,icon:'icons/icon-192.png',badge:'icons/badge.png',tag:'bc-'+it.id,lang:'ar',dir:'rtl',data:{url:'./#home'}});
+      if(!it.done&&nm>=t&&nm<t+(it.win||180)&&!sent.includes(it.id)){
+        await self.registration.showNotification(it.title,{body:it.body,icon:'icons/icon-192.png',badge:'icons/badge.png',tag:'bc-'+it.id,lang:'ar',dir:'rtl',data:{url:it.url||'./#home'}});
         sent.push(it.id);
       }}
     await c.put('sent-'+k,new Response(JSON.stringify(sent)));

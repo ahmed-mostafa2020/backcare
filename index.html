@@ -296,6 +296,11 @@ textarea{min-height:80px;resize:vertical}
 [data-theme=dark] .phwrap img{filter:brightness(.9) saturate(.95)}
 .cheer{position:absolute;left:50%;top:42%;z-index:5;transform:translate(-50%,-50%);background:linear-gradient(135deg,#FFB547,#FF6B6B);color:#fff;font-weight:700;font-size:30px;padding:12px 26px;border-radius:24px;box-shadow:0 12px 30px rgba(255,107,107,.45);white-space:nowrap;pointer-events:none;animation:cheer 1.9s cubic-bezier(.2,.9,.3,1.3) forwards;text-shadow:0 2px 4px rgba(0,0,0,.18)}
 @keyframes cheer{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-8deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.12) rotate(3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(-2deg)}80%{opacity:1;transform:translate(-50%,-60%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
+.feel{display:flex;gap:10px;margin-top:16px}.feel button{flex:1;padding:14px 4px;border-radius:18px;background:var(--sage-xl);border:1.5px solid var(--line);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}.feel button span{font-size:38px;line-height:1}.feel button:active{transform:scale(.96)}
+.badge-big{font-size:64px;width:110px;height:110px;margin:0 auto 10px;border-radius:36px;display:grid;place-items:center;background:linear-gradient(135deg,#FFE08A,#FFB547);box-shadow:0 12px 30px rgba(255,181,71,.4)}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px}.bd{text-align:center;padding:8px 2px;border-radius:16px;opacity:.45;filter:grayscale(1)}.bd span{font-size:30px;display:block}.bd b{display:block;font-size:12px;margin-top:2px}.bd em{font-style:normal;font-size:10.5px;color:var(--muted)}.bd.on{opacity:1;filter:none;background:var(--amber-l)}.bd.cur{opacity:1;filter:none;outline:1.5px dashed var(--amber)}
+.tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:8px;text-align:right}.stat.flat{box-shadow:none;border:1px solid var(--line)}
+@media print{body>*:not(#report){display:none!important}#report{position:static;overflow:visible;background:#fff}#report .noprint{display:none!important}#report .card{box-shadow:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -327,11 +332,11 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
 
 /* ================== state ================== */
 const KEY='backcare.v1';
-function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto',cheer:true,swim:true},days:{},pain:{},flares:{}}}
+function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto',cheer:true,swim:true,voice:true,move:{on:true,every:45,from:'09:00',to:'17:00',days:[0,1,2,3,4]}},days:{},pain:{},flares:{}}}
 let S=defaults();
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S={...defaults(),...o,settings:{...defaults().settings,...(o.settings||{})}}}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('تعذّر الحفظ على هذا الجهاز')}syncSWConfig()}
-function dayRec(k=today()){if(!S.days[k])S.days[k]={morning:{done:[],fin:false},evening:{done:[],fin:false},swim:null};return S.days[k]}
+function dayRec(k=today()){if(!S.days[k])S.days[k]={morning:{done:[],fin:false},evening:{done:[],fin:false},swim:null};if(!S.days[k].light)S.days[k].light={done:[],fin:false};return S.days[k]}
 if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{})}
 
 /* ================== program ================== */
@@ -356,7 +361,7 @@ function worsening(){
 function updateLevel(){
   const s=S.settings,cw=calWeek();
   if(s.hold||cw<=s.level||s.lastAdv===today())return;
-  if(worsening()){S._held=today()}else{s.level=Math.min(8,s.level+1);s.lastAdv=today();S._adv=today()}
+  if(worsening()){S._held=today()}else{const op=phaseOf(s.level);s.level=Math.min(8,s.level+1);s.lastAdv=today();S._adv=today();if(phaseOf(s.level)>op)S._phaseUp=phaseOf(s.level)}
   save();
 }
 function swimMin(L=level()){return L===1?'15':L===2?'20':L<=4?'20–25':'25–30'}
@@ -365,6 +370,7 @@ function isSwimDay(d=new Date()){return S.settings.swimDays.includes(d.getDay())
 
 function routine(kind,L=level()){
   const p=phaseOf(L);
+  if(kind==='light')return[{id:'walk',min:2,max:3},{id:'tilt',reps:8},{id:'brace',reps:6,hold:5},{id:'breath',min:1,max:2}];
   if(kind==='evening'){const r=[{id:'walk',min:5,max:5},{id:'tilt',reps:8},{id:'brace',reps:8,hold:5},{id:'hipflexor',hold:20,perSide:true}];if(L>=3)r.push({id:'piriformis',hold:20,perSide:true,optional:true});r.push({id:'breath',min:1,max:2});return r}
   const W=[[5,10],[8,12],[10,15],[12,20]][p-1];
   const r=[{id:'walk',min:W[0],max:W[1]},{id:'catcamel',reps:8}];
@@ -733,6 +739,7 @@ function viewHome(){
       ${resumeNote(nk)}
       <button class="btn primary block" style="margin-top:18px" data-act="start" data-kind="${nk}">${ic('play','icon" style="width:18px;height:18px')} ${dn?'كمّل من مكانك':'ابدأ التمرين'}</button>
       ${first?`<p class="tip">هنمشي معاك تمرين تمرين، بالرسمة والتايمر والصوت.</p>`:''}
+      ${!d.light.fin?`<button class="link" style="display:block;margin:12px auto 0" data-act="light">يوم تعبان؟ جرّب الروتين الخفيف (${routineMin('light')} دقايق)</button>`:''}
     </div>`;
   }else{
     main=`<div class="card next" style="text-align:center"><div style="font-size:40px">🎉</div><h2>عاش! خلّصت تمارين النهارده</h2><p class="muted small" style="margin-top:4px">ريّح بقى، الراحة جزء من التعافي.</p></div>`;
@@ -746,6 +753,8 @@ function viewHome(){
   if(swimOn())rows.push(swimToday
     ?`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>سباحة النهارده <span class="pill teal" style="font-size:11px;padding:1px 8px">اختياري</span></b><span>${swimMin()} دقيقة · ${fmt12(S.settings.swimTime)}</span></div><button class="tick ${swimDone?'done':''}" data-act="swim">${swimDone?'تم ✓':'سجّلت'}</button></div>`
     :`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>السباحة الجاية</b><span>${ns?(ns.i===1?'بكرة':DAY[ns.d.getDay()]):'—'} · ${fmt12(S.settings.swimTime)} · ${swimMin()} دقيقة</span></div></div>`);
+  if(d.light.fin)rows.push(`<div class="li"><div class="ico moon">🌿</div><div class="t"><b>الروتين الخفيف</b><span>تم ✓ · يوم تعبان بس ماوقفتش</span></div><span class="check on">${ic('check','icon" style="width:16px;height:16px',3)}</span></div>`);
+  if(S.settings.move.on&&S.settings.move.days.includes(new Date().getDay())){const nm2=nextMove();rows.push(`<div class="li"><div class="ico wave">🚶</div><div class="t"><b>استراحة الحركة</b><span>${S.movePaused===today()?'متوقفة النهارده':nm2?`الجاية ${fmt12(nm2)}`:'خلصت مواعيد النهارده'} · ${d.moves||0} النهارده</span></div><button class="tick ${S.movePaused===today()?'done':''}" data-act="move-now">اتحرك</button></div>`)}
   rows.push(`<button class="li" data-tab="pain"><div class="ico heart">${ic('pain')}</div><div class="t"><b>كيف ظهرك النهارده؟</b><span>${lp?`${lp.level} من 10 · ${painWord(lp.level)}`:'سجّل الألم في ثانية'}</span></div>${lp?`<b style="font-size:22px;color:${painCol(lp.level)}">${lp.level}</b>`:ic('next','chev')}</button>`);
   return `
   <div class="top">
@@ -795,11 +804,13 @@ function openDetail(id){
 
 /* ================== workout ================== */
 let W=null,wakeLock=null;
-function startWorkout(kind){
-  const items=routine(kind),done=dayRec()[kind].done;
+function startWorkout(kind,opts={}){
+  const R0=S.resume,hasRes=R0&&R0.d===today()&&R0.kind===kind;
+  if(kind!=='light'&&!opts.skipAsk&&!hasRes&&!dayRec()[kind].done.length){askFeel(kind);return}
+  let items=routine(kind);if(opts.easy)items=items.map(easyItem);const done=dayRec()[kind].done;
   let idx=items.findIndex(i=>!done.includes(i.id));
   if(idx<0){idx=0;if(dayRec()[kind].fin){dayRec()[kind].done=[];dayRec()[kind].fin=false;save()}}
-  W={kind,items,idx,steps:[],si:0,el:0,run:false,last:0,lastSec:-1};
+  W={kind,items,idx,steps:[],si:0,el:0,run:false,last:0,lastSec:-1,easy:!!opts.easy};
   const o=document.createElement('div');o.className='overlay';o.id='wk';document.body.appendChild(o);document.body.style.overflow='hidden';
   wkLoad();unlockAudio();
   const R=S.resume;
@@ -814,7 +825,7 @@ function wkLoad(){
   o.innerHTML=`<div class="wk">
    <div class="wk-top"><button class="icon-btn" data-act="wk-close" aria-label="إغلاق">${ic('x')}</button><div class="wk-prog"><b style="width:${(W.idx/W.items.length)*100}%"></b></div><b class="small">${W.idx+1} / ${W.items.length}</b></div>
    <div class="wk-fig"><div class="fig-card"><div class="fig" id="wkfig" style="width:100%;height:100%"></div></div>
-     <span class="pill teal side" id="wkside" style="display:none"></span><span class="pill phase" id="wkphase">${W.kind==='morning'?'الصباح':'المساء'}</span></div>
+     <span class="pill teal side" id="wkside" style="display:none"></span><span class="pill phase" id="wkphase">${KIND_SHORT[W.kind]}${W.easy?' · مخفّف':''}</span></div>
    <div class="wk-name"><div><h1>${ex.name}${it.optional?' <span class="pill amber" style="font-size:12px">اختياري</span>':''}</h1><div class="muted small">${targetLabel(it)}</div></div><button class="btn sm ghost" data-act="detail" data-id="${it.id}">التفاصيل</button></div>
    <p class="wk-short">${ex.short}</p>
    ${it.optional?`<div class="banner amber small" style="margin-top:10px">${ic('info')}<div>نفّذه فقط إذا كان مريحًا. إذا زاد الألم، تخطَّه.</div></div>`:''}
@@ -829,6 +840,7 @@ function wkLoad(){
   </div>`;
   W.fig=new Figure($('#wkfig'),it.id,{mode:'ext'});
   wkUpdate(true);
+  if(W.run)setTimeout(()=>speak(ex.name),300);
 }
 function stepT(st,el,anim){
   if(!st)return 0;
@@ -867,7 +879,7 @@ function wkUpdate(force){
   }else{
     const c=r.querySelector('.rg');if(c){const R=(96-9)/2,cc=2*Math.PI*R;c.setAttribute('stroke-dashoffset',(cc*(1-clamp(pct,0,1))).toFixed(2))}
   }
-  if(st.k==='timed'&&ex.anim==='breath'){const x=W.el%10;$('#wklbl').textContent=x<4?'شهيق… 🌬️':'زفير ببطء…'}
+  if(st.k==='timed'&&ex.anim==='breath'){const x=W.el%10,ph=x<4?'in':'out';$('#wklbl').textContent=ph==='in'?'شهيق… 🌬️':'زفير ببطء…';if(W.run&&W._bp!==ph){W._bp=ph;speak(ph==='in'?'شهيق':'زفير')}}
   const num=$('#wknum');if(num){num.textContent=st.d>=60?`${Math.floor(sec/60)}:${pad(sec%60)}`:sec}
   const tg=$('#wktog');if(tg){const want=W.run?'p':'r';if(tg.dataset.s!==want){tg.dataset.s=want;tg.innerHTML=W.run?ic('pause')+'<span>إيقاف مؤقت</span>':ic('play')+`<span>${W.el>0||W.si>0?'استكمل':'ابدأ'}</span>`}}
   const pb=$('.wk-prog b');if(pb){const tot=W.steps.reduce((a,s)=>a+s.d,0),dn=W.steps.slice(0,W.si).reduce((a,s)=>a+s.d,0)+W.el;pb.style.width=((W.idx+(tot?dn/tot:0))/W.items.length*100)+'%'}
@@ -891,11 +903,12 @@ function wkNextStep(){
   if(st.k==='hold'||st.k==='stretch'||st.k==='timed'){beep(880,.14,.2);buzz(60)}
   else if(st.k==='rest'){beep(520,.12,.16)}
   else if(st.k==='tempo'){beep(740,.06,.12)}
+  {const it=W.items[W.idx],ex=EX[it.id];if(st.k==='hold')speak(st.rep&&it.reps>1?`${AR_NUM[st.rep]||''}، اثبت`:'اثبت');else if(st.k==='stretch')speak('اثبت واتنفّس بهدوء');else if(st.k==='timed')speak(ex.anim==='breath'?'شهيق':'امشِ بهدوء');else if(st.k==='tempo')speak(AR_NUM[st.rep]||String(st.rep));else if(st.k==='rest')speak(st.l==='ارتخِ'?'ارتخِ':st.l)}
   {const it=W.items[W.idx];const last=W.steps.filter(x=>x.k==='hold'||x.k==='tempo').pop();if(st===last&&it.reps>2)setTimeout(()=>cheer(['آخر واحدة يا بطل! 🔥','آخر عدّة، شدّ حيلك 💪','دي الأخيرة، يلا! 🏁']),250)}
 }
 function markDone(id){const r=dayRec()[W.kind];if(!r.done.includes(id))r.done.push(id);r.fin=required(W.kind).every(i=>r.done.includes(i.id));save()}
 function wkComplete(){
-  const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);if(W.idx<W.items.length-1)celebrate(false);
+  const it=W.items[W.idx];markDone(it.id);chime();buzz([60,60,120]);if(W.idx<W.items.length-1)celebrate(false);speak('عاش');
   if(W.idx>=W.items.length-1){wkFinish();return}
   W.idx++;const keep=W.run;wkLoad();W.run=keep;saveResume();cheer(CHEER_DONE);toast('الجاي: '+EX[W.items[W.idx].id].name);
 }
@@ -904,7 +917,7 @@ function wkFinish(){
   const r=dayRec()[W.kind];const n=routineDoneCount(W.kind);
   if(r.fin){S.resume=null;save();setTimeout(()=>{if(!checkDayComplete())celebrate(true)},300)}else saveResume();
   $('#wk').innerHTML=`<div class="wk"><div class="done-hero"><div class="big">${ic('check','icon" style="width:52px;height:52px;color:#fff',3)}</div>
-   <h1>${r.fin?'عاااااش يا بطل! 🏆':'تم حفظ اللي عملته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${W.kind==='morning'?'روتين الصباح':'روتين المساء'}</p></div>
+   <h1>${r.fin?'عاااااش يا بطل! 🏆':'تم حفظ اللي عملته'}</h1><p class="muted" style="margin-top:6px">${n} من ${W.items.length} تمارين · ${KIND_NAME[W.kind]}</p></div>
    <div class="card" style="margin-top:18px"><h3>كيف الألم الآن؟</h3><div class="row between" style="margin-top:8px"><span class="muted small">حرّك المؤشر</span><b id="fpv" class="pain-num" style="font-size:34px">${(S.pain[today()]||{}).level??2}</b></div>
    <input type="range" min="0" max="10" step="1" value="${(S.pain[today()]||{}).level??2}" id="fpr" aria-label="مستوى الألم"><div class="scale"><span>0</span><span>5</span><span>10</span></div>
    <button class="btn navy block" style="margin-top:14px" data-act="wk-savepain">حفظ وإغلاق</button></div>
@@ -1000,7 +1013,7 @@ let HID=0;
 const HEART='M12 20.6s-7.3-4.4-9.4-9C1.2 8.3 3.1 4.8 6.6 4.8c2.1 0 3.6 1.1 5.4 3 1.8-1.9 3.3-3 5.4-3 3.5 0 5.4 3.5 4 6.8-2.1 4.6-9.4 9-9.4 9z';
 function heart(pct,size,o={}){const id='h'+(++HID),p=clamp(pct||0,0,1),y=4.6+16.2*(1-p);
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart${p>=1?' full':''}" role="img" aria-label="${Math.round(p*100)}%"><defs><clipPath id="${id}"><rect x="0" y="${y.toFixed(2)}" width="24" height="24"/></clipPath><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8494"/><stop offset="1" stop-color="#E0445C"/></linearGradient></defs><path d="${HEART}" style="fill:${o.bg||'var(--heart-bg)'}"/><path d="${HEART}" fill="url(#${id}g)" clip-path="url(#${id})"/><path d="${HEART}" fill="none" style="stroke:${o.line||'var(--heart-line)'}" stroke-width="${o.sw||1}"/></svg>`}
-function dayPct(k){const r=S.days[k];if(!r)return 0;const m=required('morning'),e=required('evening');const tot=m.length+e.length,dn=m.filter(i=>r.morning.done.includes(i.id)).length+e.filter(i=>r.evening.done.includes(i.id)).length;return tot?Math.min(1,dn/tot):0}
+function dayPct(k){const r=S.days[k];if(!r)return 0;const m=required('morning'),e=required('evening');const tot=m.length+e.length,dn=m.filter(i=>r.morning.done.includes(i.id)).length+e.filter(i=>r.evening.done.includes(i.id)).length;let v=tot?Math.min(1,dn/tot):0;if(r.light&&r.light.fin)v=Math.max(v,.5);return v}
 const swimOn=()=>S.settings.swim!==false;
 function weekPct(){const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay());let s=0,n=0;for(let i=0;i<=off;i++){const k=keyOf(addDays(t,-i));if(daysBetween(S.settings.start,k)<0)continue;s+=dayPct(k);n++}return n?s/n:0}
 function programPct(){let s=0;const n=Math.min(56,daysBetween(S.settings.start,today())+1);for(let i=0;i<n;i++)s+=dayPct(keyOf(addDays(parseKey(S.settings.start),i)));return s/56}
@@ -1017,6 +1030,9 @@ function viewProgress(){
    <div class="stat"><div class="k">روتين مكتمل</div><div class="v">${fin}</div></div>
    ${swimOn()||swims?`<div class="stat"><div class="k">سباحة 🏊</div><div class="v">${swims}</div></div>`:''}
   </div>
+  <div class="row" style="gap:10px;margin-top:12px"><button class="btn sm ghost" style="flex:1" data-act="week-sum">📊 ملخص الأسبوع</button><button class="btn sm ghost" style="flex:1" data-act="report">🩺 تقرير للدكتور</button></div>
+  <div class="sec-title"><h2>أوسمتك</h2></div>
+  <div class="card badges">${BADGES.map((b,i)=>`<div class="bd ${i+1<cp?'on':i+1===cp?'cur':''}"><span>${b.e}</span><b>${b.t}</b><em>${i+1<cp?'اتكسب ✓':i+1===cp?'شغّال عليه':`الأسابيع ${PHASES[i].w}`}</em></div>`).join('')}</div>
   <div class="sec-title"><h2>أيامك</h2><span class="muted small">دوس على أي يوم</span></div>
   <div class="card"><div class="hcal">${WEEK_ORDER.map(d=>`<div class="hd">${DAYS[d]}</div>`).join('')}
    ${Array.from({length:28},(_,i)=>{const d=addDays(gridStart,i),k=keyOf(d),fut=k>today(),pre=daysBetween(S.settings.start,k)<0,p=dayPct(k);
@@ -1040,6 +1056,8 @@ function openDay(k){
     ${row('sun','sun','روتين الصباح',`${md} من ${m.length} تمارين`,md===m.length)}
     ${row('moon','moon','روتين المساء',`${ed} من ${e.length} تمارين`,ed===e.length)}
     ${(swimOn()&&isSwimDay(parseKey(k)))||(r.swim&&r.swim.done)?row('wave','wave','السباحة',r.swim&&r.swim.done?`${r.swim.min||''} دقيقة`:'ماتسجّلتش',!!(r.swim&&r.swim.done)):''}
+    ${r.light&&r.light.fin?row('check','moon','الروتين الخفيف','تم',true):''}
+    ${r.moves?row('next','wave','استراحات الحركة',`${r.moves} مرات`,false):''}
     ${pn?row('pain','heart','الألم',`${pn.level} من 10 · ${painWord(pn.level)}`,false):''}
    </div>`);
 }
@@ -1095,6 +1113,16 @@ function viewSettings(){
    <div class="set-row"><div><label>إشعارات التطبيق</label><div class="muted small">${perm==='denied'?'الإشعارات محظورة من إعدادات المتصفح':perm==='unsupported'?'غير مدعومة على هذا المتصفح':'تعمل بشكل موثوق والتطبيق مفتوح أو في الخلفية'}</div></div><label class="switch"><input type="checkbox" data-toggle="notify" ${s.notify&&perm==='granted'?'checked':''} ${perm==='denied'||perm==='unsupported'?'disabled':''}><span></span></label></div>
   </div>
   <div class="banner teal small" style="margin-top:12px">${ic('info')}<div><b>للتذكير المضمون والتطبيق مقفول</b>أندرويد لا يضمن إشعارات تطبيقات الويب وهي مقفولة. أضِف التذكيرات لتقويم موبايلك مرة واحدة وستصلك يوميًا.<div style="margin-top:10px"><button class="btn sm primary" data-act="ics">${ic('cal','icon" style="width:18px;height:18px')} أضف التذكيرات للتقويم</button></div></div></div>
+  <div class="sec-title"><h2>استراحة الحركة 🚶</h2></div>
+  <div class="card" style="padding:4px 18px">
+   <div class="set-row"><div><label>فكّرني أقوم أتحرك</label><div class="muted small">إشعار كل فترة علشان القعدة الطويلة</div></div><label class="switch"><input type="checkbox" data-toggle="moveon" ${s.move.on?'checked':''}><span></span></label></div>
+   ${s.move.on?`<div class="set-row"><label for="mv-e">كل</label><select id="mv-e" data-move="every">${[20,30,45,60,90].map(v=>`<option value="${v}" ${s.move.every===v?'selected':''}>${v} دقيقة</option>`).join('')}</select></div>
+   <div class="set-row"><label for="mv-f">من</label><input type="time" id="mv-f" value="${s.move.from}" data-move="from"></div>
+   <div class="set-row"><label for="mv-t">لحد</label><input type="time" id="mv-t" value="${s.move.to}" data-move="to"></div>
+   <div class="set-row" style="display:block"><label>الأيام</label><div class="daychips">${WEEK_ORDER.map(d=>`<button class="chip ${s.move.days.includes(d)?'on':''}" data-moveday="${d}">${DAY[d]}</button>`).join('')}</div></div>
+   <div class="set-row"><div><label>إيقاف النهارده بس</label><div class="muted small">إجازة أو يوم مش شغل</div></div><label class="switch"><input type="checkbox" data-toggle="movepause" ${S.movePaused===today()?'checked':''}><span></span></label></div>
+   <div class="set-row"><span class="muted small">${moveSlots().length?`مواعيد النهارده: ${moveSlots().map(fmt12).join('، ')}`:'مفيش مواعيد النهارده'}</span></div>`:''}
+  </div>
   <div class="sec-title"><h2>البرنامج</h2></div>
   <div class="card" style="padding:4px 18px">
    <div class="set-row"><label for="s-st">تاريخ البداية</label><input type="date" id="s-st" value="${s.start}" max="${today()}" data-set="start"></div>
@@ -1105,6 +1133,7 @@ function viewSettings(){
   <div class="card" style="padding:4px 18px">
    <div class="set-row"><label>${ic('vol','icon" style="width:18px;height:18px;vertical-align:-3px')} الأصوات</label><label class="switch"><input type="checkbox" data-toggle="sound" ${s.sound?'checked':''}><span></span></label></div>
    <div class="set-row"><label>الاهتزاز</label><label class="switch"><input type="checkbox" data-toggle="vibrate" ${s.vibrate?'checked':''}><span></span></label></div>
+   <div class="set-row"><div><label>صوت المدرّب</label><div class="muted small">${'speechSynthesis' in window?'بيقول «اثبت… ارتخِ…» والعدّ':'مش مدعوم على المتصفح ده'}</div></div><label class="switch"><input type="checkbox" data-toggle="voice" ${s.voice?'checked':''}><span></span></label></div>
    <div class="set-row"><div><label>تشجيع شعبي</label><div class="muted small">«عاااااش!» و«جامد يا وحش» أثناء التمرين</div></div><label class="switch"><input type="checkbox" data-toggle="cheer" ${s.cheer?'checked':''}><span></span></label></div>
   </div>
   <div class="sec-title"><h2>بياناتك</h2></div>
@@ -1132,6 +1161,8 @@ async function toggleSetting(k,on,el){
     if(p!=='granted'){el.checked=false;toast('لم يتم السماح بالإشعارات');return}
     S.settings.notify=true;save();scheduleLocal();registerPeriodic();toast('تم تفعيل الإشعارات');return;
   }
+  if(k==='moveon'){S.settings.move.on=on;save();scheduleLocal();render();if(on&&'Notification' in window&&Notification.permission==='default'){Notification.requestPermission().then(p=>{if(p==='granted'){S.settings.notify=true;save();scheduleLocal()}})}toast(on?'هفكّرك تقوم تتحرك 🚶':'اتقفل تذكير الحركة');return}
+  if(k==='movepause'){S.movePaused=on?today():null;save();scheduleLocal();toast(on?'وقّفنا تذكير الحركة النهارده':'تذكير الحركة رجع');return}
   S.settings[k]=on;save();if(k==='swim'){render();toast(on?'السباحة اتضافت 🏊':'السباحة اتشالت من البرنامج')}if(k==='hold')toast(on?'تم تثبيت المستوى':'التدرّج التلقائي مفعّل');if(k==='sound'&&on)unlockAudio();scheduleLocal();
 }
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
@@ -1140,11 +1171,12 @@ function importData(file){const r=new FileReader();r.onload=()=>{try{const o=JSO
 function icsFile(){
   const s=S.settings,st=parseKey(today()),ds=keyOf(st).replace(/-/g,'');
   const BY=['SU','MO','TU','WE','TH','FR','SA'];
-  const ev=(uid,title,hm,rule,desc)=>{const t=hm.replace(':','')+'00';return `BEGIN:VEVENT\r\nUID:${uid}@backcare\r\nDTSTAMP:${ds}T000000Z\r\nDTSTART;TZID=Africa/Cairo:${ds}T${t}\r\nDURATION:PT${uid==='swim'?'30':'15'}M\r\nRRULE:${rule}\r\nSUMMARY:${title}\r\nDESCRIPTION:${desc}\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${title}\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`};
+  const ev=(uid,title,hm,rule,desc)=>{const t=hm.replace(':','')+'00';return `BEGIN:VEVENT\r\nUID:${uid}@backcare\r\nDTSTAMP:${ds}T000000Z\r\nDTSTART;TZID=Africa/Cairo:${ds}T${t}\r\nDURATION:PT${uid==='swim'?'30':uid.startsWith('move')?'5':'15'}M\r\nRRULE:${rule}\r\nSUMMARY:${title}\r\nDESCRIPTION:${desc}\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${title}\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`};
   let out='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//BackCare//AR\r\nCALSCALE:GREGORIAN\r\n';
   out+=ev('morning','BackCare – تمارين الصباح',s.morning,'FREQ=DAILY;COUNT=56','افتح تطبيق BackCare وابدأ روتين الصباح');
   out+=ev('evening','BackCare – تمارين المساء',s.evening,'FREQ=DAILY;COUNT=56','روتين المساء الخفيف قبل النوم');
   if(swimOn()&&s.swimDays.length)out+=ev('swim','BackCare – السباحة',s.swimTime,`FREQ=WEEKLY;COUNT=${s.swimDays.length*8};BYDAY=${s.swimDays.map(d=>BY[d]).join(',')}`,'سباحة بإيقاع مريح – سجّلها في التطبيق');
+  const mv=s.move;if(mv&&mv.on&&mv.days.length){const tmp=S.movePaused;S.movePaused=null;const slots=(()=>{const o=[];for(let t=toMin(mv.from)+mv.every;t<=toMin(mv.to);t+=mv.every)o.push(`${pad(Math.floor(t/60))}:${pad(t%60)}`);return o})();S.movePaused=tmp;slots.forEach(hm=>{out+=ev('move'+hm.replace(':',''),'BackCare – قوم اتحرك 🚶',hm,`FREQ=WEEKLY;COUNT=${mv.days.length*8};BYDAY=${mv.days.map(d=>BY[d]).join(',')}`,'دقيقتين مشي واشرب مية')})}
   return out+'END:VCALENDAR\r\n';
 }
 
@@ -1153,14 +1185,15 @@ let timers=[];
 function reminderList(d=new Date()){const s=S.settings,k=keyOf(d),r=S.days[k];const l=[
   {id:'morning',hm:s.morning,title:'روتين الصباح 🌿',body:`${routine('morning').length} تمارين · حوالي ${routineMin('morning')} دقيقة`,done:!!(r&&r.morning.fin)},
   {id:'evening',hm:s.evening,title:'روتين المساء 🌙',body:'تمارين خفيفة وتنفّس قبل النوم',done:!!(r&&r.evening.fin)}];
+  moveSlots(d).forEach(hm=>l.push({id:'move-'+hm.replace(':',''),hm,title:'قوم اتحرك 🚶',body:'خف على ظهرك: دقيقتين مشي واشرب مية',done:false,win:20,url:'./#move',move:true}));
   if(swimOn()&&isSwimDay(d))l.push({id:'swim',hm:s.swimTime,title:'وقت السباحة 🏊',body:`${swimMin()} دقيقة بإيقاع مريح`,done:!!(r&&r.swim&&r.swim.done)});return l}
 function scheduleLocal(){
   timers.forEach(clearTimeout);timers=[];
-  if(!S.settings.notify||!('Notification' in window)||Notification.permission!=='granted')return;
+  const perm=S.settings.notify&&('Notification' in window)&&Notification.permission==='granted';
   const now=new Date();
-  reminderList().forEach(r=>{const[h,m]=r.hm.split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);const ms=t-now;if(ms>0&&ms<864e5&&!r.done)timers.push(setTimeout(()=>notify(r),ms))});
+  reminderList().forEach(r=>{const[h,m]=r.hm.split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);const ms=t-now;if(ms>0&&ms<864e5&&!r.done){if(r.move)timers.push(setTimeout(()=>{if(document.visibilityState==='visible'&&!W){openMove();beep(880,.15,.18);buzz([80,60,80])}else if(perm)notify(r)},ms));else if(perm)timers.push(setTimeout(()=>notify(r),ms))}});
 }
-async function notify(r){try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();const o={body:r.body,icon:'icons/icon-192.png',badge:'icons/badge.png',tag:'bc-'+r.id,lang:'ar',dir:'rtl',data:{url:'./#home'}};if(reg)reg.showNotification(r.title,o);else new Notification(r.title,o)}catch(e){}}
+async function notify(r){try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();const o={body:r.body,icon:'icons/icon-192.png',badge:'icons/badge.png',tag:'bc-'+r.id,lang:'ar',dir:'rtl',data:{url:r.url||'./#home'}};if(reg)reg.showNotification(r.title,o);else new Notification(r.title,o)}catch(e){}}
 async function registerPeriodic(){try{const reg=await navigator.serviceWorker.ready;if('periodicSync' in reg){const st=await navigator.permissions.query({name:'periodic-background-sync'});if(st.state==='granted')await reg.periodicSync.register('bc-reminders',{minInterval:60*60*1000})}}catch(e){}}
 async function syncSWConfig(){try{if(!('caches' in window))return;const c=await caches.open('bc-config');const days={};for(let i=0;i<2;i++){const d=addDays(new Date(),i);days[keyOf(d)]=reminderList(d)}await c.put('config.json',new Response(JSON.stringify({notify:S.settings.notify,days}),{headers:{'Content-Type':'application/json'}}))}catch(e){}}
 
@@ -1213,10 +1246,112 @@ function isDark(){return document.documentElement.dataset.theme==='dark'}
 function applyTheme(){const t=S.settings.theme||'auto';const d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';const m=document.querySelector('meta[name=theme-color]');if(m)m.content=d?'#0D1524':'#13213C'}
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if((S.settings.theme||'auto')==='auto'){applyTheme();if(!W)render()}})}catch(e){}
 
+/* ================== new features ================== */
+const KIND_NAME={morning:'روتين الصباح',evening:'روتين المساء',light:'الروتين الخفيف'};
+const KIND_SHORT={morning:'الصباح',evening:'المساء',light:'خفيف'};
+/* voice coach */
+const AR_NUM=['','واحد','اتنين','تلاتة','أربعة','خمسة','ستة','سبعة','تمانية','تسعة','عشرة','حداشر','اتناشر'];
+let arVoice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();arVoice=v.find(x=>/ar[-_]EG/i.test(x.lang))||v.find(x=>/^ar/i.test(x.lang))||null}catch(e){}}
+if('speechSynthesis' in window){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
+function speak(t){if(!S.settings.voice||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=arVoice?arVoice.lang:'ar-EG';if(arVoice)u.voice=arVoice;u.rate=.95;speechSynthesis.speak(u)}catch(e){}}
+/* easy version */
+function easyItem(it){const o={...it,label:null};if(o.reps&&o.reps>1)o.reps=Math.max(3,Math.round(o.reps*.6));if(o.sets)o.sets=1;if(o.hold)o.hold=Math.max(3,Math.round(o.hold*.75));if(o.min)o.min=Math.max(2,Math.round(o.min*.6)),o.max=o.min;return o}
+function askFeel(kind){
+  const m=modal(`<div style="text-align:center"><h2>ظهرك عامل إيه دلوقتي؟</h2><p class="muted small" style="margin-top:4px">علشان نظبط التمرين على قدّك</p>
+   <div class="feel"><button data-f="good"><span>😊</span>كويس</button><button data-f="ok"><span>😐</span>مقبول</button><button data-f="bad"><span>😣</span>تعبان</button></div></div>`);
+  m.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const f=b.dataset.f;dayRec().feel=f;save();closeModal();
+    if(f!=='bad'){startWorkout(kind,{skipAsk:1});return}
+    const m2=modal(`<div style="text-align:center"><div style="font-size:40px">🤲</div><h2>ولا يهمك، هنخفّفها</h2><p class="muted small" style="margin-top:6px">اختار اللي يريّحك النهارده:</p></div>
+     <div class="stack" style="margin-top:16px"><button class="btn primary block" id="f-light">الروتين الخفيف (${routineMin('light')} دقايق)</button><button class="btn ghost block" id="f-easy">نفس الروتين بتكرارات أقل</button><button class="link" style="display:block;margin:4px auto" data-act="modal-close">مش النهارده</button></div>
+     <p class="muted small" style="text-align:center;margin-top:10px">لو الألم نازل للرجل أو فيه تنميل أو ضعف، شوف <button class="link small" data-act="redflags">العلامات التحذيرية</button>.</p>`);
+    $('#f-light',m2).onclick=()=>{closeModal();startWorkout('light',{skipAsk:1})};
+    $('#f-easy',m2).onclick=()=>{closeModal();startWorkout(kind,{skipAsk:1,easy:1})};
+  });
+}
+/* weekly summary */
+function weekStart(d=new Date()){return addDays(d,-WEEK_ORDER.indexOf(d.getDay()))}
+function weekStats(ws){
+  let act=0,full=0,sum=0,n=0,swims=0,moves=0;const pains=[];
+  for(let i=0;i<7;i++){const d=addDays(ws,i),k=keyOf(d);if(k>today()||daysBetween(S.settings.start,k)<0)continue;n++;const p=dayPct(k);sum+=p;if(p>0)act++;if(p>=1)full++;const r=S.days[k];if(r&&r.swim&&r.swim.done)swims++;if(r&&r.moves)moves+=r.moves;if(S.pain[k])pains.push(S.pain[k].level)}
+  return{n,act,full,avg:n?sum/n:0,pain:avg(pains),swims,moves};
+}
+function summaryHTML(ws,title){
+  const s=weekStats(ws),p=weekStats(addDays(ws,-7));
+  const painTxt=s.pain==null?'ماسجّلتش ألم':p.pain==null?`متوسط الألم ${s.pain.toFixed(1)}`:(s.pain<p.pain-.3?`الألم نزل من ${p.pain.toFixed(1)} لـ ${s.pain.toFixed(1)} 👏`:s.pain>p.pain+.3?`الألم زاد من ${p.pain.toFixed(1)} لـ ${s.pain.toFixed(1)}، خفّف شوية`:`الألم ثابت حوالين ${s.pain.toFixed(1)}`);
+  const msg=s.act>=6?'أسبوع أسطوري! 🏆':s.act>=4?'أسبوع جامد 💪':s.act>=2?'بداية كويسة، كمّل 👍':'الأسبوع الجاي هيبقى أحسن 🌱';
+  return `<div style="text-align:center"><div class="hwrap">${heart(s.avg,96)}<b>${Math.round(s.avg*100)}%</b></div><h2 style="margin-top:4px">${title}</h2><p class="muted">${fmtDate(ws,{day:'numeric',month:'short'})} – ${fmtDate(addDays(ws,6),{day:'numeric',month:'short'})}</p><p style="font-weight:700;margin-top:6px">${msg}</p></div>
+  <div class="list" style="margin-top:14px">
+   <div class="li"><div class="ico sun">${ic('check')}</div><div class="t"><b>${s.act} من ${s.n||7} أيام اتمرّنت فيها</b><span>منهم ${s.full} يوم كامل 100%</span></div></div>
+   <div class="li"><div class="ico heart">${ic('pain')}</div><div class="t"><b>الألم</b><span>${painTxt}</span></div></div>
+   ${swimOn()||s.swims?`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>${s.swims} مرات سباحة</b><span>الهدف 2 في الأسبوع</span></div></div>`:''}
+   ${S.settings.move.on||s.moves?`<div class="li"><div class="ico moon">🚶</div><div class="t"><b>${s.moves} استراحة حركة</b><span>كل استراحة بتريّح ظهرك</span></div></div>`:''}
+  </div>`;
+}
+function maybeWeeklySummary(){
+  const lastWs=addDays(weekStart(),-7),k=keyOf(lastWs);
+  if(S.lastSum===k||daysBetween(S.settings.start,keyOf(addDays(lastWs,6)))<0)return false;
+  S.lastSum=k;save();modal(summaryHTML(lastWs,'ملخص الأسبوع اللي فات')+`<button class="btn primary block" style="margin-top:16px" data-act="modal-close">يلا على الأسبوع الجاي</button>`);celebrate(false);return true;
+}
+/* phase badges */
+const BADGES=[{e:'🌱',t:'البداية الهادية'},{e:'🧱',t:'الثبات'},{e:'💪',t:'القوة'},{e:'🏆',t:'الوظيفي'}];
+function phaseUpModal(ph){
+  const prevIds=new Set(routine('morning',(ph-1)*2).map(i=>i.id)),nowIds=routine('morning',ph*2-1).filter(i=>!prevIds.has(i.id));
+  const b=BADGES[ph-2];
+  modal(`<div style="text-align:center"><div class="badge-big">${b.e}</div><h2>عاش! خلّصت مرحلة «${b.t}»</h2><p class="muted" style="margin-top:4px">داخل على المرحلة ${ph}: ${PHASES[ph-1].t}</p></div>
+   ${nowIds.length?`<div class="box green" style="margin-top:14px"><h3>الجديد في المرحلة دي</h3><ul class="lst">${nowIds.map(i=>`<li>${EX[i.id].name}</li>`).join('')}</ul></div>`:''}
+   <p class="muted small" style="margin-top:10px">لو أي تمرين جديد تعبك، تخطّاه أو ثبّت المستوى من الإعدادات.</p>
+   <button class="btn primary block" style="margin-top:14px" data-act="modal-close">يلا بينا 🚀</button>`);celebrate(true);
+}
+/* doctor report */
+function openReport(){
+  const end=today(),from=keyOf(addDays(new Date(),-27));let poss=0,done=0,flares=0;const symC={},reds=[],notes=[];const weeks=[[],[],[],[]];
+  for(let i=0;i<28;i++){const d=addDays(new Date(),-i),k=keyOf(d);if(daysBetween(S.settings.start,k)<0)continue;poss++;done+=dayPct(k);flares+=S.flares[k]||0;const p=S.pain[k];if(p){weeks[Math.floor(i/7)].push(p.level);(p.sym||[]).forEach(s=>{symC[s]=(symC[s]||0)+1;if(SYM_RED.includes(s))reds.push(`${fmtDate(d,{day:'numeric',month:'short'})}: ${s}`)});if(p.note)notes.push(`${fmtDate(d,{day:'numeric',month:'short'})}: ${esc(p.note)}`)}}
+  const L=level(),wk=weeks.map(a=>avg(a));
+  const o=document.createElement('div');o.className='overlay report';o.id='report';
+  o.innerHTML=`<div class="wk" style="padding-bottom:30px"><div class="wk-top noprint"><button class="icon-btn" id="rp-x" aria-label="إغلاق">${ic('x')}</button><h3 style="flex:1">تقرير للدكتور</h3></div>
+   <div class="card" style="margin-top:14px"><div class="row between"><div><h2>BackCare · تقرير متابعة</h2><div class="muted small">${fmtDate(parseKey(from),{day:'numeric',month:'long'})} – ${fmtDate(parseKey(end),{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="brand-mark">${LOGO}</div></div>
+   <div class="stats" style="margin-top:14px"><div class="stat flat"><div class="k">البرنامج</div><div class="v" style="font-size:20px">الأسبوع ${L} من 8</div><div class="muted small">${PHASES[phaseOf(L)-1].t}</div></div>
+   <div class="stat flat"><div class="k">الالتزام (آخر 4 أسابيع)</div><div class="v">${poss?Math.round(done/poss*100):0}%</div></div>
+   <div class="stat flat"><div class="k">آخر ألم مسجّل</div><div class="v">${(()=>{const k=Object.keys(S.pain).sort().pop();return k?S.pain[k].level+'/10':'—'})()}</div></div>
+   <div class="stat flat"><div class="k">مرات «الألم زاد»</div><div class="v">${flares}</div></div></div>
+   <h3 style="margin-top:16px">متوسط الألم أسبوعيًا</h3><table class="tbl"><tr><th>الأسبوع</th><th>متوسط الألم</th></tr>${wk.map((v,i)=>`<tr><td>${['الحالي','اللي فات','من أسبوعين','من 3 أسابيع'][i]}</td><td>${v==null?'—':v.toFixed(1)+' / 10'}</td></tr>`).join('')}</table>
+   <h3 style="margin-top:16px">الألم آخر 4 أسابيع</h3>${painChart()}
+   <h3 style="margin-top:16px">الأعراض المسجّلة</h3>${Object.keys(symC).length?`<ul class="lst">${Object.entries(symC).map(([s,c])=>`<li>${esc(s)}: ${c} مرة</li>`).join('')}</ul>`:'<p class="muted small">مفيش أعراض مسجّلة.</p>'}
+   ${reds.length?`<div class="box red" style="margin-top:12px"><h3>علامات تحتاج تقييم</h3><ul class="lst">${reds.map(esc).join('')?reds.map(r=>`<li>${esc(r)}</li>`).join(''):''}</ul></div>`:''}
+   ${notes.length?`<h3 style="margin-top:16px">ملاحظات المريض</h3><ul class="lst small">${notes.slice(0,10).map(n=>`<li>${n}</li>`).join('')}</ul>`:''}
+   <h3 style="margin-top:16px">التمارين الحالية</h3><p class="small">${routine('morning').map(i=>`${EX[i.id].name} (${targetLabel(i)})`).join('، ')}</p>
+   <p class="muted small" style="margin-top:14px">تقرير ذاتي من تطبيق BackCare للتمارين المنزلية، وليس تشخيصًا طبيًا.</p></div>
+   <div class="row noprint" style="gap:10px;margin-top:14px"><button class="btn primary" style="flex:1" id="rp-print">${ic('dl','icon" style="width:18px;height:18px')} حفظ PDF / طباعة</button><button class="btn ghost" style="flex:1" id="rp-share">مشاركة</button></div></div>`;
+  document.body.appendChild(o);document.body.style.overflow='hidden';
+  $('#rp-x').onclick=()=>{o.remove();document.body.style.overflow=''};
+  $('#rp-print').onclick=()=>{try{window.print()}catch(e){toast('الطباعة مش متاحة هنا')}};
+  $('#rp-share').onclick=async()=>{const txt=`BackCare – تقرير متابعة\nالأسبوع ${L} من 8\nالالتزام: ${poss?Math.round(done/poss*100):0}%\nمتوسط الألم أسبوعيًا (من الأحدث): ${wk.map(v=>v==null?'—':v.toFixed(1)).join(' / ')}\nمرات زيادة الألم: ${flares}${reds.length?'\nعلامات تحتاج تقييم: '+reds.join('، '):''}`;
+    try{if(navigator.share)await navigator.share({title:'تقرير BackCare',text:txt});else{await navigator.clipboard.writeText(txt);toast('اتنسخ التقرير، الصقه في الرسالة')}}catch(e){}};
+}
+/* movement breaks (pomodoro) */
+function moveSlots(d=new Date()){const m=S.settings.move;if(!m||!m.on||!m.days.includes(d.getDay())||S.movePaused===keyOf(d))return[];const out=[];for(let t=toMin(m.from)+m.every;t<=toMin(m.to);t+=m.every)out.push(`${pad(Math.floor(t/60))}:${pad(t%60)}`);return out}
+function nextMove(){const now=nowMin();return moveSlots().find(hm=>toMin(hm)>now)||null}
+let moveTimer=null;
+function openMove(){
+  if(W||$('#modal'))return;
+  const m=modal(`<div style="text-align:center"><div class="fig-card" style="max-width:300px;margin:0 auto"><div class="fig" data-ex="walk" style="width:100%;height:100%"></div></div>
+   <h2 style="margin-top:12px">قوم اتحرك شوية 🚶</h2><p class="muted" style="margin-top:4px">خف على ظهرك من القعدة</p></div>
+   <ul class="lst" style="margin-top:10px"><li>امشِ دقيقتين بهدوء</li><li>اشرب مية</li><li>ارجع اقعد وضهرك مسنود وقدمك على الأرض</li></ul>
+   <div class="timer" style="margin-top:12px;box-shadow:none;border:1px solid var(--line)"><div class="ring" id="mvring">${ring(0,96,9,'#2A8C82','var(--ring-bg)')}<div class="num" id="mvnum">2:00</div></div><div style="flex:1"><div class="lbl" id="mvlbl">جاهز؟</div><div class="sub">دقيقتين بس</div></div></div>
+   <div class="row" style="gap:10px;margin-top:14px"><button class="btn ghost" style="flex:1" id="mv-later">بعدين</button><button class="btn primary" style="flex:1.4" id="mv-go">${ic('play','icon" style="width:18px;height:18px')} يلا</button></div>`);
+  mountFigures(m);
+  const done=()=>{const r=dayRec();r.moves=(r.moves||0)+1;save();clearInterval(moveTimer);closeModal();celebrate(false);toast('عاش! ظهرك بيشكرك 🙏');if(!W&&tab==='home')render()};
+  $('#mv-later',m).onclick=()=>{clearInterval(moveTimer);closeModal()};
+  $('#mv-go',m).onclick=()=>{const b=$('#mv-go',m);if(b.dataset.on){done();return}b.dataset.on=1;b.innerHTML=ic('check','icon" style="width:18px;height:18px')+' خلّصت';unlockAudio();speak('يلا قوم اتحرك');let left=120;$('#mvlbl',m).textContent='امشِ بهدوء…';
+    moveTimer=setInterval(()=>{left--;const n=$('#mvnum');if(!n){clearInterval(moveTimer);return}n.textContent=`${Math.floor(left/60)}:${pad(left%60)}`;const c=$('#mvring .rg');if(c){const R=(96-9)/2,cc=2*Math.PI*R;c.setAttribute('stroke-dashoffset',(cc*(left/120)).toFixed(2))}if(left<=0){chime();done()}},1000)};
+}
+
 /* ================== events ================== */
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset],[data-day]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset],[data-day],[data-moveday]');if(!t)return;
   if(t.dataset.day){openDay(t.dataset.day);return}
+  if(t.dataset.moveday){const d=+t.dataset.moveday,a=S.settings.move.days;const i=a.indexOf(d);if(i<0)a.push(d);else a.splice(i,1);save();scheduleLocal();render();return}
   if(t.dataset.themeset){S.settings.theme=t.dataset.themeset;save();applyTheme();render();return}
   if(t.dataset.tab){closeSheet();go(t.dataset.tab);return}
   if(t.dataset.sym){const s=t.dataset.sym;const i=PD.sym.indexOf(s);if(i<0)PD.sym.push(s);else PD.sym.splice(i,1);t.classList.toggle('on');return}
@@ -1225,6 +1360,10 @@ document.addEventListener('click',e=>{
   switch(a){
     case 'theme':S.settings.theme=isDark()?'light':'dark';save();applyTheme();render();break;
     case 'start':startWorkout(t.dataset.kind);break;
+    case 'light':startWorkout('light',{skipAsk:1});break;
+    case 'report':openReport();break;
+    case 'week-sum':modal(summaryHTML(weekStart(),'الأسبوع ده لحد دلوقتي')+`<button class="btn ghost block" style="margin-top:14px" id="ws-prev">الأسبوع اللي فات</button><button class="btn primary block" style="margin-top:10px" data-act="modal-close">تمام</button>`);$('#ws-prev').onclick=()=>{closeModal();modal(summaryHTML(addDays(weekStart(),-7),'الأسبوع اللي فات')+`<button class="btn primary block" style="margin-top:14px" data-act="modal-close">تمام</button>`)};break;
+    case 'move-now':openMove();break;
     case 'detail':openDetail(t.dataset.id);break;
     case 'sheet-close':closeSheet();break;
     case 'modal-close':closeModal();break;
@@ -1236,7 +1375,7 @@ document.addEventListener('click',e=>{
     case 'export':exportData();break;
     case 'import':$('#imp').click();break;
     case 'reset':confirmBox('مسح كل البيانات؟','سيتم حذف سجل التمارين والألم والإعدادات من هذا الموبايل. لا يمكن التراجع.','مسح',()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defaults();save();render();onboarding()},true);break;
-    case 'wk-toggle':unlockAudio();W.run=!W.run;if(W.run)requestWake();else saveResume();W.last=0;wkUpdate(false);break;
+    case 'wk-toggle':unlockAudio();W.run=!W.run;if(W.run){requestWake();if(W.si===0&&W.el<.5)speak(EX[W.items[W.idx].id].name)}else{saveResume();try{speechSynthesis.cancel()}catch(e){}}W.last=0;wkUpdate(false);break;
     case 'wk-skip':if(W.idx>=W.items.length-1){wkFinish()}else{const k=W.run;W.idx++;wkLoad();W.run=k;saveResume()}break;
     case 'wk-prev':if(W.idx>0){W.idx--;wkLoad()}break;
     case 'wk-done':wkComplete();break;
@@ -1255,6 +1394,7 @@ document.addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset.set){applySetting(t.dataset.set,t.value);if(t.dataset.set!=='morning'&&t.dataset.set!=='evening'&&t.dataset.set!=='swimTime')render();return}
   if(t.dataset.toggle){toggleSetting(t.dataset.toggle,t.checked,t);return}
+  if(t.dataset.move){const m=S.settings.move,k=t.dataset.move;if(k==='every')m.every=+t.value;else if(t.value)m[k]=t.value;if(toMin(m.to)<=toMin(m.from)){toast('وقت النهاية لازم يبقى بعد البداية');return}save();scheduleLocal();render();toast('اتحفظ');return}
   if(t.id==='imp'&&t.files[0]){importData(t.files[0]);t.value=''}
 });
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(TABS.some(x=>x[0]===h)&&h!==tab){tab=h;render()}});
@@ -1270,6 +1410,8 @@ async function doInstall(){if(!deferredInstall)return;deferredInstall.prompt();t
 if('serviceWorker' in navigator&&location.protocol==='https:'||location.hostname==='localhost'){if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').then(()=>{syncSWConfig();if(S.settings.notify)registerPeriodic()}).catch(()=>{})}
 applyTheme();render();requestAnimationFrame(loop);scheduleLocal();
 if(!S.settings.onboarded)onboarding();
+else setTimeout(()=>{if(location.hash==='#move'){try{history.replaceState(null,'','#home')}catch(e){}openMove();return}if(S._phaseUp){const ph=S._phaseUp;S._phaseUp=null;save();phaseUpModal(ph);return}maybeWeeklySummary()},700);
+window.addEventListener('hashchange',()=>{if(location.hash==='#move'){try{history.replaceState(null,'','#home')}catch(e){}openMove()}});
 setInterval(()=>{if(!W&&tab==='home'&&!$('#sheet')&&!$('#modal')&&!$('#ob')&&document.visibilityState==='visible'){const sy=scrollY;render();scrollTo(0,sy)}},5*60*1000);
 </script>
 </body>
