@@ -301,6 +301,19 @@ textarea{min-height:80px;resize:vertical}
 .badges{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px}.bd{text-align:center;padding:8px 2px;border-radius:16px;opacity:.45;filter:grayscale(1)}.bd span{font-size:30px;display:block}.bd b{display:block;font-size:12px;margin-top:2px}.bd em{font-style:normal;font-size:10.5px;color:var(--muted)}.bd.on{opacity:1;filter:none;background:var(--amber-l)}.bd.cur{opacity:1;filter:none;outline:1.5px dashed var(--amber)}
 .tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:8px;text-align:right}.stat.flat{box-shadow:none;border:1px solid var(--line)}
 @media print{body>*:not(#report){display:none!important}#report{position:static;overflow:visible;background:#fff}#report .noprint{display:none!important}#report .card{box-shadow:none}}
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+#picker{z-index:95}
+.pick{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 12px 0 10px;border-radius:12px;background:var(--sage-xl);border:1px solid var(--line);font-weight:600;font-size:15px;color:var(--ink)}
+.pick:active{transform:scale(.97)}.pick.wide{display:flex;width:100%;justify-content:space-between;min-height:52px;padding:0 16px;font-size:16px;background:var(--input)}
+.picker .li.opt{min-height:60px}.radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;position:relative}
+.opt.sel .radio{border-color:var(--teal)}.opt.sel .radio:after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--teal)}.opt.sel b{color:var(--teal-ink)}
+.tbig{text-align:center;font-size:44px;font-weight:700;margin:8px 0 4px;font-variant-numeric:tabular-nums;direction:ltr}.tbig small{font-size:20px;color:var(--muted)}
+.tgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.tgrid button{min-height:46px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);font-weight:600;font-variant-numeric:tabular-nums}
+.tgrid button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+#tabs button .icon{padding:3px 14px;box-sizing:content-box;border-radius:99px;transition:background .2s}#tabs button.on .icon{background:var(--teal-l)}
+#view{animation:viewIn .22s ease-out}@keyframes viewIn{from{opacity:.4;transform:translateY(6px)}}
+.sheet{will-change:transform}
+.set-row label{flex:1}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -812,6 +825,7 @@ function startWorkout(kind,opts={}){
   if(idx<0){idx=0;if(dayRec()[kind].fin){dayRec()[kind].done=[];dayRec()[kind].fin=false;save()}}
   W={kind,items,idx,steps:[],si:0,el:0,run:false,last:0,lastSec:-1,easy:!!opts.easy};
   const o=document.createElement('div');o.className='overlay';o.id='wk';document.body.appendChild(o);document.body.style.overflow='hidden';
+  W.layer=openLayer(wkBack);
   wkLoad();unlockAudio();
   const R=S.resume;
   if(R&&R.d===today()&&R.kind===kind&&W.items[W.idx].id===R.id&&R.si>0&&R.si<W.steps.length){W.si=R.si;W.el=Math.min(R.el||0,W.steps[R.si].d-1);W._k=-1;wkUpdate(true);toast('كمّلنا من مكان ما وقفت 👌')}
@@ -925,7 +939,8 @@ function wkFinish(){
    <p class="muted small" style="text-align:center;margin-top:16px">ألم خفيف ومؤقت (حتى 3 من 10) يهدأ خلال 24 ساعة أمر مقبول. إذا زاد أو امتد للساق، خفّف التمارين.</p></div>`;
   $('#fpr').addEventListener('input',e=>{$('#fpv').textContent=e.target.value;$('#fpv').style.color=painCol(+e.target.value)});
 }
-function wkClose(){if(W&&W.steps.length&&!dayRec()[W.kind].fin)saveResume();W=null;releaseWake();const o=$('#wk');if(o)o.remove();document.body.style.overflow='';render()}
+function wkBack(fp){if(!W)return;W.layer=null;if($('.done-hero')){wkClose(true);return}W.run=false;saveResume();W.layer=openLayer(wkBack);const n=routineDoneCount(W.kind);confirmBox('إنهاء التمرين؟',n?`اتحفظ ${n} تمارين، وتقدر تكمّل بعدين من نفس المكان.`:'لسه ماخلّصتش أي تمرين.','إنهاء',()=>wkClose())}
+function wkClose(fromPop){if(W&&W.steps.length&&!dayRec()[W.kind].fin)saveResume();if(W&&W.layer&&fromPop!==true)closeLayer(W.layer);W=null;releaseWake();const o=$('#wk');if(o)o.remove();document.body.style.overflow='';render()}
 
 /* audio & haptics */
 let AC=null;
@@ -1104,29 +1119,29 @@ function viewSettings(){
   <div class="seg">${[['auto','تلقائي','phone'],['light','فاتح','sun'],['dark','داكن','moon']].map(([k,l,i])=>`<button class="${(s.theme||'auto')===k?'on':''}" data-themeset="${k}">${ic(i,'icon" style="width:17px;height:17px')}${l}</button>`).join('')}</div>
   <div class="sec-title"><h2>التذكيرات</h2></div>
   <div class="card" style="padding:4px 18px">
-   <div class="set-row"><label for="s-m">${ic('sun','icon" style="width:18px;height:18px;vertical-align:-3px;color:#B7791F')} تمارين الصباح</label><input type="time" id="s-m" value="${s.morning}" data-set="morning"></div>
-   <div class="set-row"><label for="s-e">${ic('moon','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--navy3)')} تمارين المساء</label><input type="time" id="s-e" value="${s.evening}" data-set="evening"></div>
+   <div class="set-row"><label for="s-m">${ic('sun','icon" style="width:18px;height:18px;vertical-align:-3px;color:#B7791F')} تمارين الصباح</label>${pickBtn('data-pick="time:morning"','time',s.morning)}</div>
+   <div class="set-row"><label for="s-e">${ic('moon','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--navy3)')} تمارين المساء</label>${pickBtn('data-pick="time:evening"','time',s.evening)}</div>
    <div class="set-row"><div><label>السباحة (اختياري)</label><div class="muted small">مش بتدخل في نسبة اليوم، بتتحسب كإضافة</div></div><label class="switch"><input type="checkbox" data-toggle="swim" ${swimOn()?'checked':''}><span></span></label></div>
    ${swimOn()?`<div class="set-row" style="display:block"><div class="row between"><label>${ic('wave','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--teal)')} أيام السباحة</label><span class="muted small">${s.swimDays.length} أيام</span></div>
      <div class="daychips">${WEEK_ORDER.map(d=>`<button class="chip ${s.swimDays.includes(d)?'on':''}" data-swimday="${d}">${DAY[d]}</button>`).join('')}</div></div>
-   <div class="set-row"><label for="s-s">وقت السباحة</label><input type="time" id="s-s" value="${s.swimTime}" data-set="swimTime"></div>`:''}
+   <div class="set-row"><label for="s-s">وقت السباحة</label>${pickBtn('data-pick="time:swimTime"','time',s.swimTime)}</div>`:''}
    <div class="set-row"><div><label>إشعارات التطبيق</label><div class="muted small">${perm==='denied'?'الإشعارات محظورة من إعدادات المتصفح':perm==='unsupported'?'غير مدعومة على هذا المتصفح':'تعمل بشكل موثوق والتطبيق مفتوح أو في الخلفية'}</div></div><label class="switch"><input type="checkbox" data-toggle="notify" ${s.notify&&perm==='granted'?'checked':''} ${perm==='denied'||perm==='unsupported'?'disabled':''}><span></span></label></div>
   </div>
   <div class="banner teal small" style="margin-top:12px">${ic('info')}<div><b>للتذكير المضمون والتطبيق مقفول</b>أندرويد لا يضمن إشعارات تطبيقات الويب وهي مقفولة. أضِف التذكيرات لتقويم موبايلك مرة واحدة وستصلك يوميًا.<div style="margin-top:10px"><button class="btn sm primary" data-act="ics">${ic('cal','icon" style="width:18px;height:18px')} أضف التذكيرات للتقويم</button></div></div></div>
   <div class="sec-title"><h2>استراحة الحركة 🚶</h2></div>
   <div class="card" style="padding:4px 18px">
    <div class="set-row"><div><label>فكّرني أقوم أتحرك</label><div class="muted small">إشعار كل فترة علشان القعدة الطويلة</div></div><label class="switch"><input type="checkbox" data-toggle="moveon" ${s.move.on?'checked':''}><span></span></label></div>
-   ${s.move.on?`<div class="set-row"><label for="mv-e">كل</label><select id="mv-e" data-move="every">${[20,30,45,60,90].map(v=>`<option value="${v}" ${s.move.every===v?'selected':''}>${v} دقيقة</option>`).join('')}</select></div>
-   <div class="set-row"><label for="mv-f">من</label><input type="time" id="mv-f" value="${s.move.from}" data-move="from"></div>
-   <div class="set-row"><label for="mv-t">لحد</label><input type="time" id="mv-t" value="${s.move.to}" data-move="to"></div>
+   ${s.move.on?`<div class="set-row"><label for="mv-e">كل</label>${pickBtn('data-pick="every"','every',s.move.every)}</div>
+   <div class="set-row"><label for="mv-f">من</label>${pickBtn('data-pick="time:move.from"','time',s.move.from)}</div>
+   <div class="set-row"><label for="mv-t">لحد</label>${pickBtn('data-pick="time:move.to"','time',s.move.to)}</div>
    <div class="set-row" style="display:block"><label>الأيام</label><div class="daychips">${WEEK_ORDER.map(d=>`<button class="chip ${s.move.days.includes(d)?'on':''}" data-moveday="${d}">${DAY[d]}</button>`).join('')}</div></div>
    <div class="set-row"><div><label>إيقاف النهارده بس</label><div class="muted small">إجازة أو يوم مش شغل</div></div><label class="switch"><input type="checkbox" data-toggle="movepause" ${S.movePaused===today()?'checked':''}><span></span></label></div>
    <div class="set-row"><span class="muted small">${moveSlots().length?`مواعيد النهارده: ${moveSlots().map(fmt12).join('، ')}`:'مفيش مواعيد النهارده'}</span></div>`:''}
   </div>
   <div class="sec-title"><h2>البرنامج</h2></div>
   <div class="card" style="padding:4px 18px">
-   <div class="set-row"><label for="s-st">تاريخ البداية</label><input type="date" id="s-st" value="${s.start}" max="${today()}" data-set="start"></div>
-   <div class="set-row"><div><label for="s-lv">المستوى الحالي</label><div class="muted small">حسب التقويم: الأسبوع ${calWeek()}</div></div><select id="s-lv" data-set="level">${Array.from({length:8},(_,i)=>`<option value="${i+1}" ${s.level===i+1?'selected':''}>الأسبوع ${i+1}</option>`).join('')}</select></div>
+   <div class="set-row"><label for="s-st">تاريخ البداية</label>${pickBtn('data-pick="date:start"','date',s.start)}</div>
+   <div class="set-row"><div><label for="s-lv">المستوى الحالي</label><div class="muted small">حسب التقويم: الأسبوع ${calWeek()}</div></div>${pickBtn('data-pick="level"','level',s.level)}</div>
    <div class="set-row"><div><label>تثبيت المستوى</label><div class="muted small">لا تتدرّج تلقائيًا (مفيد لو الأعراض زادت)</div></div><label class="switch"><input type="checkbox" data-toggle="hold" ${s.hold?'checked':''}><span></span></label></div>
   </div>
   <div class="sec-title"><h2>أثناء التمرين</h2></div>
@@ -1198,10 +1213,11 @@ async function registerPeriodic(){try{const reg=await navigator.serviceWorker.re
 async function syncSWConfig(){try{if(!('caches' in window))return;const c=await caches.open('bc-config');const days={};for(let i=0;i<2;i++){const d=addDays(new Date(),i);days[keyOf(d)]=reminderList(d)}await c.put('config.json',new Response(JSON.stringify({notify:S.settings.notify,days}),{headers:{'Content-Type':'application/json'}}))}catch(e){}}
 
 /* ================== sheets & modals ================== */
-function sheet(html){closeSheet();const bg=document.createElement('div');bg.className='sheet-bg';bg.id='sheet';bg.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div class="row" style="justify-content:flex-end;margin:-6px 0 6px"><button class="x" data-act="sheet-close" aria-label="إغلاق" style="width:38px;height:38px;border-radius:12px;background:var(--card);display:grid;place-items:center">${ic('x')}</button></div>${html}</div>`;document.body.appendChild(bg);mountFigures(bg);bg.addEventListener('click',e=>{if(e.target===bg)closeSheet()})}
-function closeSheet(){const s=$('#sheet');if(s)s.remove()}
-function modal(html){closeModal();const bg=document.createElement('div');bg.className='modal-bg';bg.id='modal';bg.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(bg);bg.addEventListener('click',e=>{if(e.target===bg&&!bg.dataset.lock)closeModal()});return bg}
-function closeModal(){const m=$('#modal');if(m)m.remove()}
+let sheetL=null,modalL=null;
+function sheet(html){closeSheet();const bg=document.createElement('div');bg.className='sheet-bg';bg.id='sheet';bg.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div class="row" style="justify-content:flex-end;margin:-6px 0 6px"><button class="x" data-act="sheet-close" aria-label="إغلاق" style="width:38px;height:38px;border-radius:12px;background:var(--card);display:grid;place-items:center">${ic('x')}</button></div>${html}</div>`;document.body.appendChild(bg);mountFigures(bg);bg.addEventListener('click',e=>{if(e.target===bg)closeSheet()});sheetL=openLayer(fp=>closeSheet(fp));enableSwipe(bg.firstChild,()=>closeSheet())}
+function closeSheet(fromPop){const s=$('#sheet');if(s){s.remove();if(fromPop!==true)closeLayer(sheetL)}}
+function modal(html){closeModal();const bg=document.createElement('div');bg.className='modal-bg';bg.id='modal';bg.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(bg);bg.addEventListener('click',e=>{if(e.target===bg&&!bg.dataset.lock)closeModal()});modalL=openLayer(fp=>closeModal(fp));return bg}
+function closeModal(fromPop){const m=$('#modal');if(m){if(typeof moveTimer!=='undefined')clearInterval(moveTimer);m.remove();if(fromPop!==true)closeLayer(modalL)}}
 function confirmBox(title,text,okLabel,onOk,danger){const m=modal(`<h2>${title}</h2><p class="muted" style="margin-top:8px">${text}</p><div class="row" style="margin-top:18px;gap:10px"><button class="btn sm ghost" style="flex:1" data-act="modal-close">إلغاء</button><button class="btn sm ${danger?'danger':'primary'}" style="flex:1" id="okb">${okLabel}</button></div>`);$('#okb',m).onclick=()=>{closeModal();onOk()}}
 
 function onboarding(step=0){
@@ -1226,16 +1242,16 @@ function onboarding(step=0){
    `<div style="text-align:center"><div style="width:76px;height:76px;border-radius:26px;background:var(--teal-l);color:var(--teal-ink);display:grid;place-items:center;margin:6px auto 18px">${ic('bell','icon" style="width:36px;height:36px')}</div></div>
     <h1>ظبّط مواعيدك</h1><p class="lead">تقدر تغيّرها بعدين من الإعدادات</p>
     <div class="card" style="margin-top:20px">
-     <label class="f" for="ob-m" style="margin-top:0">تمارين الصباح</label><input type="time" id="ob-m" value="${S.settings.morning}">
-     <label class="f" for="ob-e">تمارين المساء</label><input type="time" id="ob-e" value="${S.settings.evening}">
-     <label class="f" for="ob-s">بداية البرنامج</label><input type="date" id="ob-s" value="${S.settings.start}" max="${today()}">
+     <label class="f" style="margin-top:0">تمارين الصباح</label><button class="pick wide" id="ob-m" data-pick="ob" data-k="morning" data-v="${S.settings.morning}"><span>${fmt12(S.settings.morning)}</span>${ic('next','icon" style="width:16px;height:16px;opacity:.5')}</button>
+     <label class="f">تمارين المساء</label><button class="pick wide" id="ob-e" data-pick="ob" data-k="evening" data-v="${S.settings.evening}"><span>${fmt12(S.settings.evening)}</span>${ic('next','icon" style="width:16px;height:16px;opacity:.5')}</button>
+     <label class="f">بداية البرنامج</label><button class="pick wide" id="ob-s" data-pick="ob" data-k="start" data-v="${S.settings.start}"><span>${pickValueLabel('date',S.settings.start)}</span>${ic('next','icon" style="width:16px;height:16px;opacity:.5')}</button>
      <div class="set-row" style="margin-top:10px;border:0;padding-bottom:0"><div><label>أضف السباحة (اختياري)</label><div class="muted small">مرتين في الأسبوع، تقدر تغيّرها بعدين</div></div><label class="switch"><input type="checkbox" id="ob-sw" ${swimOn()?'checked':''}><span></span></label></div>
     </div>`];
   o.innerHTML=`<div class="in">${dots}<div class="body">${pages[step]}</div>
    <div class="row" style="gap:10px;margin-top:24px">${step?`<button class="btn ghost" style="flex:1" id="ob-back">رجوع</button>`:''}<button class="btn primary" style="flex:2" id="ob-next">${step===2?'يلا نبدأ':step===1?'فهمت':'التالي'}</button></div></div>`;
   $('#ob-next').onclick=()=>{
     if(step<2){onboarding(step+1);return}
-    const m=$('#ob-m').value,e=$('#ob-e').value,s=$('#ob-s').value;
+    const m=$('#ob-m').dataset.v,e=$('#ob-e').dataset.v,s=$('#ob-s').dataset.v;
     if(m)S.settings.morning=m;if(e)S.settings.evening=e;if(s)S.settings.start=s;S.settings.swim=$('#ob-sw').checked;
     S.settings.level=calWeek();S.settings.lastAdv=today();S.settings.onboarded=true;save();scheduleLocal();
     o.remove();document.body.style.overflow='';render();
@@ -1324,7 +1340,8 @@ function openReport(){
    <p class="muted small" style="margin-top:14px">تقرير ذاتي من تطبيق BackCare للتمارين المنزلية، وليس تشخيصًا طبيًا.</p></div>
    <div class="row noprint" style="gap:10px;margin-top:14px"><button class="btn primary" style="flex:1" id="rp-print">${ic('dl','icon" style="width:18px;height:18px')} حفظ PDF / طباعة</button><button class="btn ghost" style="flex:1" id="rp-share">مشاركة</button></div></div>`;
   document.body.appendChild(o);document.body.style.overflow='hidden';
-  $('#rp-x').onclick=()=>{o.remove();document.body.style.overflow=''};
+  const rl=openLayer(()=>{o.remove();document.body.style.overflow=''});
+  $('#rp-x').onclick=()=>{o.remove();document.body.style.overflow='';closeLayer(rl)};
   $('#rp-print').onclick=()=>{try{window.print()}catch(e){toast('الطباعة مش متاحة هنا')}};
   $('#rp-share').onclick=async()=>{const txt=`BackCare – تقرير متابعة\nالأسبوع ${L} من 8\nالالتزام: ${poss?Math.round(done/poss*100):0}%\nمتوسط الألم أسبوعيًا (من الأحدث): ${wk.map(v=>v==null?'—':v.toFixed(1)).join(' / ')}\nمرات زيادة الألم: ${flares}${reds.length?'\nعلامات تحتاج تقييم: '+reds.join('، '):''}`;
     try{if(navigator.share)await navigator.share({title:'تقرير BackCare',text:txt});else{await navigator.clipboard.writeText(txt);toast('اتنسخ التقرير، الصقه في الرسالة')}}catch(e){}};
@@ -1347,9 +1364,70 @@ function openMove(){
     moveTimer=setInterval(()=>{left--;const n=$('#mvnum');if(!n){clearInterval(moveTimer);return}n.textContent=`${Math.floor(left/60)}:${pad(left%60)}`;const c=$('#mvring .rg');if(c){const R=(96-9)/2,cc=2*Math.PI*R;c.setAttribute('stroke-dashoffset',(cc*(left/120)).toFixed(2))}if(left<=0){chime();done()}},1000)};
 }
 
+/* ================== UX: back-button layers, pickers, swipe ================== */
+const LAYERS=[];let ignorePop=0;
+function openLayer(close){const top=LAYERS[LAYERS.length-1];if(top&&!top.live){top.close=close;top.live=true;return top}const L={close,live:true};LAYERS.push(L);try{history.pushState({bcLayer:LAYERS.length},'')}catch(e){}return L}
+function closeLayer(L){if(!L||!L.live)return;L.live=false;setTimeout(()=>{const top=LAYERS[LAYERS.length-1];if(top===L&&!L.live){LAYERS.pop();ignorePop++;try{history.back()}catch(e){ignorePop--}}},80)}
+window.addEventListener('popstate',()=>{if(ignorePop>0){ignorePop--;return}const top=LAYERS.pop();if(top&&top.live){top.live=false;top.close(true)}});
+function haptic(){if(S.settings.vibrate&&navigator.vibrate)try{navigator.vibrate(8)}catch(e){}}
+/* swipe down to dismiss sheets */
+function enableSwipe(sheetEl,onClose){let y0=null,dy=0;sheetEl.addEventListener('touchstart',e=>{if(sheetEl.scrollTop>0)return;y0=e.touches[0].clientY;dy=0;sheetEl.style.transition='none'},{passive:true});
+  sheetEl.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0)sheetEl.style.transform=`translateY(${dy}px)`},{passive:true});
+  sheetEl.addEventListener('touchend',()=>{if(y0==null)return;sheetEl.style.transition='transform .22s';if(dy>110){sheetEl.style.transform='translateY(100%)';setTimeout(onClose,180)}else sheetEl.style.transform='';y0=null})}
+/* generic bottom-sheet list picker */
+function pickSheet({title,options,value,onPick,extra=''}){
+  const bg=document.createElement('div');bg.className='sheet-bg';bg.id='picker';
+  bg.innerHTML=`<div class="sheet picker" role="dialog" aria-modal="true"><div class="grab"></div><h3 style="text-align:center;margin-bottom:10px">${title}</h3>
+   <div class="list">${options.map(o=>`<button class="li opt ${String(o.v)===String(value)?'sel':''}" data-v="${esc(o.v)}"><div class="t"><b>${o.l}</b>${o.sub?`<span>${o.sub}</span>`:''}</div><span class="radio"></span></button>`).join('')}</div>${extra}</div>`;
+  document.body.appendChild(bg);const sh=bg.firstChild;
+  let L;const close=(fromPop)=>{bg.remove();if(!fromPop)closeLayer(L)};L=openLayer(close);
+  bg.addEventListener('click',e=>{if(e.target===bg)close()});enableSwipe(sh,()=>close());
+  bg.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{haptic();bg.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');setTimeout(()=>{close();onPick(b.dataset.v)},140)});
+  return {bg,close};
+}
+/* time picker sheet: 12h chips + AM/PM + 5-min steps */
+function timeSheet({title,value,onPick}){
+  let [h,m]=value.split(':').map(Number);let pm=h>=12;let h12=((h+11)%12)+1;m=Math.round(m/5)*5%60;
+  const bg=document.createElement('div');bg.className='sheet-bg';bg.id='picker';
+  const draw=()=>`<div class="grab"></div><h3 style="text-align:center">${title}</h3>
+   <div class="tbig">${h12}:${pad(m)} <small>${pm?'م':'ص'}</small></div>
+   <div class="seg" style="grid-template-columns:1fr 1fr;margin:6px 0 14px"><button class="${!pm?'on':''}" data-ap="am">☀️ صباحًا</button><button class="${pm?'on':''}" data-ap="pm">🌙 مساءً</button></div>
+   <div class="small muted" style="margin-bottom:6px">الساعة</div><div class="tgrid">${[12,1,2,3,4,5,6,7,8,9,10,11].map(x=>`<button class="${x===h12?'on':''}" data-h="${x}">${x}</button>`).join('')}</div>
+   <div class="small muted" style="margin:12px 0 6px">الدقيقة</div><div class="tgrid">${Array.from({length:12},(_,i)=>i*5).map(x=>`<button class="${x===m?'on':''}" data-m="${x}">${pad(x)}</button>`).join('')}</div>
+   <button class="btn primary block" style="margin-top:16px" data-ok>تم</button>`;
+  bg.innerHTML=`<div class="sheet picker" role="dialog" aria-modal="true">${draw()}</div>`;document.body.appendChild(bg);const sh=bg.firstChild;
+  let L;const close=(fromPop)=>{bg.remove();if(!fromPop)closeLayer(L)};L=openLayer(close);
+  bg.addEventListener('click',e=>{if(e.target===bg){close();return}const t=e.target.closest('button');if(!t)return;haptic();
+    if(t.dataset.ap)pm=t.dataset.ap==='pm';else if(t.dataset.h)h12=+t.dataset.h;else if(t.dataset.m!=null&&t.dataset.m!=='')m=+t.dataset.m;
+    if(t.hasAttribute('data-ok')){const H=(h12%12)+(pm?12:0);close();onPick(`${pad(H)}:${pad(m)}`);return}
+    sh.innerHTML=draw()});
+  enableSwipe(sh,()=>close());
+}
+function dateSheet({title,value,onPick}){
+  const opts=[0,1,7,14,21,28].map(n=>{const k=keyOf(addDays(new Date(),-n));return{v:k,l:n===0?'النهارده':n===1?'امبارح':`من ${n/7===1?'أسبوع':n/7===2?'أسبوعين':n/7+' أسابيع'}`,sub:fmtDate(parseKey(k),{weekday:'long',day:'numeric',month:'long'})}});
+  const p=pickSheet({title,options:opts,value,onPick,extra:`<label class="small muted" style="display:block;margin:14px 4px 6px">أو اختار تاريخ تاني</label><input type="date" id="pk-date" value="${value}" max="${today()}">`});
+  $('#pk-date',p.bg).addEventListener('change',e=>{if(e.target.value){p.close();onPick(e.target.value)}});
+}
+function pickValueLabel(kind,v){if(kind==='time')return fmt12(v);if(kind==='level')return `الأسبوع ${v}`;if(kind==='every')return `${v} دقيقة`;if(kind==='date')return fmtDate(parseKey(v),{day:'numeric',month:'short'});return v}
+const pickBtn=(attr,kind,val)=>`<button class="pick" ${attr}><span>${pickValueLabel(kind,val)}</span>${ic('next','icon" style="width:16px;height:16px;opacity:.5')}</button>`;
+function handlePick(t){
+  const [kind,key]=t.dataset.pick.split(':');const s=S.settings;
+  if(kind==='time'){const cur=key.startsWith('move.')?s.move[key.slice(5)]:s[key];
+    timeSheet({title:{morning:'معاد تمارين الصباح',evening:'معاد تمارين المساء',swimTime:'معاد السباحة','move.from':'استراحات الحركة من','move.to':'استراحات الحركة لحد'}[key]||'الوقت',value:cur,onPick:v=>{
+      if(key.startsWith('move.')){const k2=key.slice(5),old=s.move[k2];s.move[k2]=v;if(toMin(s.move.to)<=toMin(s.move.from)){s.move[k2]=old;toast('وقت النهاية لازم يبقى بعد البداية');return}save();scheduleLocal();render();toast('اتحفظ')}
+      else{applySetting(key,v);render()}}});return}
+  if(kind==='level'){pickSheet({title:'المستوى الحالي',value:s.level,options:Array.from({length:8},(_,i)=>({v:i+1,l:`الأسبوع ${i+1}`,sub:PHASES[phaseOf(i+1)-1].t+(i+1===calWeek()?' · حسب التقويم':'')})),onPick:v=>{applySetting('level',v);render()}});return}
+  if(kind==='every'){pickSheet({title:'فكّرني أقوم كل…',value:s.move.every,options:[20,30,45,60,90].map(v=>({v,l:`${v} دقيقة`,sub:v===45?'مقترح':v<=30?'لو قعدتك طويلة جدًا':''})),onPick:v=>{s.move.every=+v;save();scheduleLocal();render();toast('اتحفظ')}});return}
+  if(kind==='date'){dateSheet({title:'بداية البرنامج',value:s.start,onPick:v=>{applySetting('start',v);render()}});return}
+  if(kind==='ob'){const inp=t;const k=inp.dataset.k;if(k==='start')dateSheet({title:'بداية البرنامج',value:inp.dataset.v,onPick:v=>{inp.dataset.v=v;inp.querySelector('span').textContent=pickValueLabel('date',v)}});
+    else timeSheet({title:k==='morning'?'معاد تمارين الصباح':'معاد تمارين المساء',value:inp.dataset.v,onPick:v=>{inp.dataset.v=v;inp.querySelector('span').textContent=fmt12(v)}});}
+}
+
 /* ================== events ================== */
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset],[data-day],[data-moveday]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-act],[data-sym],[data-swimday],[data-themeset],[data-day],[data-moveday],[data-pick]');if(!t)return;
+  if(t.closest('.btn,.tick,.chip,.li,.tile,#tabs button'))haptic();
+  if(t.dataset.pick){handlePick(t);return}
   if(t.dataset.day){openDay(t.dataset.day);return}
   if(t.dataset.moveday){const d=+t.dataset.moveday,a=S.settings.move.days;const i=a.indexOf(d);if(i<0)a.push(d);else a.splice(i,1);save();scheduleLocal();render();return}
   if(t.dataset.themeset){S.settings.theme=t.dataset.themeset;save();applyTheme();render();return}
