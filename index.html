@@ -282,6 +282,7 @@ textarea{min-height:80px;resize:vertical}
 .hc em{font-style:normal;font-size:9.5px;color:var(--muted);line-height:1}
 .hc.today{background:var(--sage-xl);outline:1.5px solid var(--teal)}
 .hc.off{opacity:.35}
+.hc .swb{position:absolute;top:0;left:2px;font-size:11px;font-style:normal}
 .resume{margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--teal-l);color:var(--teal-ink);font-size:14px;display:flex;gap:8px;align-items:center}
 .phwrap{position:relative;width:100%;height:100%;overflow:hidden;background:#F0F6EF}
 .phwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
@@ -326,7 +327,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
 
 /* ================== state ================== */
 const KEY='backcare.v1';
-function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto',cheer:true},days:{},pain:{},flares:{}}}
+function defaults(){return{v:1,settings:{onboarded:false,start:today(),level:1,lastAdv:null,hold:false,morning:'09:00',evening:'21:00',swimDays:[6,1],swimTime:'19:00',sound:true,vibrate:true,notify:false,theme:'auto',cheer:true,swim:true},days:{},pain:{},flares:{}}}
 let S=defaults();
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S={...defaults(),...o,settings:{...defaults().settings,...(o.settings||{})}}}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('تعذّر الحفظ على هذا الجهاز')}syncSWConfig()}
@@ -751,8 +752,8 @@ function viewHome(){
   const lp=S.pain[today()];
   const rows=[];
   if(nk)rows.push(`<button class="li" data-act="start" data-kind="${other}"><div class="ico ${om?'sun':'moon'}">${ic(om?'sun':'moon')}</div><div class="t"><b>${om?'روتين الصباح':'روتين المساء'}</b><span>${oRec.fin?'تم ✓':`${fmt12(om?S.settings.morning:S.settings.evening)} · ${routineMin(other)} دقيقة`}</span></div>${oRec.fin?`<span class="check on">${ic('check','icon" style="width:16px;height:16px',3)}</span>`:ic('next','chev')}</button>`);
-  rows.push(swimToday
-    ?`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>سباحة النهارده</b><span>${swimMin()} دقيقة · ${fmt12(S.settings.swimTime)}</span></div><button class="tick ${swimDone?'done':''}" data-act="swim">${swimDone?'تم ✓':'سجّلت'}</button></div>`
+  if(swimOn())rows.push(swimToday
+    ?`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>سباحة النهارده <span class="pill teal" style="font-size:11px;padding:1px 8px">اختياري</span></b><span>${swimMin()} دقيقة · ${fmt12(S.settings.swimTime)}</span></div><button class="tick ${swimDone?'done':''}" data-act="swim">${swimDone?'تم ✓':'سجّلت'}</button></div>`
     :`<div class="li"><div class="ico wave">${ic('wave')}</div><div class="t"><b>السباحة الجاية</b><span>${ns?(ns.i===1?'بكرة':DAY[ns.d.getDay()]):'—'} · ${fmt12(S.settings.swimTime)} · ${swimMin()} دقيقة</span></div></div>`);
   rows.push(`<button class="li" data-tab="pain"><div class="ico heart">${ic('pain')}</div><div class="t"><b>كيف ظهرك النهارده؟</b><span>${lp?`${lp.level} من 10 · ${painWord(lp.level)}`:'سجّل الألم في ثانية'}</span></div>${lp?`<b style="font-size:22px;color:${painCol(lp.level)}">${lp.level}</b>`:ic('next','chev')}</button>`);
   return `
@@ -1008,7 +1009,8 @@ let HID=0;
 const HEART='M12 20.6s-7.3-4.4-9.4-9C1.2 8.3 3.1 4.8 6.6 4.8c2.1 0 3.6 1.1 5.4 3 1.8-1.9 3.3-3 5.4-3 3.5 0 5.4 3.5 4 6.8-2.1 4.6-9.4 9-9.4 9z';
 function heart(pct,size,o={}){const id='h'+(++HID),p=clamp(pct||0,0,1),y=4.6+16.2*(1-p);
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart${p>=1?' full':''}" role="img" aria-label="${Math.round(p*100)}%"><defs><clipPath id="${id}"><rect x="0" y="${y.toFixed(2)}" width="24" height="24"/></clipPath><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8494"/><stop offset="1" stop-color="#E0445C"/></linearGradient></defs><path d="${HEART}" style="fill:${o.bg||'var(--heart-bg)'}"/><path d="${HEART}" fill="url(#${id}g)" clip-path="url(#${id})"/><path d="${HEART}" fill="none" style="stroke:${o.line||'var(--heart-line)'}" stroke-width="${o.sw||1}"/></svg>`}
-function dayPct(k){const r=S.days[k];if(!r)return 0;const m=required('morning'),e=required('evening');let tot=m.length+e.length,dn=m.filter(i=>r.morning.done.includes(i.id)).length+e.filter(i=>r.evening.done.includes(i.id)).length;if(isSwimDay(parseKey(k))){tot+=4;if(r.swim&&r.swim.done)dn+=4}return tot?Math.min(1,dn/tot):0}
+function dayPct(k){const r=S.days[k];if(!r)return 0;const m=required('morning'),e=required('evening');const tot=m.length+e.length,dn=m.filter(i=>r.morning.done.includes(i.id)).length+e.filter(i=>r.evening.done.includes(i.id)).length;return tot?Math.min(1,dn/tot):0}
+const swimOn=()=>S.settings.swim!==false;
 function weekPct(){const t=new Date(),off=WEEK_ORDER.indexOf(t.getDay());let s=0,n=0;for(let i=0;i<=off;i++){const k=keyOf(addDays(t,-i));if(daysBetween(S.settings.start,k)<0)continue;s+=dayPct(k);n++}return n?s/n:0}
 function programPct(){let s=0;const n=Math.min(56,daysBetween(S.settings.start,today())+1);for(let i=0;i<n;i++)s+=dayPct(keyOf(addDays(parseKey(S.settings.start),i)));return s/56}
 function streak(){let n=0;let d=new Date();const any=k=>dayPct(k)>0||(S.days[k]&&S.days[k].swim&&S.days[k].swim.done);if(!any(keyOf(d)))d=addDays(d,-1);while(any(keyOf(d))){n++;d=addDays(d,-1)}return n}
@@ -1019,15 +1021,15 @@ function viewProgress(){
   const big=(p,l,s)=>`<div style="text-align:center;flex:1"><div class="hwrap">${heart(p,74)}<b>${Math.round(p*100)}%</b></div><div style="font-weight:700;margin-top:4px">${l}</div><div class="muted small">${s}</div></div>`;
   return `<div class="top"><div><h1>التقدّم</h1><div class="date">بدأت ${fmtDate(parseKey(S.settings.start),{day:'numeric',month:'long'})} · الأسبوع ${L} من 8</div></div></div>
   <div class="card"><div class="row" style="align-items:flex-start">${big(tp,'النهارده','هدف اليوم')}${big(wp,'الأسبوع ده','متوسط أيامك')}${big(pp,'البرنامج','رحلة 8 أسابيع')}</div></div>
-  <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
+  <div class="stats" style="grid-template-columns:repeat(${swimOn()||swims?3:2},1fr);margin-top:12px">
    <div class="stat"><div class="k">${ic('flame','icon" style="width:16px;height:16px;color:var(--amber)')} أيام ورا بعض</div><div class="v">${streak()}</div></div>
    <div class="stat"><div class="k">روتين مكتمل</div><div class="v">${fin}</div></div>
-   <div class="stat"><div class="k">سباحة</div><div class="v">${swims}</div></div>
+   ${swimOn()||swims?`<div class="stat"><div class="k">سباحة 🏊</div><div class="v">${swims}</div></div>`:''}
   </div>
   <div class="sec-title"><h2>أيامك</h2><span class="muted small">دوس على أي يوم</span></div>
   <div class="card"><div class="hcal">${WEEK_ORDER.map(d=>`<div class="hd">${DAYS[d]}</div>`).join('')}
    ${Array.from({length:28},(_,i)=>{const d=addDays(gridStart,i),k=keyOf(d),fut=k>today(),pre=daysBetween(S.settings.start,k)<0,p=dayPct(k);
-     return `<button class="hc ${k===today()?'today':''} ${fut||pre?'off':''}" ${fut||pre?'disabled':`data-day="${k}"`}>${heart(fut||pre?0:p,30)}<span>${d.getDate()}</span>${!fut&&!pre&&p>0?`<em>${Math.round(p*100)}%</em>`:''}</button>`}).join('')}
+     const sw=S.days[k]&&S.days[k].swim&&S.days[k].swim.done;return `<button class="hc ${k===today()?'today':''} ${fut||pre?'off':''}" ${fut||pre?'disabled':`data-day="${k}"`}>${heart(fut||pre?0:p,30)}${sw?'<i class="swb">🏊</i>':''}<span>${d.getDate()}</span>${!fut&&!pre&&p>0?`<em>${Math.round(p*100)}%</em>`:''}</button>`}).join('')}
   </div></div>
   <div class="sec-title"><h2>الألم آخر 4 أسابيع</h2></div>
   <div class="card">${painChart()}</div>
@@ -1046,7 +1048,7 @@ function openDay(k){
    <div class="list" style="margin-top:16px">
     ${row('sun','sun','روتين الصباح',`${md} من ${m.length} تمارين`,md===m.length)}
     ${row('moon','moon','روتين المساء',`${ed} من ${e.length} تمارين`,ed===e.length)}
-    ${isSwimDay(parseKey(k))||(r.swim&&r.swim.done)?row('wave','wave','السباحة',r.swim&&r.swim.done?`${r.swim.min||''} دقيقة`:'ماتسجّلتش',!!(r.swim&&r.swim.done)):''}
+    ${(swimOn()&&isSwimDay(parseKey(k)))||(r.swim&&r.swim.done)?row('wave','wave','السباحة',r.swim&&r.swim.done?`${r.swim.min||''} دقيقة`:'ماتسجّلتش',!!(r.swim&&r.swim.done)):''}
     ${pn?row('pain','heart','الألم',`${pn.level} من 10 · ${painWord(pn.level)}`,false):''}
    </div>`);
 }
@@ -1095,9 +1097,10 @@ function viewSettings(){
   <div class="card" style="padding:4px 18px">
    <div class="set-row"><label for="s-m">${ic('sun','icon" style="width:18px;height:18px;vertical-align:-3px;color:#B7791F')} تمارين الصباح</label><input type="time" id="s-m" value="${s.morning}" data-set="morning"></div>
    <div class="set-row"><label for="s-e">${ic('moon','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--navy3)')} تمارين المساء</label><input type="time" id="s-e" value="${s.evening}" data-set="evening"></div>
-   <div class="set-row" style="display:block"><div class="row between"><label>${ic('wave','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--teal)')} أيام السباحة</label><span class="muted small">${s.swimDays.length} أيام</span></div>
+   <div class="set-row"><div><label>السباحة (اختياري)</label><div class="muted small">مش بتدخل في نسبة اليوم، بتتحسب كإضافة</div></div><label class="switch"><input type="checkbox" data-toggle="swim" ${swimOn()?'checked':''}><span></span></label></div>
+   ${swimOn()?`<div class="set-row" style="display:block"><div class="row between"><label>${ic('wave','icon" style="width:18px;height:18px;vertical-align:-3px;color:var(--teal)')} أيام السباحة</label><span class="muted small">${s.swimDays.length} أيام</span></div>
      <div class="daychips">${WEEK_ORDER.map(d=>`<button class="chip ${s.swimDays.includes(d)?'on':''}" data-swimday="${d}">${DAY[d]}</button>`).join('')}</div></div>
-   <div class="set-row"><label for="s-s">وقت السباحة</label><input type="time" id="s-s" value="${s.swimTime}" data-set="swimTime"></div>
+   <div class="set-row"><label for="s-s">وقت السباحة</label><input type="time" id="s-s" value="${s.swimTime}" data-set="swimTime"></div>`:''}
    <div class="set-row"><div><label>إشعارات التطبيق</label><div class="muted small">${perm==='denied'?'الإشعارات محظورة من إعدادات المتصفح':perm==='unsupported'?'غير مدعومة على هذا المتصفح':'تعمل بشكل موثوق والتطبيق مفتوح أو في الخلفية'}</div></div><label class="switch"><input type="checkbox" data-toggle="notify" ${s.notify&&perm==='granted'?'checked':''} ${perm==='denied'||perm==='unsupported'?'disabled':''}><span></span></label></div>
   </div>
   <div class="banner teal small" style="margin-top:12px">${ic('info')}<div><b>للتذكير المضمون والتطبيق مقفول</b>أندرويد لا يضمن إشعارات تطبيقات الويب وهي مقفولة. أضِف التذكيرات لتقويم موبايلك مرة واحدة وستصلك يوميًا.<div style="margin-top:10px"><button class="btn sm primary" data-act="ics">${ic('cal','icon" style="width:18px;height:18px')} أضف التذكيرات للتقويم</button></div></div></div>
@@ -1138,7 +1141,7 @@ async function toggleSetting(k,on,el){
     if(p!=='granted'){el.checked=false;toast('لم يتم السماح بالإشعارات');return}
     S.settings.notify=true;save();scheduleLocal();registerPeriodic();toast('تم تفعيل الإشعارات');return;
   }
-  S.settings[k]=on;save();if(k==='hold')toast(on?'تم تثبيت المستوى':'التدرّج التلقائي مفعّل');if(k==='sound'&&on)unlockAudio();scheduleLocal();
+  S.settings[k]=on;save();if(k==='swim'){render();toast(on?'السباحة اتضافت 🏊':'السباحة اتشالت من البرنامج')}if(k==='hold')toast(on?'تم تثبيت المستوى':'التدرّج التلقائي مفعّل');if(k==='sound'&&on)unlockAudio();scheduleLocal();
 }
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
 function exportData(){download(`backcare-backup-${today()}.json`,JSON.stringify(S,null,1),'application/json');toast('تم تصدير النسخة الاحتياطية')}
@@ -1150,7 +1153,7 @@ function icsFile(){
   let out='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//BackCare//AR\r\nCALSCALE:GREGORIAN\r\n';
   out+=ev('morning','BackCare – تمارين الصباح',s.morning,'FREQ=DAILY;COUNT=56','افتح تطبيق BackCare وابدأ روتين الصباح');
   out+=ev('evening','BackCare – تمارين المساء',s.evening,'FREQ=DAILY;COUNT=56','روتين المساء الخفيف قبل النوم');
-  if(s.swimDays.length)out+=ev('swim','BackCare – السباحة',s.swimTime,`FREQ=WEEKLY;COUNT=${s.swimDays.length*8};BYDAY=${s.swimDays.map(d=>BY[d]).join(',')}`,'سباحة بإيقاع مريح – سجّلها في التطبيق');
+  if(swimOn()&&s.swimDays.length)out+=ev('swim','BackCare – السباحة',s.swimTime,`FREQ=WEEKLY;COUNT=${s.swimDays.length*8};BYDAY=${s.swimDays.map(d=>BY[d]).join(',')}`,'سباحة بإيقاع مريح – سجّلها في التطبيق');
   return out+'END:VCALENDAR\r\n';
 }
 
@@ -1159,7 +1162,7 @@ let timers=[];
 function reminderList(d=new Date()){const s=S.settings,k=keyOf(d),r=S.days[k];const l=[
   {id:'morning',hm:s.morning,title:'روتين الصباح 🌿',body:`${routine('morning').length} تمارين · حوالي ${routineMin('morning')} دقيقة`,done:!!(r&&r.morning.fin)},
   {id:'evening',hm:s.evening,title:'روتين المساء 🌙',body:'تمارين خفيفة وتنفّس قبل النوم',done:!!(r&&r.evening.fin)}];
-  if(isSwimDay(d))l.push({id:'swim',hm:s.swimTime,title:'وقت السباحة 🏊',body:`${swimMin()} دقيقة بإيقاع مريح`,done:!!(r&&r.swim&&r.swim.done)});return l}
+  if(swimOn()&&isSwimDay(d))l.push({id:'swim',hm:s.swimTime,title:'وقت السباحة 🏊',body:`${swimMin()} دقيقة بإيقاع مريح`,done:!!(r&&r.swim&&r.swim.done)});return l}
 function scheduleLocal(){
   timers.forEach(clearTimeout);timers=[];
   if(!S.settings.notify||!('Notification' in window)||Notification.permission!=='granted')return;
@@ -1186,7 +1189,7 @@ function onboarding(step=0){
     <h1>أهلًا بيك في BackCare</h1><p class="lead">رحلة تعافي ظهرك في 8 أسابيع، خطوة بخطوة.</p>
     <div class="card" style="margin-top:24px;padding:6px 18px">
      ${feat('play','" style="background:var(--teal-l);color:var(--teal-ink)','تمارين موجّهة','رسمة متحركة وتايمر وصوت لكل تمرين')}
-     ${feat('wave','" style="background:var(--sage-xl);color:var(--ink2)','سباحة مرتين في الأسبوع','بمدد بتزيد تدريجيًا')}
+     ${feat('wave','" style="background:var(--sage-xl);color:var(--ink2)','سباحة (اختياري)','مرتين في الأسبوع لو حابب')}
      ${feat('prog','" style="background:var(--amber-l);color:var(--amber-ink)','تابع ألمك وتقدّمك','البرنامج بيتدرّج بس لما الأعراض تكون مستقرة')}
     </div>`,
    `<div style="text-align:center"><div style="width:76px;height:76px;border-radius:26px;background:var(--amber-l);color:var(--amber-ink);display:grid;place-items:center;margin:6px auto 18px">${ic('info','icon" style="width:38px;height:38px')}</div></div>
@@ -1202,13 +1205,14 @@ function onboarding(step=0){
      <label class="f" for="ob-m" style="margin-top:0">تمارين الصباح</label><input type="time" id="ob-m" value="${S.settings.morning}">
      <label class="f" for="ob-e">تمارين المساء</label><input type="time" id="ob-e" value="${S.settings.evening}">
      <label class="f" for="ob-s">بداية البرنامج</label><input type="date" id="ob-s" value="${S.settings.start}" max="${today()}">
+     <div class="set-row" style="margin-top:10px;border:0;padding-bottom:0"><div><label>أضف السباحة (اختياري)</label><div class="muted small">مرتين في الأسبوع، تقدر تغيّرها بعدين</div></div><label class="switch"><input type="checkbox" id="ob-sw" ${swimOn()?'checked':''}><span></span></label></div>
     </div>`];
   o.innerHTML=`<div class="in">${dots}<div class="body">${pages[step]}</div>
    <div class="row" style="gap:10px;margin-top:24px">${step?`<button class="btn ghost" style="flex:1" id="ob-back">رجوع</button>`:''}<button class="btn primary" style="flex:2" id="ob-next">${step===2?'يلا نبدأ':step===1?'فهمت':'التالي'}</button></div></div>`;
   $('#ob-next').onclick=()=>{
     if(step<2){onboarding(step+1);return}
     const m=$('#ob-m').value,e=$('#ob-e').value,s=$('#ob-s').value;
-    if(m)S.settings.morning=m;if(e)S.settings.evening=e;if(s)S.settings.start=s;
+    if(m)S.settings.morning=m;if(e)S.settings.evening=e;if(s)S.settings.start=s;S.settings.swim=$('#ob-sw').checked;
     S.settings.level=calWeek();S.settings.lastAdv=today();S.settings.onboarded=true;save();scheduleLocal();
     o.remove();document.body.style.overflow='';render();
   };
@@ -1234,7 +1238,7 @@ document.addEventListener('click',e=>{
     case 'sheet-close':closeSheet();break;
     case 'modal-close':closeModal();break;
     case 'redflags':showRedFlags(false);break;
-    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();if(!checkDayComplete()){celebrate(false);toast('سمكة يا معلّم! 🐟 السباحة اتسجّلت')}}save();render();break}
+    case 'swim':{const d=dayRec();if(d.swim&&d.swim.done){d.swim=null;toast('تم إلغاء التسجيل')}else{d.swim={done:true,min:swimMinNum()};chime();celebrate(false);toast('سمكة يا معلّم! 🐟 السباحة اتسجّلت')}save();render();break}
     case 'pain-save':savePain();break;
     case 'install':doInstall();break;
     case 'ics':download('backcare-reminders.ics',icsFile(),'text/calendar');toast('افتح الملف لإضافته لتقويم جوجل');break;
