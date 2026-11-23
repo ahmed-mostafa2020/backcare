@@ -283,6 +283,10 @@ textarea{min-height:80px;resize:vertical}
 .hc.today{background:var(--sage-xl);outline:1.5px solid var(--teal)}
 .hc.off{opacity:.35}
 .resume{margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--teal-l);color:var(--teal-ink);font-size:14px;display:flex;gap:8px;align-items:center}
+.phwrap{position:relative;width:100%;height:100%;overflow:hidden;background:#F0F6EF}
+.phwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.phwrap .pb{opacity:0}
+[data-theme=dark] .phwrap img{filter:brightness(.9) saturate(.95)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -440,7 +444,7 @@ const EX={
   mis:['تقويس أسفل الظهر عند فرد الساق','رفع الكعب عن الأرض','الحركة السريعة'],
   safe:'إذا شعرت بشدّ في الظهر، قلّل مسافة الانزلاق.',
   det:'حافظ على شدّ البطن الخفيف طوال الحركة وظهرك ثابت. ازلق الكعب حتى تقترب الساق من الاستقامة، ثم اسحبه للوضع الأول. نفّذ كل التكرارات على جهة ثم الجهة الأخرى.'},
- birddog:{name:'الطائر والكلب',en:'Bird Dog',kind:'reps',anim:'hold',prop:'mat',
+ birddog:{name:'الطائر والكلب',en:'Bird Dog',kind:'reps',anim:'hold',prop:'mat',img:'birddog',
   A:{head:[210,90],neck:[192,102],hip:[118,106],elN:[194,130],haN:[196,160],elF:[188,130],haF:[190,160],knN:[118,158],anN:[80,161],toN:[70,158],knF:[122,158],anF:[84,161],toF:[74,158],f:[1,.35]},
   B:{elN:[222,98],haN:[250,94],knF:[82,106],anF:[46,103],toF:[38,96]},
   short:'على اليدين والركبتين: شدّ البطن، ثم افرد ذراعًا للأمام والساق المعاكسة للخلف ببطء واثبت.',
@@ -448,7 +452,7 @@ const EX={
   mis:['رفع الساق أعلى من الجسم وتقويس الظهر','دوران الحوض للجانب','حبس النفس أو الحركة السريعة'],
   safe:'إذا كانت الحركة الكاملة صعبة، ابدأ بفرد الساق وحدها. الظهر يبقى مستويًا كسطح طاولة.',
   det:'اليدان تحت الكتفين والركبتان تحت الوركين. تخيّل كوب ماء على أسفل ظهرك لا يجب أن ينسكب. افرد الذراع والساق المعاكسة حتى مستوى الجسم فقط، اثبت، ثم ارجع ببطء.'},
- bridge:{name:'جسر الأرداف',en:'Glute Bridge',kind:'reps',anim:'hold',tempo:4,prop:'mat',
+ bridge:{name:'جسر الأرداف',en:'Glute Bridge',kind:'reps',anim:'hold',tempo:4,prop:'mat',img:'bridge',
   A:HOOK,B:{hip:[140,126],neck:[82,151],knN:[178,110],knF:[174,112]},
   short:'على ظهرك والركبتان مثنيتان: شدّ البطن والأرداف وارفع الحوض حتى يستقيم الجسم من الكتفين للركبتين، ثم انزل ببطء.',
   ben:['يقوّي الأرداف التي تحمي أسفل الظهر','يقلل الحمل على الظهر في حركتك اليومية'],
@@ -573,6 +577,7 @@ const FIGS=new Set();
 class Figure{
   constructor(el,id,opt={}){
     this.def=id==='swim'?SWIM:EX[id];this.id=id;this.el=el;this.mode=opt.mode||'loop';this.off=Math.random()*3;this.t=0;this.side=null;
+    if(this.def.img&&!opt.svg){this.isImg=true;el.innerHTML=`<div class="phwrap"><img src="img/${this.def.img}-a.webp" alt="" decoding="async"><img class="pb" src="img/${this.def.img}-b.webp" alt="" decoding="async"></div>`;this.wrap=el.firstChild;this.pb=el.querySelector('.pb');FIGS.add(this);this.draw(0,null);return}
     const svg=mk('svg',{viewBox:'0 0 300 200','aria-hidden':'true',preserveAspectRatio:'xMidYMid meet'});
     this.svg=svg;const d=this.def;
     mk('circle',{cx:252,cy:44,r:30,fill:'#fff',opacity:.6,class:'c-deco'},svg);
@@ -609,6 +614,7 @@ class Figure{
     this.draw(0,null);FIGS.add(this);
   }
   draw(t,side){
+    if(this.isImg){const e=t<0?0:t>1?1:t;this.pb.style.opacity=e.toFixed(3);if(side!==this.side){this.side=side;this.wrap.style.transform=side==='L'?'scaleX(-1)':''}return}
     const d=this.def,A=d.A,B=d.B||{};const p={};
     const e=t<0?0:t>1?1:t;
     for(const k in A){p[k]=B[k]&&k!=='f'?lerp(A[k],B[k],e):A[k]}
